@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [[ "$VIRTUAL_ENV" ]]; then
+    if [[ "$(type -t deactivate)" == "function" ]]; then
+        echo "Deactivating existing virtualenv..."
+        deactivate
+    else
+        echo "Cannot deactivate existing virtualenv!"
+    fi
+fi
+
+# Move to the root of the project.
+PROJECT="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )" && pwd )"
+cd "$PROJECT"
+
+# Drop into Python virtualenv.
+VENV="$PROJECT/var/venv-$(uname)-$(arch)"
+. $VENV/bin/activate
+
+# All variables are set below this point so that the critical ones will
+# get reset when the venv is deactivated.
+
+export PATH="$PROJECT/bin:$VENV/node_modules/.bin:$PATH"
+export PYTHONPATH="$PYTHONPATH:$PROJECT"
+
+# Ruby gems.
+export GEM_HOME="$VENV"
+export GEM_PATH=""
+
+# Node package manager (NPM) wrapper.
+if [[ ! -e $VENV/bin/npm ]]; then
+cat > $VENV/bin/npm <<EOF
+#!/usr/bin/env bash
+exec $(PATH=/usr/bin:/usr/local/bin which npm) --prefix="$VENV" \$@
+
+EOF
+chmod +x $VENV/bin/npm
+fi
+
+export bower_directory="var/bower"
+
