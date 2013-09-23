@@ -9,6 +9,7 @@ PyHAML==1.0.1
 
 Flask-SQLAlchemy==1.0
 SQLAlchemy==0.8.2
+alembic==0.6.0
 
 greenlet==0.4.1
 gunicorn==18.0

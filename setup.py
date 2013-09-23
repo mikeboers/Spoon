@@ -15,6 +15,7 @@ setup(
     entry_points={
         'console_scripts': [
             'git-base-shell = gitbase.commands.shell:main',
+            'git-base-import = gitbase.commands.import:main',
         ],
     },
 
