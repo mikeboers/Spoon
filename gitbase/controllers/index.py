@@ -2,4 +2,4 @@ from . import *
 
 @app.route('/')
 def index():
-    return 'Hello!'
+    return render_template('index.haml')

@@ -15,7 +15,7 @@ except ImportError:
 
 from flask.ext.mako import MakoTemplates as Base, _render, Template
 from flask import g
-# import haml
+import haml
 
 from .flask import app
 from .markdown import markdown
@@ -153,7 +153,6 @@ def tiny_mako(source):
 
 
 def preprocessor(source):
-    return source
     if getattr(g, '_mako_template_name', '').endswith('.haml'):
         source = haml.preprocessor(source)
     return inline_control_statements(whitespace_control(source))
