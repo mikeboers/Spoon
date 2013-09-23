@@ -1,0 +1,291 @@
+#!/usr/bin/env python
+
+from inspect import getargspec
+from subprocess import Popen, call, check_output, CalledProcessError, PIPE
+import datetime
+import glob
+import logging
+import os
+import re
+import site
+import socket
+import subprocess
+import sys
+import time
+import hashlib
+import errno
+
+from baker import command
+import baker
+# import watchdog.observers
+
+
+is_vagrant = os.environ.get('USER') == 'vagrant'
+
+
+# We have to monkey patch baker so that we can use commands without any args.
+# It will remove the first arg if it is "self", so we latch on to that action.
+def patched_get_argspec(fn):
+    arglist, vargsname, kwargsname, defaults = getargspec(fn)
+    if not arglist:
+        arglist = ['self']
+    return arglist, vargsname, kwargsname, defaults
+baker.getargspec = patched_get_argspec
+
+
+log = logging.getLogger(os.path.basename(__file__))
+
+# Make sure the working directory is right here.
+root = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir))
+os.chdir(root)
+
+
+@command
+def entropy():
+    path = 'var/etc/secret_key_entropy.txt'
+    if not os.path.exists(path):
+        entropy = os.urandom(1024)
+        with open(path, 'wb') as fh:
+            fh.write(entropy.encode('base64'))
+        return entropy
+    else:
+        return open(path, 'rb').read().decode('base64')
+
+
+@command
+def secret_key():
+    with open('var/etc/flask/901-secret_key.py', 'w') as fh:
+        fh.write('SECRET_KEY = %r.decode("hex")\n' % hashlib.sha256(entropy()).hexdigest())
+
+
+@command
+def nginx():
+    from mako.lookup import TemplateLookup
+    from app.core import config
+
+    lookup = TemplateLookup(directories=[os.path.join(config.ROOT_PATH, 'etc')])
+
+    try:
+        os.makedirs('var/etc/nginx')
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    def render(name, **kwargs):
+        data = dict(config.__dict__)
+        data.update(kwargs)
+        rendered = lookup.get_template('nginx.conf.mako').render(**data)
+        with open(os.path.join(config.ROOT_PATH, 'var', 'etc', 'nginx', name), 'wb') as fh:
+            fh.write(rendered)
+
+    domains = getattr(config, 'DOMAINS', None) or [getattr(config, "DOMAIN", 'localhost')]
+    for domain in domains:
+        render('%s.conf' % domain.lower(), DOMAIN=domain)
+
+    
+
+def get_user():
+    user = os.environ.get('SUDO_USER') or check_output(['id', '-un']).strip()
+    uid = int(check_output(['id', '-u', user]))
+    return user, uid
+
+
+def get_group():
+    for group in 'www', 'www-data':
+        try:
+            gid = int(check_output(['id', '-g', group], stderr=PIPE))
+            return group, gid
+        except CalledProcessError:
+            pass
+    
+    raise RuntimeError('Could not determine server group.')
+
+
+@command
+def config(all=False, *args):
+
+    if all:
+        from gitbase.core.flask import app
+        obj = gitbase.config
+    else:
+        import gitbase.core.config
+        obj = gitbase.core.config.__dict__
+
+    if args:
+        print obj.get(args[0])
+        return
+
+    for k, v in sorted(obj.iteritems()):
+        if k.startswith('_') or k.upper() != k:
+            continue
+        print '%s: %r' % (k, v)
+    
+
+@command
+def git(check=False, update=False):
+    if is_vagrant:
+        print 'No git allowed on Vagrant!'
+        return
+    call('git submodule init'.split())
+    top_msg = False
+    for line in check_output('git submodule'.split()).splitlines():
+        if check and not line.startswith(' '):
+            if not top_msg:
+                print 'git submodules out of sync:'
+                top_msg = True
+            print '\t' + line.split(' ', 1)[1]
+        if update or line.startswith('-'):
+            path = line.split(' ', 1)[1]
+            call('git submodule update --'.split() + [path])
+    if check and not top_msg:
+        print 'git submodules are up to date.'
+
+
+@command
+def directories():
+    for name in '''
+        var/tmp
+        var/etc
+        var/log/nginx
+        var/static
+        var/sqlite
+        var/etc/flask
+        var/etc/nginx
+        var/assets
+    '''.strip().split():
+        if not os.path.exists(name):
+            print 'mkdir -p', name
+            os.makedirs(name)
+        call('chmod g+s'.split() + [name])
+
+
+@command
+def permissions(verbose=False):
+    user, _ = get_user()
+    group, _ = get_group()
+    all_ = glob.glob('*')
+    call(['chown', '-R' + ('v' if verbose else ''), user] + all_)
+    call(['chgrp', '-R' + ('v' if verbose else ''), group] + all_)
+    call(['chmod', '-R' + ('v' if verbose else ''), 'ug=rwX,o='] + all_)
+
+
+@command
+def css(watch=False):
+    if watch:
+        try:
+            call(['compass', 'watch', './css', '--output-style', 'nested', '--force'])
+        except KeyboardInterrupt: pass
+    else:
+        call(['compass', 'compile', './css', '--output-style', 'compressed', '--force'])
+
+
+@command
+def js(watch=False):
+    
+    if watch:
+        
+        affected_files = []
+        finals = ['%s.js' % x for x in 'main', 'admin', 'lib'] + ['%s.min.js' % x for x in 'main', 'admin', 'lib']
+        
+        class EventHandler(object):
+            def dispatch(self, event):
+                
+                # Ignore non-JS events.
+                if not event.src_path.endswith('.js'):
+                    return
+                
+                # Ignore the final files.
+                if os.path.basename(event.src_path) in finals:
+                    return
+                
+                affected_files.append((event.src_path, time.time()))
+
+        handler = EventHandler()
+        observer = watchdog.observers.Observer()
+        observer.schedule(handler, path="js", recursive=True)
+        observer.start()
+        
+        try:
+            while True:
+                time.sleep(0.25)
+                if affected_files:
+                    while time.time() - affected_files[-1][1] < 0.25:
+                        time.sleep(0.05)
+                    affected_files[:] = []
+                    js()
+
+        except KeyboardInterrupt:
+            observer.stop()
+        observer.join()
+        return
+    
+    else:
+        
+        if not os.path.exists('var/static/js'):
+            os.makedirs('var/static/js')
+
+        from jsmin import jsmin
+        for name in 'main', 'admin', 'lib':
+
+            print 'js/%s.js' % name
+
+            combined = check_output(('sprockets --include js --include js/include --include var/bower js/%s.js' % name).split())
+            with open('var/static/js/%s.js' % name, 'w') as fh:
+                fh.write(combined)
+
+            minified = jsmin(combined)
+            with open('var/static/js/%s.min.js' % name, 'w') as fh:
+                fh.write(minified)
+
+@command
+def database():
+    call('python -m app.model.distributor', shell=True)
+    call('python -m app.model.partner', shell=True)
+    call('python -m app.model.product', shell=True)
+    call('python -m app.model.testimonial', shell=True)
+
+
+@command(default=True)
+def build():
+    # git()
+    directories()
+    permissions()
+    # secret_key()
+    nginx()
+    css()
+    # js()
+    database()
+
+
+@command
+def reload():
+    kill('hup')
+            
+@command
+def kill(signal='kill'):
+    pid = open('services/http/pid').read().strip()
+    call(['kill', '-' + signal, pid])
+     
+@command
+def serve(debug=True, watch=True):
+
+    if debug:
+        from gitbase.main import app
+        app.run(
+            debug=True,
+            use_reloader=watch,
+            port=app.config['PORT'],
+        )
+
+    else:
+    
+        proc = Popen(['services/http/run'])
+        try:
+            proc.wait()
+        except KeyboardInterrupt:
+            proc.kill()
+    
+
+
+if __name__ == '__main__':
+    baker.run()
