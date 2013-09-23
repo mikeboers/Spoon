@@ -1,0 +1,79 @@
+
+Very lightweight clone of GitHub.
+
+Uses LibGit2, is written in Python on top of Flask, and uses HAML+SASS.
+
+Perhaps replace gitolite as the repo configurator.
+
+    It only seems to hook the .ssh/authorized_keys, and the `update` hook.
+    
+    The authorized_keys only allows three git commands to get through, and
+    makes sure that the repository name is sane. It may also create empty
+    repos if the person is allowed to do that. It also controls read access.
+
+    The update hook is run once for every branch being pushed BEFORE they are
+    accepted. This allows us to do access control. See:
+
+        - http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
+        - https://github.com/sitaramc/gitolite/blob/master/src/lib/Gitolite/Hooks/Update.pm#L110
+
+    - How is SSH access wrangled?
+        - authorized_keys:
+            command="bash -c 'env | grep SSH | sort'",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty KEY
+        - `ssh -i id_rsa localhost hello`
+            SSH_CLIENT=127.0.0.1 54588 22
+            SSH_CONNECTION=127.0.0.1 54588 127.0.0.1 22
+            SSH_ORIGINAL_COMMAND=hello
+
+Read-only HTTP access to the repos.
+    - This is a matter of preparing a couple of special index files, see:
+      http://git-scm.com/book/en/Git-Internals-Transfer-Protocols#The-Dumb-Protocol
+
+Read-only version of gitolite.
+    
+    - Description in $repo/description
+    - Name of the creator in $repo/gl-creator
+    - Extra permissions in $repo/gl-perms
+
+Authentication via GitHub, Facebook, passwords, or one-time links which
+create cookies for access to single projects.
+
+example.com/pypi to give a pip-usable interface using tags.
+
+Mark repos as clones from other locations. Periodically pull them, OR respond
+when they are hit with a webhook from GitHub or a post-recieve hook.
+
+Schema:
+
+    User: An actual user. May contain repos.
+    Group: Non-user group of repos.
+    Repo: A repo.
+    
+
+Name:
+    git.ly
+    gitly
+    gitlight (too much like gitolite)
+    gitter
+
+    git pipe
+    git house
+    git-pump
+
+    git-only
+    gitsplore
+
+    Git Get
+    
+    Git One (git-one)
+    Git Me
+    Git Base
+    Git by Git
+    Git Map
+
+    git-stop
+    git-town
+
+
+
+
