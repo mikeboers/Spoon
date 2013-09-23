@@ -1,1 +1,5 @@
+/distribute-*.tar.gz
+/*.egg-info
+
 /var
+/vendor/git*
