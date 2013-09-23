@@ -5,11 +5,7 @@ import re
 import subprocess
 import sys
 
-
-# TODO: pull this from Flask.
-config = {
-    'REPO_DIR': os.path.abspath(os.path.join(__file__, '..', '..', 'var', 'repositories'))
-}
+from .core import config
 
 
 def die(message, *args):
@@ -54,7 +50,7 @@ def main():
     group_name, repo_name = m.groups()
 
 
-    group_dir = os.path.join(config['REPO_DIR'], group_name)
+    group_dir = os.path.join(config.REPO_DIR, group_name)
     if not os.path.exists(group_dir):
 
         # TODO: make sure they have permission to create groups.
@@ -71,7 +67,7 @@ def main():
         debug('creating new repository')
         proc = subprocess.Popen(['git', 'init', '--bare', repo_dir], stdout=subprocess.PIPE)
         for line in proc.stdout:
-            sys.stderr.write(line.replace(config['REPO_DIR'], ''))
+            sys.stderr.write(line.replace(config.REPO_DIR, ''))
         code = proc.wait()
         if code:
             die(code)
