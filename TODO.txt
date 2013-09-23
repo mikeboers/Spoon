@@ -1,6 +1,4 @@
 
-Very lightweight clone of GitHub.
-
 Uses LibGit2, is written in Python on top of Flask, and uses HAML+SASS.
 
 Perhaps replace gitolite as the repo configurator.
@@ -49,7 +47,12 @@ Schema:
     Group: Non-user group of repos.
     Repo: A repo.
     
+Commands:
 
+    git-base-shell: the ssh shell
+    git-base-build: rebuilds the user's .ssh/authorized_keys based off of the
+        database
+    
 Name:
     git.ly
     gitly
