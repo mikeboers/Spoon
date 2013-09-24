@@ -2,6 +2,13 @@
 - separate readme/tree/commits into tabs
     - readme rendering should be part of tree rendering?
 
+- hook git-base-shell into authx
+    >>> app.test_request_context().push()
+    >>> login_user(user or AnonymousUserMixin())
+    now the permission checking works
+    if not auth.can('read', repo):
+        die('No repo with read permissions.')
+
 - authentication
     - quick user with password, maybe via Flask-Login
     - ACLs, maybe via Flask-Principal
