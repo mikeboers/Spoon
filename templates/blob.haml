@@ -1,6 +1,8 @@
 %%inherit(file="/_main.haml")/
 -!
     import os
+
+    import pygments
 -
     group = repo.group
 
@@ -22,13 +24,19 @@
 
 
 %%def(name='render_blob(blob, path)')
+    -
+        ext = os.path.splitext(path)[1]
+        try:
+            lexer = pygments.lexers.get_lexer_for_filename(path)
+        except pygments.util.ClassNotFound:
+            lexer = pygments.lexers.TextLexer()
+
     .panel.panel-default
         .panel-heading %h2.panel-title &= path
-        .panel-body
-            - if os.path.splitext(path)[1] == '.md':
-                = markdown(blob.data)
-            - else:
-                %pre &= blob.data
+        - if ext == '.md':
+            .panel-body = markdown(blob.data)
+        - else:
+            .panel-body.git-blob-pre = pygments.highlight(blob.data, lexer, pygments.formatters.HtmlFormatter(linenos='table'))
 
 = render_blob(blob, path)
 

@@ -2,6 +2,13 @@
 - syntax highlighting
 - tree at different commits
 
+- separate readme/tree/commits into tabs
+    - readme rendering should be part of tree rendering?
+
+- authentication
+    - quick user with password, maybe via Flask-Login
+    - ACLs, maybe via Flask-Principal
+
 - avatars on groups and users
 - group.is_user_group signals that it holds all of a user's repos
 
