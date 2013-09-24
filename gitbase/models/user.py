@@ -1,6 +1,7 @@
 import logging
 import re
 
+import bcrypt
 import sqlalchemy as sa
 import werkzeug as wz
 
@@ -20,6 +21,12 @@ class User(db.Model):
         extend_existing=True,
     )
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
+
+    def check_password(self, password):
+        return bcrypt.checkpw(password, self.password_hash)
+    
     def is_authenticated(self):
         '''Returns True if the user is authenticated.
 

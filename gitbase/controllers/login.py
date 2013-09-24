@@ -15,7 +15,7 @@ def load_user(userid):
 class LoginForm(Form):
 
     username = wtf.TextField('Username', validators=[wtf.validators.Required()])
-    password = wtf.PasswordField('Password', validators=[])
+    password = wtf.PasswordField('Password', validators=[wtf.validators.Required()])
 
 
 
@@ -28,12 +28,12 @@ def login():
     if form.validate_on_submit():
 
         user = User.query.filter_by(login=form.username.data).first()
-
-        # TODO: check password
-        if user:
+        if user and user.check_password(form.password.data):
+            
             login_user(user)
             flash("Logged in successfully.")
             return redirect(request.args.get("next") or url_for("index"))
+
         else:
             flash("User '%s' not found." % form.username.data, 'warning')
 

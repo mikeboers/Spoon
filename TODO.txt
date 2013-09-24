@@ -1,4 +1,7 @@
 
+- auth.assert_can is different from requires, which is a decorator
+    auth.assert_can(stealth=True) should not push to login page
+
 - separate readme/tree/commits into tabs
     - readme rendering should be part of tree rendering?
 

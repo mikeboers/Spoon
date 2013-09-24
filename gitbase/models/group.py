@@ -11,6 +11,9 @@ from . import app, db
 log = logging.getLogger(__name__)
 
 
+group_memberships_table = db.Table('group_memberships', db.metadata, autoload=True)
+
+
 class Group(db.Model):
 
     __tablename__ = 'groups'
@@ -19,6 +22,8 @@ class Group(db.Model):
         autoload_with=db.engine,
         extend_existing=True,
     )
+
+    members = db.relationship('User', secondary=group_memberships_table, backref='groups')
 
     @classmethod
     def lookup(cls, name, create=False):

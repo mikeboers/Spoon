@@ -1,7 +1,6 @@
 import datetime
 
 import sqlalchemy as sa
-from alembic import op
 
 
 def upgrade(engine):

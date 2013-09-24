@@ -1,7 +1,6 @@
 import datetime
 
 import sqlalchemy as sa
-from alembic import op
 
 
 def upgrade(engine):
@@ -13,7 +12,7 @@ def upgrade(engine):
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('login', sa.String, nullable=False),
         sa.Column('email', sa.String),
-        sa.Column('password_hash', sa.String),
+        sa.Column('password_hash', sa.BLOB),
     )
     users.create()
 

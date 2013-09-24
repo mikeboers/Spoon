@@ -26,7 +26,8 @@ class Repo(db.Model):
     )
 
     group = db.relationship(Group, backref='repos')
-
+    owner = db.relationship('User', backref='repos')
+    
     @property
     def __acl__(self):
         return [

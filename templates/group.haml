@@ -6,6 +6,9 @@
     %li
         repositories
 
+
+%h2 Repositories
+
 - for repo in group.repos:
     .media
         %a.pull-left(href='#')
@@ -17,3 +20,12 @@
                 &= repo.name
             %p&= 'No description.'
             %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.
+
+
+%h2 Members
+
+- if group.members:
+    %ol - for user in group.members:
+        %li &= user.login
+- else:
+    %em No members.

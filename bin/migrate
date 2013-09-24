@@ -6,10 +6,8 @@ import os
 import sys
 from optparse import OptionParser
 
-from alembic.migration import MigrationContext
-from alembic.operations import Operations
-import alembic
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, DateTime, String
+import migrate # For the monkey patching.
 
 root_path = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir))
 if root_path not in sys.path:
@@ -72,10 +70,7 @@ for dirpath, dirnames, filenames in os.walk(patchdir, followlinks=True):
                 else:
                     print patch_name, 'applying...',
 
-                    conn = engine.connect()
-                    ctx = MigrationContext.configure(conn)
-                    with Operations.context(ctx):
-                        patch(engine)
+                    patch(engine)
 
                     engine.execute(table.insert(), name=patch_name)
                     print 'Done.'
