@@ -1,8 +1,8 @@
 .DS_Store
+*.egg-info
+*.pyc
 
 /distribute-*.tar.gz
-/*.egg-info
-*.pyc
 /css/.sass-cache
 
 /var

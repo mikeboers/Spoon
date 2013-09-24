@@ -8,9 +8,7 @@
 -
     head = repo.git.head.get_object()
 
-%ol.breadcrumb
-    %li
-        %a(href='/') %img(src="/img/git-logo.png")
+@breadcrumb
     %li
         %a(href=url_for('group', group=group)) &= group.name
     %li

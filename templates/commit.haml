@@ -7,11 +7,9 @@
     prev = repo.git.revparse_single(commit.hex + '^')
     diff = repo.git.diff(prev, commit)
 
-%ol.breadcrumb
+@breadcrumb
     %li
-        %a(href='/') %img(src="/img/git-logo.png")
-    %li
-        %a(href=url_for('group', group=group)) &= group.name
+        %a(href=url_for('group', group=repo.group)) &= repo.group.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
     

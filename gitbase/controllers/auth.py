@@ -1,6 +1,6 @@
 import wtforms as wtf
 from flask.ext.wtf import Form
-from flask.ext.login import login_user
+from flask.ext.login import login_user, login_required, logout_user
 
 from ..core.flask import login_manager
 
@@ -9,7 +9,7 @@ from . import *
 
 @login_manager.user_loader
 def load_user(userid):
-    return User.query.filter_by(login=userid)
+    return User.query.filter_by(login=userid).first()
 
 
 class LoginForm(Form):
@@ -42,3 +42,10 @@ def login():
 
     return render_template("login.haml", form=form)
 
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out.')
+    return redirect(request.args.get("next") or url_for("index"))

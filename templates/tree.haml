@@ -1,15 +1,13 @@
-%%inherit(file="/_main.haml")/
+%%inherit(file="/_main.haml")
 -!
     import os
     import pygit2
 -
     group = repo.group
 
-%ol.breadcrumb
+@breadcrumb
     %li
-        %a(href='/') %img(src="/img/git-logo.png")
-    %li
-        %a(href=url_for('group', group=group)) &= group.name
+        %a(href=url_for('group', group=repo.group)) &= repo.group.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
 

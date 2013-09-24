@@ -1,3 +1,5 @@
+-!
+    from flask.ext.login import current_user
 !!! 5
 %head
 
@@ -9,10 +11,26 @@
 
 %body .container
     
+    %ol.breadcrumb
+
+        - if current_user.is_authenticated():
+            %small.pull-right
+                Logged in as ${current_user.login|h}
+                %a(href=url_for('logout')) Logout.
+        - else:
+            %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login')) Login
+
+        %li
+            %a(href='/') %img(src="/img/git-logo.png")
+        = next.breadcrumb()
+
+
     - for class_, message in get_flashed_messages(with_categories=True):
         - class_ = 'info' if class_ == 'message' else class_
         %.alert(class_='alert-' + class_) &= message
 
     = next.body()
 
+-# Just a stub.
+@breadcrumb
 
