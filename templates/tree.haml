@@ -1,6 +1,7 @@
 %%inherit(file="/_main.haml")/
 -!
     import os
+    import pygit2
 -
     group = repo.group
 
@@ -11,22 +12,25 @@
         %a(href=url_for('group', group=group)) &= group.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
-    %li
-        &= path
+
+    - chunks = path.strip('/').split('/')
+    - for i, chunk in enumerate(chunks):
+        %li
+            - if i + 1 < len(chunks):
+                %a(href=url_for('tree', repo=repo, path='/'.join(chunks[:i + 1]))) &= chunk
+            - else:
+                &= chunk
+
 
 
 %%def(name='render_tree(tree, base=\'\')')
     .panel.panel-default
-    
+
         .panel-heading %h2.panel-title
             Files at
             &= '/' + base
 
         %table.table.table-condensed
-
-            %thead
-                %td Filename
-                %td OID
 
             - if base: %tr
                 - parent = os.path.dirname(base)
@@ -37,8 +41,8 @@
 
             - for entry in tree: %tr
                 %td %a(href=url_for('tree', repo=repo, path=os.path.join(base, entry.name)))
-                    &= entry.name
-                %td %a(href='#') %code &= entry.hex[:8]
+                    &= entry.name + ('/' if isinstance(repo.git[entry.oid], pygit2.Tree) else '')
+                -# %td %a(href='#') %code &= entry.hex[:8]
 
 = render_tree(tree, path)
 

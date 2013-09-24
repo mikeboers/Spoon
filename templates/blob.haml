@@ -11,8 +11,14 @@
         %a(href=url_for('group', group=group)) &= group.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
-    %li
-        &= path
+    
+    - chunks = path.strip('/').split('/')
+    - for i, chunk in enumerate(chunks):
+        %li
+            - if i + 1 < len(chunks):
+                %a(href=url_for('tree', repo=repo, path='/'.join(chunks[:i + 1]))) &= chunk
+            - else:
+                &= chunk
 
 
 %%def(name='render_blob(blob, path)')
