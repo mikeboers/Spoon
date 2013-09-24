@@ -13,3 +13,4 @@ from ..models import Group, Repo
 from . import index
 from . import group
 from . import repo
+from . import tree

@@ -1,7 +1,10 @@
 %%inherit(file="/_main.haml")/
+%%namespace(file="/tree.haml", name="tree_utils")/
+%%namespace(file="/blob.haml", name="blob_utils")/
 -!
     import itertools
     import pygit2 as git
+    from gitbase.utils import debug
 -
     head = repo.git.head.get_object()
 
@@ -15,29 +18,20 @@
 
 .media
     %a.pull-left(href='#')
-        %img.thumbnail.media-object(src='//robohash.org/%s--%s.png' % (group.name, repo.name), width=48, height=48)
+        %img.thumbnail.media-object(src='//robohash.org/%s--%s.png' % (group.name, repo.name), width=96, height=96)
     .media-body
         %h4.media-heading&= repo.name
         %p&= 'No description.'
 
 
-%h2 Current Tree
-
-%table.table
-    - for entry in head.tree:
-        %tr
-            %td = oct(entry.filemode & 0o777)
-            %td %a(href='#') &= entry.name
-            %td %a(href='#') %code &= entry.hex[:8]
+= tree_utils.render_tree(head.tree)
 
 
 - if 'README.md' in head.tree:
     -
         entry = head.tree['README.md']
         blob = repo.git[entry.oid]
-
-    %h2 README
-    %pre &= blob.data
+    = blob_utils.render_blob(blob, 'README.md')
 
 
 %h2 Recent Commits

@@ -1,0 +1,28 @@
+%%inherit(file="/_main.haml")/
+-!
+    import os
+-
+    group = repo.group
+
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        %a(href=url_for('group', group=group)) &= group.name
+    %li
+        %a(href=url_for('repo', repo=repo)) &= repo.name
+    %li
+        &= path
+
+
+%%def(name='render_blob(blob, path)')
+    .panel.panel-default
+        .panel-heading %h2.panel-title &= '/' + path
+        .panel-body
+            - if os.path.splitext(path)[1] == '.md':
+                = markdown(blob.data)
+            - else:
+                %pre &= blob.data
+
+= render_blob(blob, path)
+

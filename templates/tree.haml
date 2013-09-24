@@ -1,0 +1,44 @@
+%%inherit(file="/_main.haml")/
+-!
+    import os
+-
+    group = repo.group
+
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        %a(href=url_for('group', group=group)) &= group.name
+    %li
+        %a(href=url_for('repo', repo=repo)) &= repo.name
+    %li
+        &= path
+
+
+%%def(name='render_tree(tree, base=\'\')')
+    .panel.panel-default
+    
+        .panel-heading %h2.panel-title
+            Files at
+            &= '/' + base
+
+        %table.table.table-condensed
+
+            %thead
+                %td Filename
+                %td OID
+
+            - if base: %tr
+                - parent = os.path.dirname(base)
+                - if parent:
+                    %td %a(href=url_for('tree', repo=repo, path=parent)) ..
+                - else:
+                    %td %a(href=url_for('repo', repo=repo)) ..
+
+            - for entry in tree: %tr
+                %td %a(href=url_for('tree', repo=repo, path=os.path.join(base, entry.name)))
+                    &= entry.name
+                %td %a(href='#') %code &= entry.hex[:8]
+
+= render_tree(tree, path)
+
