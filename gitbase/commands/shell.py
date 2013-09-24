@@ -29,7 +29,10 @@ def main():
     group_name, repo_name = m.groups()
 
     # TODO: pass results of user.has_permission('repo.create')
-    repo = Repo.lookup(group_name, repo_name, create=True)
+    try:
+        repo = Repo.lookup(group_name, repo_name, create=True)
+    except (ValueError, RuntimeError) as e:
+        die(str(e))
 
     # Allow the call to go through.
     debug('calling %s %s/%s', git_command, group_name, repo_name)

@@ -4,12 +4,12 @@
     %li
         %a(href='/') %img(src="/img/git-logo.png")
     %li
-        Groups
+        groups
 
 - for group in groups:
     .media
         %a.pull-left(href='#')
-            %img.thumbnail.media-object(src='//robohash.org/%s.png' % group.name, width=96, height=96)
+            %img.thumbnail.media-object(src='//robohash.org/%s.png' % group.name, width=48, height=48)
         .media-body
             %h4.media-heading %a(href=url_for('group', group=group))
                 &= group.name

@@ -25,7 +25,7 @@ class Group(db.Model):
 
         name = name.lower()
         if not re.match(app.config['GROUP_NAME_RE'], name):
-            raise ValueError('bad group name: %r' % name)
+            raise ValueError('invalid group name: %r' % name)
 
         group = Group.query.filter_by(name=name).first()
 

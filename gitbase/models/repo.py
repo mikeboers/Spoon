@@ -33,6 +33,10 @@ class Repo(db.Model):
     @classmethod
     def lookup(cls, group_name, repo_name, create=False):
 
+        repo_name = repo_name.lower()
+        if not re.match(r'^%s$' % app.config['REPO_NAME_RE'], repo_name):
+            raise ValueError('invalid repo name: %r' % repo_name)
+        
         group = Group.lookup(group_name, create=create)
         if not group:
             return
