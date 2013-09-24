@@ -23,7 +23,6 @@ class Group(db.Model):
     @classmethod
     def lookup(cls, name, create=False):
 
-        name = name.lower()
         if not re.match(app.config['GROUP_NAME_RE'], name):
             raise ValueError('invalid group name: %r' % name)
 
