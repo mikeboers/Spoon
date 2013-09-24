@@ -22,6 +22,8 @@
         '+': 'git-diff-plus',
         '-': 'git-diff-minus',
         ' ': 'git-diff-same',
+        '>': 'git-diff-right',
+        '<': 'git-diff-left',
     }
 
 - for patch in diff:
@@ -54,7 +56,7 @@
                     %td.git-diff-lineno - if mode != '-':
                         = new_line
                         - new_line += 1
-                    %td.git-diff-content &= mode + line
+                    %td.git-diff-content &= mode + line.strip('\n')
 
 -#
     %pre
