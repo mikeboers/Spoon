@@ -16,6 +16,7 @@ setup(
         'console_scripts': [
             'git-base-shell = gitbase.commands.shell:main',
             'git-base-import = gitbase.commands.import:main',
+            'git-base-adduser = gitbase.commands.adduser:main',
         ],
     },
 

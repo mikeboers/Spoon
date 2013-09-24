@@ -1,0 +1,13 @@
+%%inherit(file="/_main.haml")
+%%namespace(name='utils', file='_utils.haml')
+
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        login
+
+%form.form(method='POST', role='form')
+
+    = utils.render_form(form)
+    %button.btn.btn-primary(type='submit') Submit

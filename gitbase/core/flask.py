@@ -7,6 +7,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.imgsizer import ImgSizer
 # from flask.ext.mail import Mail
 from flask.helpers import send_from_directory
+from flask.ext.login import LoginManager
 
 
 class Flask(Base):
@@ -52,6 +53,7 @@ mako = MakoTemplates(app)
 db = SQLAlchemy(app)
 # mail = Mail(app)
 
+login_manager = LoginManager(app)
 
 # WTF do I need to do this for?!
 db.metadata.bind = db.engine

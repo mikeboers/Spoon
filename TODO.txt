@@ -1,13 +1,54 @@
 
-- syntax highlighting
-- tree at different commits
-
 - separate readme/tree/commits into tabs
     - readme rendering should be part of tree rendering?
 
 - authentication
     - quick user with password, maybe via Flask-Login
     - ACLs, maybe via Flask-Principal
+    - what are all the permissions that we want to be able to grant?
+        - I can do anything.
+        - mikeboers group is generally readable
+        - mikeboers/server_conf is NOT publically readable
+        - user smartin can access group smartin
+        - user smartin can access group swisssol
+        - user smartin can read mikeboers/server_conf
+
+    Look for acl via __acl__ attribute (which may be a property). If it
+    has an __acl_parent__, it is checked afterwards.
+
+    ACLs on groups and repos, where:
+        - OWNER is the owner
+        - MEMBERS is members of the group (or repo's group)
+        - USERS is anyone authenticated
+        - ANY is anyone
+
+    The permissions are:
+        write: reading, writing, merging
+        write+: reading, writing, merging, forcing
+        read: only reading
+
+    Order to check permissions is:
+        1. Are we an admin?
+        2. Are we the owner?
+        3. Check Repo ACL (if this is a repo)
+        4. Check Group ACL
+        5. Are we a member of the group?
+
+    delete implies read and write
+    create implies read and write
+    write implies read
+    there is no specific force permission
+
+    We do this by adding some extra ACL in the front and back:
+        ALLOW ADMIN *
+        ALLOW OWNER *
+        <repo acl>
+        <group acl>
+        ALLOW MEMBER write
+        ALLOW ANY read (if public)
+
+
+
 
 - avatars on groups and users
 - group.is_user_group signals that it holds all of a user's repos
@@ -21,8 +62,6 @@
 
     - http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
     - https://github.com/sitaramc/gitolite/blob/master/src/lib/Gitolite/Hooks/Update.pm#L110
-
-- move repo creation code to one place
 
 - read-only HTTP access to the repo. This is a matter of preparing a couple of
   special index files, see:
