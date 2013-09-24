@@ -1,0 +1,6 @@
+
+@permalink(target, anchor=False)
+    - if anchor:
+        %a.permalink(href='#' + target, id=target) &para;
+    - else:
+        %a.permalink(href='#' + target) &para;

@@ -1,4 +1,5 @@
-%%inherit(file="/_main.haml")/
+%%inherit(file="/_main.haml")
+%%namespace(name='utils', file='_utils.haml')
 -!
     import os
 -
@@ -37,6 +38,7 @@
                 %code ${commit.hex[:8]}
 
             &= patch.new_file_path
+            = utils.permalink(patch.new_file_path.replace('/', '-'), anchor=True)
 
         %table.git-diff - for hunk in patch.hunks:
 
@@ -58,13 +60,4 @@
                         - new_line += 1
                     %td.git-diff-content &= mode + line.strip('\n')
 
--#
-    %pre
-        :plain
-            index ${prev.hex[:8]}..${commit.hex[:8]}
-            --- ${patch.old_file_path}
-            +++ ${patch.new_file_path}
-        - for hunk in patch.hunks:
-            :plain @@ ${hunk.old_lines},${hunk.old_start} ${hunk.new_lines},${hunk.new_start} @@
-            - for mode, line in hunk.lines: :plain ${mode}${line.rstrip('\n')}
 
