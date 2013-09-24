@@ -14,3 +14,4 @@ from . import index
 from . import group
 from . import repo
 from . import tree
+from . import commit

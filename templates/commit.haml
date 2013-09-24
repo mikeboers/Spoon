@@ -1,0 +1,29 @@
+%%inherit(file="/_main.haml")/
+-!
+    import os
+-
+    group = repo.group
+    prev = repo.git.revparse_single(commit.hex + '^')
+    diff = repo.git.diff(prev, commit)
+
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        %a(href=url_for('group', group=group)) &= group.name
+    %li
+        %a(href=url_for('repo', repo=repo)) &= repo.name
+    
+    %li
+        &= commit.hex
+
+- for patch in diff:
+    %pre
+        :plain
+            index ${prev.hex[:8]}..${commit.hex[:8]}
+            --- ${patch.old_file_path}
+            +++ ${patch.new_file_path}
+        - for hunk in patch.hunks:
+            :plain @@ ${hunk.old_lines},${hunk.old_start} ${hunk.new_lines},${hunk.new_start} @@
+            - for mode, line in hunk.lines: :plain ${mode}${line.rstrip('\n')}
+

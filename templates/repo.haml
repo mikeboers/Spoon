@@ -42,8 +42,9 @@
 
 %ol - for commit in commits:
     %li
-        %code= commit.hex[:8]
-        &= commit.message
+        %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
+            %code= commit.hex[:8]
+            &= commit.message
 
 -
     next_ = next(commit_iter, None)
