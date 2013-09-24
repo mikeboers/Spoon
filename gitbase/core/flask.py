@@ -41,7 +41,7 @@ app.root_path = app.config['ROOT_PATH']
 
 # Setup logging before any extensions. Must be imported *after* the app is
 # configured so that logging can use that configuration.
-# from . import logs
+from . import logs
 
 # Extensions that must be imported after app.core.app exists.
 from .mako import MakoTemplates
