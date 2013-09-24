@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 
+import pygit2
 import sqlalchemy as sa
 import werkzeug as wz
 
@@ -27,6 +28,10 @@ class Repo(db.Model):
     group = db.relationship(Group, backref='repos')
 
     @property
+    def git(self):
+        return pygit2.Repository(self.path)
+
+    @property
     def path(self):
         return os.path.join(app.config['REPO_DIR'], self.group.name, self.name + '.git')
 
@@ -36,7 +41,7 @@ class Repo(db.Model):
         repo_name = repo_name.lower()
         if not re.match(r'^%s$' % app.config['REPO_NAME_RE'], repo_name):
             raise ValueError('invalid repo name: %r' % repo_name)
-        
+
         group = Group.lookup(group_name, create=create)
         if not group:
             return

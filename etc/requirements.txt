@@ -11,6 +11,8 @@ Flask-SQLAlchemy==1.0
 SQLAlchemy==0.8.2
 alembic==0.6.0
 
+pygit2==0.19.0
+
 greenlet==0.4.1
 gunicorn==18.0
 gevent==0.13.8

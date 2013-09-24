@@ -1,3 +1,5 @@
+.DS_Store
+
 /distribute-*.tar.gz
 /*.egg-info
 *.pyc

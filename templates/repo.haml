@@ -1,4 +1,7 @@
 %%inherit(file="/_main.haml")/
+-!
+    import itertools
+    import pygit2 as git
 
 %ol.breadcrumb
     %li
@@ -14,3 +17,23 @@
     .media-body
         %h4.media-heading&= repo.name
         %p&= 'No description.'
+
+
+%h2 Recent Commits
+
+-
+    head = repo.git.head.get_object()
+    commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
+    commits = itertools.islice(commit_iter, 10)
+
+%ol - for commit in commits:
+    %li
+        %code= commit.hex[:8]
+        &= commit.message
+
+-
+    next_ = next(commit_iter, None)
+- if next_:
+    There are more, starting with
+    %code &= next_.hex[:8]
+
