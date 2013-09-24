@@ -1,4 +1,6 @@
 
+- make case sensitive
+
 - group and repo path types
   group matches '<group>' and repo matches '<group>/<repo>'
 
