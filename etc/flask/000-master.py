@@ -1,7 +1,7 @@
 import os
 
 
-DOMAIN = 'mikeboers.com'
+DOMAIN = 'git.mikeboers.com'
 PORT = 8000
 
 UPLOAD_FOLDER = os.path.join(ROOT_PATH, 'var', 'uploads')

@@ -61,7 +61,7 @@ def secret_key():
 @command
 def nginx():
     from mako.lookup import TemplateLookup
-    from app.core import config
+    from gitbase.core import config
 
     lookup = TemplateLookup(directories=[os.path.join(config.ROOT_PATH, 'etc')])
 
