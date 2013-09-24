@@ -1,8 +1,6 @@
 
-- make case sensitive
-
-- group and repo path types
-  group matches '<group>' and repo matches '<group>/<repo>'
+- syntax highlighting
+- tree at different commits
 
 - avatars on groups and users
 - group.is_user_group signals that it holds all of a user's repos

@@ -18,3 +18,4 @@
             %h4.media-heading %a(href=url_for('repo', repo=repo))
                 &= repo.name
             %p&= 'No description.'
+            %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.

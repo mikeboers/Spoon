@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import datetime
 import json
 import hashlib
 import os
@@ -97,6 +98,8 @@ def static(file_name):
 
 
 def fuzzy_time(d, now=None):
+    if isinstance(d, (int, long)):
+        d = datetime.datetime.fromtimestamp(d)
     now = now or datetime.datetime.utcnow()
     diff = now - d
     s = diff.seconds + diff.days * 24 * 3600
@@ -104,7 +107,7 @@ def fuzzy_time(d, now=None):
     days, s = divmod(abs(s), 60 * 60 * 24)
     prefix = 'in ' if future else ''
     postfix = '' if future else ' ago'
-    if days > 7:
+    if days > 30:
         return 'on ' + d.strftime('%B %d, %Y')
     elif days == 1:
         out = '1 day'
