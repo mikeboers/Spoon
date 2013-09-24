@@ -3,7 +3,7 @@ import pygit2
 from . import *
 
 
-@app.route('/<repo:repo>/master/tree/<path:path>')
+@app.route('/<repo:repo>/tree/master/<path:path>')
 def tree(repo, path):
 
     entry = repo.git.head.get_object().tree[path]

@@ -23,12 +23,11 @@
 
 
 
-%%def(name='render_tree(tree, base=\'\')')
-    .panel.panel-default
+@render_tree(tree, base='', title=None)
+    .panel.panel-info
 
         .panel-heading %h2.panel-title
-            Files at
-            &= '/' + base
+            &= title or '/' + base
 
         %table.table.table-condensed
 
@@ -40,8 +39,18 @@
                     %td %a(href=url_for('repo', repo=repo)) ..
 
             - for entry in tree: %tr
-                %td %a(href=url_for('tree', repo=repo, path=os.path.join(base, entry.name)))
-                    &= entry.name + ('/' if isinstance(repo.git[entry.oid], pygit2.Tree) else '')
+
+                - is_tree = isinstance(repo.git[entry.oid], pygit2.Tree)
+                -# %td 
+                    - if is_tree:
+                        %span.glyphicon.glyphicon-folder-open
+                    - else:
+                        %span.glyphicon.glyphicon-file
+                %td
+                    %a(href=url_for('tree', repo=repo, path=os.path.join(base, entry.name)))
+                        &= entry.name + ('/' if is_tree else '')
+                -# %td << latest commit message >>
+                -# %td &= fuzzy_time
                 -# %td %a(href='#') %code &= entry.hex[:8]
 
 = render_tree(tree, path)
