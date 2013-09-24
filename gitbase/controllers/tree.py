@@ -1,3 +1,5 @@
+import mimetypes
+
 import pygit2
 
 from . import *
@@ -18,3 +20,19 @@ def tree(repo, path, ref='HEAD'):
 
     abort(404)
 
+
+@app.route('/<repo:repo>/raw/HEAD/<path:path>')
+@app.route('/<repo:repo>/raw/<ref>/<path:path>')
+def raw_blob(repo, path, ref='HEAD'):
+
+    commit = repo.git.revparse_single(ref)
+    entry = commit.tree[path]
+    obj = repo.git[entry.oid]
+
+    if not isinstance(obj, pygit2.Blob):
+        abort(404)
+
+    type_, encoding = mimetypes.guess_type(path)
+    type_ = type_ or 'application/octet-stream'
+
+    return obj.data, 200, [('Content-Type', type_)]

@@ -1,5 +1,6 @@
 %%inherit(file="/_main.haml")/
 -!
+    import mimetypes
     import os
 
     import pygments
@@ -25,16 +26,23 @@
 
 %%def(name='render_blob(blob, path)')
     -
+        mimetype, encoding = mimetypes.guess_type(path)
         ext = os.path.splitext(path)[1]
         try:
             lexer = pygments.lexers.get_lexer_for_filename(path)
         except pygments.util.ClassNotFound:
             lexer = pygments.lexers.TextLexer()
 
+        raw_url = url_for('raw_blob', repo=repo, path=path)
+
     .panel.panel-default
-        .panel-heading %h2.panel-title &= path
+        .panel-heading
+            .pull-right %a.btn.btn-primary.btn-xs(href=raw_url) Raw
+            %h2.panel-title &= path
         - if ext == '.md':
             .panel-body = markdown(blob.data)
+        - elif mimetype and mimetype.startswith('image/'):
+            .panel-body %img(src=raw_url)
         - else:
             .panel-body.git-blob-pre = pygments.highlight(blob.data, lexer, pygments.formatters.HtmlFormatter(linenos='table'))
 
