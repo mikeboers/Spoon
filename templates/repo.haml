@@ -2,6 +2,8 @@
 -!
     import itertools
     import pygit2 as git
+-
+    head = repo.git.head.get_object()
 
 %ol.breadcrumb
     %li
@@ -19,10 +21,28 @@
         %p&= 'No description.'
 
 
+%h2 Current Tree
+
+%table.table
+    - for entry in head.tree:
+        %tr
+            %td = oct(entry.filemode & 0o777)
+            %td %a(href='#') &= entry.name
+            %td %a(href='#') %code &= entry.hex[:8]
+
+
+- if 'README.md' in head.tree:
+    -
+        entry = head.tree['README.md']
+        blob = repo.git[entry.oid]
+
+    %h2 README
+    %pre &= blob.data
+
+
 %h2 Recent Commits
 
 -
-    head = repo.git.head.get_object()
     commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
     commits = itertools.islice(commit_iter, 10)
 
