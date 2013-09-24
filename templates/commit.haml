@@ -15,9 +15,48 @@
         %a(href=url_for('repo', repo=repo)) &= repo.name
     
     %li
-        &= commit.hex
+        &= commit.hex[:8]
+
+-
+    mode_to_class = {
+        '+': 'git-diff-plus',
+        '-': 'git-diff-minus',
+        ' ': 'git-diff-same',
+    }
 
 - for patch in diff:
+
+    .panel.panel-default
+
+        .panel-heading
+            .pull-right
+                %code ${prev.hex[:8]}
+                ..
+                %code ${commit.hex[:8]}
+
+            &= patch.new_file_path
+
+        %table.git-diff - for hunk in patch.hunks:
+
+            %tr.git-diff-target
+                %td ...
+                %td ...
+                %td @@ -${hunk.old_lines},${hunk.old_start} +${hunk.new_lines},${hunk.new_start} @@
+
+            -
+                old_line = hunk.old_lines
+                new_line = hunk.new_lines
+            - for mode, line in hunk.lines:
+                %tr(class_=mode_to_class[mode])
+                    %td.git-diff-lineno - if mode != '+':
+                        = old_line
+                        - old_line += 1
+                    %td.git-diff-lineno - if mode != '-':
+                        = new_line
+                        - new_line += 1
+                    %td.git-diff-content &= mode + line
+
+-#
     %pre
         :plain
             index ${prev.hex[:8]}..${commit.hex[:8]}
