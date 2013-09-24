@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+service="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)"
+
+# Get the owner of the `run` command. We are using Python since `stat` did not
+# present a consistent interface on Linux and OS X.
+if [[ $(id -u) == "0" ]]; then
+    
+    OWNER=$(python -c "import os, pwd; print pwd.getpwuid(os.stat('$service/run').st_uid).pw_name")
+    
+    if [[ "$(which chpst)" ]]; then
+        PRELUDE="chpst -u $OWNER"
+    elif [[ "$(which setuidgid)" ]]; then
+        PRELUDE="setuidgid $OWNER"
+    fi
+
+fi
+
+
+. "$service/../../bin/activate"
+
+PORT=$(manage config PORT)
+
+exec 2>&1
+exec $PRELUDE gunicorn -k gevent -b 0.0.0.0:$PORT -p $service/pid gitbase.main:app
