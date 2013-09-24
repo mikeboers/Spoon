@@ -11,3 +11,5 @@ from ..models import Group, Repo
 # --- Register the pages.
 
 from . import index
+from . import group
+from . import repo

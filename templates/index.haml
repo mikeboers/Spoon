@@ -1,13 +1,17 @@
-%head
+%%inherit(file="/_main.haml")/
 
-    %link(rel="stylesheet", href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css")
-    %link(rel="icon", href="/favicon.ico")
-    
-    %title Git Base
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        Groups
 
-%body
-
-    %h1 Git Base
-
-    %ul - for group in groups: - for repo in group.repos:
-        %li ${group.name}/${repo.name}
+- for group in groups:
+    .media
+        %a.pull-left(href='#')
+            %img.thumbnail.media-object(src='//robohash.org/%s.png' % group.name, width=96, height=96)
+        .media-body
+            %h4.media-heading %a(href=url_for('group', group=group))
+                &= group.name
+            %p&= 'No description.'
+            %p.small ${len(group.repos)} ${'repository' if len(group.repos) == 1 else 'repositories'}.

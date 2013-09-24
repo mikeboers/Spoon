@@ -1,57 +1,80 @@
 
-Uses LibGit2, is written in Python on top of Flask, and uses HAML+SASS.
+- group and repo path types
+  group matches '<group>' and repo matches '<group>/<repo>'
 
-Perhaps replace gitolite as the repo configurator.
+- avatars on groups and users
+- group.is_user_group signals that it holds all of a user's repos
 
-    It only seems to hook the .ssh/authorized_keys, and the `update` hook.
+- SSH keys for users
+    - update .ssh/authorized_keys
+    - command="bash -c 'env | grep SSH | sort'",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty KEY
+
+- add `update` hook to repos on creation. It is run once for every branch being
+  pushed BEFORE they are accepted, allowing us to do write/force/merge control.
+
+    - http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
+    - https://github.com/sitaramc/gitolite/blob/master/src/lib/Gitolite/Hooks/Update.pm#L110
+
+- move repo creation code to one place
+
+- read-only HTTP access to the repo. This is a matter of preparing a couple of
+  special index files, see:
+
+  http://git-scm.com/book/en/Git-Internals-Transfer-Protocols#The-Dumb-Protocol
+
+
+- auth via GitHub, Facebook, passwords, or one-time links which create cookies
+  for access to single projects.
+
+- example.com/pypi to give a pip-usable interface using tags.
+
+- be able to mark repos as clones from other locations. Periodically pull them,
+  OR respond when they are hit with a webhook from GitHub or a post-recieve hook.
+
+
+Access control list:
     
-    The authorized_keys only allows three git commands to get through, and
-    makes sure that the repository name is sane. It may also create empty
-    repos if the person is allowed to do that. It also controls read access.
+    Permissions attached to users as a comma seperated list of strings:
+        repo.create
 
-    The update hook is run once for every branch being pushed BEFORE they are
-    accepted. This allows us to do access control. See:
+    ACLs are a series of access control lines
 
-        - http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
-        - https://github.com/sitaramc/gitolite/blob/master/src/lib/Gitolite/Hooks/Update.pm#L110
+        has(PERMISSION) ALLOW PERMISSION
+        repo.name == self.name ALLOW write
+        repo.name == self.name ALLOW force
 
-    - How is SSH access wrangled?
-        - authorized_keys:
-            command="bash -c 'env | grep SSH | sort'",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty KEY
-        - `ssh -i id_rsa localhost hello`
-            SSH_CLIENT=127.0.0.1 54588 22
-            SSH_CONNECTION=127.0.0.1 54588 127.0.0.1 22
-            SSH_ORIGINAL_COMMAND=hello
 
-Read-only HTTP access to the repos.
-    - This is a matter of preparing a couple of special index files, see:
-      http://git-scm.com/book/en/Git-Internals-Transfer-Protocols#The-Dumb-Protocol
 
-Read-only version of gitolite.
-    
-    - Description in $repo/description
-    - Name of the creator in $repo/gl-creator
-    - Extra permissions in $repo/gl-perms
-
-Authentication via GitHub, Facebook, passwords, or one-time links which
-create cookies for access to single projects.
-
-example.com/pypi to give a pip-usable interface using tags.
-
-Mark repos as clones from other locations. Periodically pull them, OR respond
-when they are hit with a webhook from GitHub or a post-recieve hook.
 
 Schema:
 
-    User: An actual user. May contain repos.
-    Group: Non-user group of repos.
+    User: An actual user. Does not contain repos.
+        - name
+        - avatar_url
+        - password_hash
+        - permission_blob: encoded permissions
+
+    Group:
+        - name
+        - avatar_url
+        - description
+        - acl_blob: encoded access control list
+
     Repo: A repo.
+        - name
+        - description
+        - remote_url
+        - acl_blob: encoded access control list
+
+
     
 Commands:
 
     git-base-shell: the ssh shell
-    git-base-build: rebuilds the user's .ssh/authorized_keys based off of the
+    git-base-ssh-keys: generate a .ssh/authorized_keys file from the
         database
+    git-base-import: add existing repos to the database
+
     
 Name:
     git.ly

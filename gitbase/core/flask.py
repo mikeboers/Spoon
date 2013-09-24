@@ -62,5 +62,5 @@ db.metadata.bind = db.engine
 
 
 # Setup error handlers.
-# from . import errors
+from . import errors
 

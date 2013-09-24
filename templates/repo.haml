@@ -1,0 +1,16 @@
+%%inherit(file="/_main.haml")/
+
+%ol.breadcrumb
+    %li
+        %a(href='/') %img(src="/img/git-logo.png")
+    %li
+        %a(href=url_for('group', group=group)) &= group.name
+    %li
+        &= repo.name
+
+.media
+    %a.pull-left(href='#')
+        %img.thumbnail.media-object(src='//robohash.org/%s--%s.png' % (group.name, repo.name), width=96, height=96)
+    .media-body
+        %h4.media-heading&= repo.name
+        %p&= 'No description.'
