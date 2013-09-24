@@ -90,7 +90,7 @@ class RepoConverter(wz.routing.BaseConverter):
                 return repo
         except ValueError:
             pass
-        raise ValidationError('repo does not exist: %r' % value)
+        raise wz.routing.ValidationError('repo does not exist: %r' % value)
 
     def to_url(self, repo):
         return '%s/%s' % (repo.group.name, repo.name)

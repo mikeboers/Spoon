@@ -56,7 +56,7 @@ class GroupConverter(wz.routing.BaseConverter):
                 return group
         except ValueError:
             pass
-        raise ValidationError('group does not exist: %r' % name)
+        raise wz.routing.ValidationError('group does not exist: %r' % name)
 
     def to_url(self, group):
         return group.name
