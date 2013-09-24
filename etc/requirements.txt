@@ -18,6 +18,8 @@ Flask-WTF==0.9.2
 WTForms==1.0.5
 
 Flask-Login==0.2.7
+-e lib/Flask-ACL
+
 Pygments==1.6
 
 pygit2==0.19.0

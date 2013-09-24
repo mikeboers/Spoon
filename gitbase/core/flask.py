@@ -8,6 +8,7 @@ from flask.ext.imgsizer import ImgSizer
 # from flask.ext.mail import Mail
 from flask.helpers import send_from_directory
 from flask.ext.login import LoginManager
+from flask.ext.acl import AuthManager
 
 
 class Flask(Base):
@@ -52,8 +53,8 @@ imgsizer = ImgSizer(app)
 mako = MakoTemplates(app)
 db = SQLAlchemy(app)
 # mail = Mail(app)
-
 login_manager = LoginManager(app)
+auth = AuthManager(app)
 
 # WTF do I need to do this for?!
 db.metadata.bind = db.engine

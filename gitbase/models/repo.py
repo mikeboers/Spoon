@@ -28,6 +28,13 @@ class Repo(db.Model):
     group = db.relationship(Group, backref='repos')
 
     @property
+    def __acl__(self):
+        return [
+            'ALLOW OWNER ANY',
+            'ALLOW AUTHENTICATED read',
+        ]
+
+    @property
     def git(self):
         return pygit2.Repository(self.path)
 
