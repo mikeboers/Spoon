@@ -22,8 +22,12 @@ pip install -e .
 mkdir -p var/etc/flask
 mkdir -p var/sqlite
 
-# Setup.
+
+echo 'Installing GEMs...'
+gem-install etc/gems.txt
+
 echo 'Running migrations...'
 migrate
+
 echo 'Importing existing repos...'
 git-base-import
