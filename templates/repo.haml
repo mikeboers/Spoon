@@ -18,7 +18,8 @@
 
 .media
     %a.pull-left(href='#')
-        %img.thumbnail.media-object(src='//robohash.org/%s--%s.png' % (group.name, repo.name), width=96, height=96)
+        - size = 96
+        %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
     .media-body
         %h4.media-heading&= repo.name
         %p&= 'No description.'

@@ -4,7 +4,7 @@ import os
 
 from flask import Flask as Base
 from flask.ext.sqlalchemy import SQLAlchemy
-# from flask.ext.imgsizer import ImgSizer
+from flask.ext.imgsizer import ImgSizer
 # from flask.ext.mail import Mail
 from flask.helpers import send_from_directory
 
@@ -47,7 +47,7 @@ app.root_path = app.config['ROOT_PATH']
 from .mako import MakoTemplates
 
 
-# imgsizer = ImgSizer(app)
+imgsizer = ImgSizer(app)
 mako = MakoTemplates(app)
 db = SQLAlchemy(app)
 # mail = Mail(app)

@@ -13,7 +13,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(ROOT_PATH, 'var', 'sqlite'
 # completly random in here just in case.
 SECRET_KEY = os.urandom(32)
 
-# MAKO_IMPORTS = ['from flask.ext.imgsizer import resized_img_src, resized_img_src as auto_img_src']
+MAKO_IMPORTS = ['from flask.ext.imgsizer import resized_img_src']
 MAKO_MODULE_DIRECTORY = os.path.join(ROOT_PATH, 'var', 'mako')
 
 IMGSIZER_PATH = [os.path.join(ROOT_PATH, x) for x in (

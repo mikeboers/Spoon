@@ -11,6 +11,9 @@ Flask-SQLAlchemy==1.0
 SQLAlchemy==0.8.2
 alembic==0.6.0
 
+PIL
+-e lib/Flask-ImgSizer
+
 pygit2==0.19.0
 
 greenlet==0.4.1

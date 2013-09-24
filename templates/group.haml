@@ -11,7 +11,9 @@
 - for repo in group.repos:
     .media
         %a.pull-left(href='#')
-            %img.thumbnail.media-object(src='//robohash.org/%s--%s.png' % (group.name, repo.name), width=48, height=48)
+            - size = 64
+            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
+
         .media-body
             %h4.media-heading %a(href=url_for('repo', repo=repo))
                 &= repo.name
