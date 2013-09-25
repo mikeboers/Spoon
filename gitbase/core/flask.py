@@ -45,16 +45,16 @@ app.root_path = app.config['ROOT_PATH']
 # configured so that logging can use that configuration.
 from . import logs
 
-# Extensions that must be imported after app.core.app exists.
-from .mako import MakoTemplates
 
 
-imgsizer = ImgSizer(app)
-mako = MakoTemplates(app)
-db = SQLAlchemy(app)
-# mail = Mail(app)
 login_manager = LoginManager(app)
 auth = AuthManager(app)
+
+from .mako import MakoTemplates
+mako = MakoTemplates(app)
+imgsizer = ImgSizer(app)
+db = SQLAlchemy(app)
+# mail = Mail(app)
 
 # WTF do I need to do this for?!
 db.metadata.bind = db.engine

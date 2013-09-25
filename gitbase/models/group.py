@@ -46,6 +46,14 @@ class Group(db.Model):
 
         return group
 
+    @property
+    def __acl__(self):
+        yield 'ALLOW ADMIN ANY'
+        # TODO: user specified goes here.
+        yield 'ALLOW MEMBER ANY'
+        if self.is_public:
+            yield 'ALLOW ANY read'
+
 
 class GroupConverter(wz.routing.BaseConverter):
 

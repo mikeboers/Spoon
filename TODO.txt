@@ -1,9 +1,6 @@
 
-- auth.assert_can is different from requires, which is a decorator
-    auth.assert_can(stealth=True) should not push to login page
 
-- separate readme/tree/commits into tabs
-    - readme rendering should be part of tree rendering?
+- separate tree/commits into tabs
 
 - hook git-base-shell into authx
     >>> app.test_request_context().push()
@@ -13,24 +10,17 @@
         die('No repo with read permissions.')
 
 - authentication
-    - quick user with password, maybe via Flask-Login
-    - ACLs, maybe via Flask-Principal
-    - what are all the permissions that we want to be able to grant?
-        - I can do anything.
-        - mikeboers group is generally readable
-        - mikeboers/server_conf is NOT publically readable
-        - user smartin can access group smartin
-        - user smartin can access group swisssol
-        - user smartin can read mikeboers/server_conf
-
-    Look for acl via __acl__ attribute (which may be a property). If it
-    has an __acl_parent__, it is checked afterwards.
 
     ACLs on groups and repos, where:
         - OWNER is the owner
-        - MEMBERS is members of the group (or repo's group)
-        - USERS is anyone authenticated
+        - MEMBER is members of the group (or repo's group)
         - ANY is anyone
+
+    __acl_context__ to supply a context to other rules
+    build up the contxt from the __acl_bases__ 
+    def __acl__(self):
+        yield parent_acl_placeholder
+        yield prevent_default
 
     The permissions are:
         write: reading, writing, merging
@@ -50,8 +40,8 @@
     there is no specific force permission
 
     We do this by adding some extra ACL in the front and back:
-        ALLOW ADMIN *
-        ALLOW OWNER *
+        ALLOW ADMIN ANY
+        ALLOW OWNER ANY
         <repo acl>
         <group acl>
         ALLOW MEMBER write

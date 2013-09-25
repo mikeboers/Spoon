@@ -30,10 +30,13 @@ class Repo(db.Model):
     
     @property
     def __acl__(self):
-        return [
-            'ALLOW OWNER ANY',
-            'ALLOW AUTHENTICATED read',
-        ]
+        yield 'ALLOW ADMIN ALL'
+        yield 'ALLOW OWNER ALL'
+        # TODO: user specified goes here.
+        for ace in self.group.__acl__:
+            yield ace
+        if self.is_public:
+            yield 'ALLOW ANY read'
 
     @property
     def git(self):

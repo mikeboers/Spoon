@@ -18,7 +18,7 @@ from flask.ext.mako import MakoTemplates as Base, _render, Template
 from flask import g
 import haml
 
-from .flask import app
+from .flask import app, auth
 from .markdown import markdown
 
 
@@ -129,6 +129,7 @@ defaults = dict(
     markdown=markdown,
     json=json.dumps,
     static=static,
+    auth=auth,
 )
 
 
