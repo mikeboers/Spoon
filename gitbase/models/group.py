@@ -3,6 +3,7 @@ import re
 
 import sqlalchemy as sa
 import werkzeug as wz
+from flask.ext.login import current_user
 
 from ..utils import debug
 from ..core.flask import app, auth, db
@@ -38,9 +39,13 @@ class Group(db.Model):
             if not create:
                 return
 
+            if not current_user.is_admin:
+                return
+
             # TODO: make sure they are allowed to do this.
             debug('importing group %s', name)
             group = Group(name=name)
+            group.members.append(current_user)
             db.session.add(group)
             db.session.commit()
 

@@ -68,7 +68,7 @@ class RequestContextInjector(logging.Filter):
         try:
             record.remote_addr = request.remote_addr
             record.request_counter = getattr(g, 'log_request_counter')
-        except RuntimeError:
+        except (AttributeError, RuntimeError):
             record.remote_addr = None
             record.request_counter = 0
         return True

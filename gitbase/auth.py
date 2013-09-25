@@ -5,7 +5,8 @@ from flask.ext.acl.predicates import string_predicates
 from flask.ext.login import current_user
 
 from .main import app, auth
-from .models import Repo, Group
+from .models.repo import Repo
+from .models.group import Group
 
 log = logging.getLogger(__name__)
 

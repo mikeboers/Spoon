@@ -8,9 +8,10 @@ import pygit2
 import sqlalchemy as sa
 import werkzeug as wz
 
-from ..utils import debug, makedirs
+from flask.ext.login import current_user
 
-from ..main import app, auth, db
+from ..utils import debug, makedirs
+from ..core.flask import app, auth, db
 from . import Group
 
 
@@ -77,6 +78,9 @@ class Repo(db.Model):
             if not create:
                 return
 
+            if not auth.can('write', group):
+                return
+
             # TODO: make sure they are allowed to do this.
             debug('creating bare repository %s/%s', group_name, repo_name)
             makedirs(repo_dir)
@@ -91,8 +95,12 @@ class Repo(db.Model):
         # that above.
         repo = Repo.query.filter_by(name=repo_name, group=group).first()
         if not repo:
+
+            if not auth.can('write', group):
+                return
+
             debug('importing repository %s/%s', group_name, repo_name)
-            repo = Repo(name=repo_name, group=group)
+            repo = Repo(name=repo_name, group=group, owner=current_user)
             db.session.add(repo)
             db.session.commit()
 

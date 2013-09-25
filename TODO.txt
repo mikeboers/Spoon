@@ -1,8 +1,13 @@
 
 
+- what permission is there for creating groups?
+- what permission is there for creating repos in groups?
+
 - separate tree/commits into tabs
 
 - hook git-base-shell into authx
+
+    - check for basic write permissions on git-receive-pack and git
     >>> app.test_request_context().push()
     >>> login_user(user or AnonymousUserMixin())
     now the permission checking works
