@@ -1,0 +1,23 @@
+-!
+    import datetime
+
+
+%ol.breadcrumb %li
+
+    Git Base is
+    -
+        links = '''
+            http://python.org
+            http://flask.pocoo.org
+            http://sqlalchemy.org
+            http://jquery.com
+            http://makotemplates.org
+            http://getbootstrap.com
+        '''.strip().split()
+        words = 'built on the shoulders of others.'.split()
+    
+    - for url, word in zip(links, words):
+        %a(href=url) &= word
+
+    Source code <a href="https://github.com/mikeboers/git-base">available on GitHub</a> under BSD license.
+    <a href="https://github.com/mikeboers/git-base/blob/master/LICENSE.txt">View license details.</a>

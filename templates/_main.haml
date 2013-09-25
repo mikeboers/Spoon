@@ -9,29 +9,37 @@
     
     %title Git Base
 
-%body .container
-    
-    %ol.breadcrumb
+%body
 
-        - if current_user.is_authenticated():
-            %.pull-right
-                Logged in as
-                %a(href=url_for('user', user=current_user)) &= current_user.login
-                .
-                %a(href=url_for('logout')) Logout.
-        - else:
-            %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login')) Login
+    #root.container
+        
+        %ol.breadcrumb
 
-        %li
-            %a(href='/') %img(src="/img/git-logo.png")
-        = next.breadcrumb()
+            - if current_user.is_authenticated():
+                %.pull-right
+                    Logged in as
+                    %a(href=url_for('user', user=current_user)) &= current_user.login
+                    .
+                    %a(href=url_for('logout')) Logout.
+            - else:
+                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login')) Login
+
+            %li
+                %a(href='/') %img(src="/img/git-logo.png")
+            = next.breadcrumb()
 
 
-    - for class_, message in get_flashed_messages(with_categories=True):
-        - class_ = 'info' if class_ == 'message' else class_
-        %.alert(class_='alert-' + class_) &= message
+        - for class_, message in get_flashed_messages(with_categories=True):
+            - class_ = 'info' if class_ == 'message' else class_
+            %.alert(class_='alert-' + class_) &= message
 
-    = next.body()
+        = next.body()
+
+        #root-footer
+
+    #footer.container
+        %%include(file='_footer.haml')
+
 
 -# Just a stub.
 @breadcrumb
