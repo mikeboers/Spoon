@@ -19,8 +19,6 @@
     __acl_context__ to supply a context to other rules
     build up the contxt from the __acl_bases__ 
     def __acl__(self):
-        yield parent_acl_placeholder
-        yield prevent_default
 
     The permissions are:
         write: reading, writing, merging

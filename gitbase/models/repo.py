@@ -39,6 +39,13 @@ class Repo(db.Model):
             yield 'ALLOW ANY read'
 
     @property
+    def __acl_context__(self):
+        return dict(
+            repo=self,
+            group=self.group,
+        )
+
+    @property
     def git(self):
         return pygit2.Repository(self.path)
 

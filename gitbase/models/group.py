@@ -54,6 +54,11 @@ class Group(db.Model):
         if self.is_public:
             yield 'ALLOW ANY read'
 
+    @property
+    def __acl_context__(self):
+        return dict(
+            group=self,
+        )
 
 class GroupConverter(wz.routing.BaseConverter):
 

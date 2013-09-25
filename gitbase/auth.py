@@ -9,17 +9,17 @@ log = logging.getLogger(__name__)
 
 
 def check_admin(**kw):
-    log.info('check if %r is an admin' % current_user)
+    # log.info('check if %r is an admin' % current_user)
     return current_user.is_authenticated() and current_user.is_admin
 
 
 def check_owner(repo=None, group=None, **kw):
-    log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
+    # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
     return current_user.is_authenticated() and repo.owner == current_user
 
 
 def check_members(group=None, **kw):
-    log.info('check if %r is member of %r' % (current_user, group))
+    # log.info('check if %r is member of %r' % (current_user, group))
     return current_user.is_authenticated() and current_user in group.members
 
 
