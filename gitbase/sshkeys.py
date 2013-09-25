@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 from .core.flask import app, db
 from .models import User, SSHKey
@@ -20,7 +21,7 @@ def rewrite():
     if m:
         content = content[:m.start()] + content[m.end():]
 
-    command_path = os.path.join(app.root_path, 'bin', 'git-base-shell')
+    command_path = os.path.join(os.path.dirname(sys.executable), 'git-base-shell')
     format = 'command="%s %%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %%s' % command_path
 
     to_add = []
