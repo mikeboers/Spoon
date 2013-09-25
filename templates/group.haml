@@ -1,4 +1,6 @@
-%%inherit(file="/_main.haml")/
+%%inherit(file='/_main.haml')
+%%namespace(name='repo_utils', file='repo.haml')
+%%namespace(name='user_utils', file='user.haml')
 
 @breadcrumb
     %li
@@ -7,25 +9,43 @@
         repositories
 
 
+@render_card(group, link=True, avatar_size=64)
+
+    .media
+
+        - url = url_for('group', group=group)
+        
+        %a.pull-left(href=url)
+            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
+
+        .media-body
+            %h4.media-heading
+                
+                @title
+                    = group.name
+                    - if not group.is_public:
+                        %small %span.label.label-warning PRIVATE
+
+                - if link: %a(href=url) = title()
+                - else: = title()
+            %p&= 'No description.'
+            %p.small ${len(group.repos)} ${'repository' if len(group.repos) == 1 else 'repositories'}.
+
+
+= render_card(group, link=False, avatar_size=128)
+
+
 %h2 Repositories
 
 - for repo in group.repos:
-    .media
-        %a.pull-left(href='#')
-            - size = 64
-            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
-
-        .media-body
-            %h4.media-heading %a(href=url_for('repo', repo=repo))
-                &= repo.name
-            %p&= 'No description.'
-            %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.
+    = repo_utils.render_card(repo)
 
 
 %h2 Members
 
 - if group.members:
-    %ol - for user in group.members:
-        %li &= user.login
+    - for user in group.members:
+        = user_utils.render_card(user)
+
 - else:
     %em No members.

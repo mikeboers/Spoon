@@ -14,16 +14,32 @@
     %li
         &= repo.name
 
-.media
-    %a.pull-left(href='#')
-        - size = 96
-        %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
-    .media-body
-        %h4.media-heading&= repo.name
-        %p&= 'No description.'
+
+@render_card(repo, avatar_size=64, link=True)
+
+    .media
+
+        .pull-left
+            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
+
+        .media-body
+            %h4.media-heading
+
+                @title
+                    &= repo.name
+                    - if not repo.is_public:
+                        %small %span.label.label-warning PRIVATE
+
+                - if link:
+                    %a(href=url_for('repo', repo=repo)) = title()
+                - else:
+                    = title()
+
+            %p&= 'No description.'
+            %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.
 
 
-
+= render_card(repo, link=False, avatar_size=128)
 
 = tree_utils.render_tree(repo, head.tree, title=head.message)
 
