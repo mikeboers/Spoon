@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser
 
 from ..core.flask import app, db
-from ..models import User, Group
+from ..models import User, Group, SSHKey
 
 
 def main():
@@ -15,10 +15,10 @@ def main():
     arg_parser.add_argument('--no-admin', action='store_true')
 
     arg_parser.add_argument('-a', '--append', action='store_true')
-    arg_parser.add_argument('-g', '-G', '--groups', action='append')
+    arg_parser.add_argument('-g', '-G', '--group', dest='groups', action='append')
 
+    arg_parser.add_argument('-k', '--key', dest='keys', action='append')
     arg_parser.add_argument('-p', '--password')
-    arg_parser.add_argument('-s', '--sudo', action='store_true')
 
     arg_parser.add_argument('login')
 
@@ -55,5 +55,12 @@ def main():
                 db.session.add(group)
             if group not in user.groups:
                 user.groups.append(group)
+
+    if args.keys:
+        if not args.append:
+            user.ssh_keys = []
+        for raw_key in args.keys:
+            ssh_key = SSHKey(data=raw_key)
+            user.ssh_keys.append(ssh_key)
 
     db.session.commit()

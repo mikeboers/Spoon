@@ -17,6 +17,7 @@ setup(
             'git-base-shell = gitbase.commands.shell:main',
             'git-base-import = gitbase.commands.import:main',
             'git-base-adduser = gitbase.commands.adduser:main',
+            'git-base-setupkeys = gitbase.sshkeys:rewrite',
         ],
     },
 
