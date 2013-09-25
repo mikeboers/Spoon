@@ -1,0 +1,31 @@
+%%inherit(file="_main.haml")
+
+@breadcrumb
+
+    %li users
+    %li &= user.login
+
+
+
+@render_card(user, avatar_size=64, link=True)
+
+    .media
+
+        %a.pull-left(href='#')
+            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
+
+        .media-body
+            %h4.media-heading
+
+                @title
+                    &= user.login
+                    - if user.is_admin:
+                        %small %span.label.label-primary ADMIN
+
+                - if link:
+                    %a(href=url_for('user', user=user)) = title()
+                - else:
+                    = title()
+
+
+= render_card(user, avatar_size=128, link=False)

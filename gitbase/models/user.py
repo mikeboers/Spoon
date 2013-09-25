@@ -26,7 +26,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.checkpw(password, self.password_hash)
-    
+
     def is_authenticated(self):
         '''Returns True if the user is authenticated.
 
@@ -68,3 +68,24 @@ class User(db.Model):
         '''
 
         return self.login
+
+
+class UserConverter(wz.routing.BaseConverter):
+
+    def __init__(self, url_map):
+        super(UserConverter, self).__init__(url_map)
+
+    def to_python(self, login):
+        try:
+            user = User.query.filter_by(login=login).first()
+            if user:
+                return user
+        except ValueError:
+            pass
+        raise wz.routing.ValidationError('user does not exist: %r' % login)
+
+    def to_url(self, user):
+        return user.login
+
+
+app.url_map.converters['user'] = UserConverter

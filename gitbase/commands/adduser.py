@@ -11,6 +11,9 @@ def main():
 
     arg_parser.add_argument('-e', '--edit', action='store_true')
 
+    arg_parser.add_argument('--admin', action='store_true')
+    arg_parser.add_argument('--no-admin', action='store_true')
+
     arg_parser.add_argument('-a', '--append', action='store_true')
     arg_parser.add_argument('-g', '-G', '--groups', action='append')
 
@@ -37,6 +40,11 @@ def main():
     if args.password:
         user.set_password(args.password)
 
+    if args.admin:
+        user.is_admin = True
+    if args.no_admin:
+        user.is_admin = False
+    
     if args.groups:
         if not args.append:
             user.groups = []

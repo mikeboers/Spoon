@@ -15,7 +15,9 @@
 
         - if current_user.is_authenticated():
             %.pull-right
-                Logged in as ${current_user.login|h}.
+                Logged in as
+                %a(href=url_for('user', user=current_user)) &= current_user.login
+                .
                 %a(href=url_for('logout')) Logout.
         - else:
             %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login')) Login

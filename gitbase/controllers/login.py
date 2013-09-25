@@ -29,13 +29,13 @@ def login():
 
         user = User.query.filter_by(login=form.username.data).first()
         if user and user.check_password(form.password.data):
-            
-            login_user(user)
+
+            login_user(user, remember=True)
             flash("Logged in successfully.")
             return redirect(request.args.get("next") or url_for("index"))
 
         else:
-            flash("User '%s' not found." % form.username.data, 'warning')
+            flash("Username and password did not match.", 'warning')
 
     else:
         flash('Please login.')
