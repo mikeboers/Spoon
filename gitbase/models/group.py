@@ -5,7 +5,7 @@ import sqlalchemy as sa
 import werkzeug as wz
 
 from ..utils import debug
-from . import app, db
+from ..core.flask import app, auth, db
 
 
 log = logging.getLogger(__name__)
@@ -59,6 +59,11 @@ class Group(db.Model):
         return dict(
             group=self,
         )
+
+    @wz.cached_property
+    def readable_repos(self):
+        return [r for r in self.repos if auth.can('read', r)]
+
 
 class GroupConverter(wz.routing.BaseConverter):
 

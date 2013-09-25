@@ -10,7 +10,8 @@ import werkzeug as wz
 
 from ..utils import debug, makedirs
 
-from . import app, db, Group
+from ..main import app, auth, db
+from . import Group
 
 
 log = logging.getLogger(__name__)
@@ -30,9 +31,16 @@ class Repo(db.Model):
     
     @property
     def __acl__(self):
+        
         yield 'ALLOW ADMIN ALL'
         yield 'ALLOW OWNER ALL'
+
         # TODO: user specified goes here.
+        
+        if not self.is_public:
+            yield 'DENY ANY read'
+            return
+
         for ace in self.group.__acl__:
             yield ace
         if self.is_public:

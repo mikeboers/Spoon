@@ -1,8 +1,8 @@
-from gitbase.core.flask import app, db
+from gitbase.core.flask import app, auth, db
 
 
 # Register things.
-from gitbase import auth
+from gitbase import auth as _auth
 from gitbase import models
 from gitbase import controllers
 

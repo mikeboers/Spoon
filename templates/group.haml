@@ -22,14 +22,22 @@
             %h4.media-heading
                 
                 @title
-                    = group.name
                     - if not group.is_public:
-                        %small %span.label.label-warning PRIVATE
+                        %span.glyphicon.glyphicon-lock
+                    = group.name
 
                 - if link: %a(href=url) = title()
                 - else: = title()
             %p&= 'No description.'
-            %p.small ${len(group.repos)} ${'repository' if len(group.repos) == 1 else 'repositories'}.
+            %small
+                %span.glyphicon.glyphicon-book
+                ${len(group.readable_repos)} ${'repository' if len(group.readable_repos) == 1 else 'repositories'}
+            %br/
+            %small
+                %span.glyphicon.glyphicon-user
+                ${len(group.members)} user${'s' if len(group.members) != 1 else ''}
+            - if not group.is_public:
+                %p %small %span.label.label-warning PRIVATE
 
 
 = render_card(group, link=False, avatar_size=128)
@@ -37,9 +45,10 @@
 
 %h2 Repositories
 
-- for repo in group.repos:
+- for repo in group.readable_repos:
     = repo_utils.render_card(repo)
-
+- if not group.readable_repos:
+    .alert.alert-warning No repositories.
 
 %h2 Members
 

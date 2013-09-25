@@ -1,11 +1,20 @@
 import logging
 
+from flask import request
 from flask.ext.acl.predicates import string_predicates
 from flask.ext.login import current_user
 
+from .main import app, auth
+from .models import Repo, Group
 
 log = logging.getLogger(__name__)
 
+
+@app.before_request
+def assert_can_access_url_pieces():
+    for v in request.view_args.itervalues():
+        if isinstance(v, (Repo, Group)):
+            auth.assert_can('read', v)
 
 
 def check_admin(**kw):

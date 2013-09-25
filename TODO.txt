@@ -9,42 +9,6 @@
     if not auth.can('read', repo):
         die('No repo with read permissions.')
 
-- authentication
-
-    ACLs on groups and repos, where:
-        - OWNER is the owner
-        - MEMBER is members of the group (or repo's group)
-        - ANY is anyone
-
-    __acl_context__ to supply a context to other rules
-    build up the contxt from the __acl_bases__ 
-    def __acl__(self):
-
-    The permissions are:
-        write: reading, writing, merging
-        write+: reading, writing, merging, forcing
-        read: only reading
-
-    Order to check permissions is:
-        1. Are we an admin?
-        2. Are we the owner?
-        3. Check Repo ACL (if this is a repo)
-        4. Check Group ACL
-        5. Are we a member of the group?
-
-    delete implies read and write
-    create implies read and write
-    write implies read
-    there is no specific force permission
-
-    We do this by adding some extra ACL in the front and back:
-        ALLOW ADMIN ANY
-        ALLOW OWNER ANY
-        <repo acl>
-        <group acl>
-        ALLOW MEMBER write
-        ALLOW ANY read (if public)
-
 
 
 
