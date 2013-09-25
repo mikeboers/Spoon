@@ -1,4 +1,6 @@
 %%inherit(file="/_main.haml")
+%%namespace(name='blob_utils', file='blob.haml')
+
 -!
     import os
     import pygit2
@@ -21,7 +23,8 @@
 
 
 
-@render_tree(tree, base='', title=None)
+@render_tree(repo, tree, base='', title=None)
+
     .panel.panel-info
 
         .panel-heading %h2.panel-title
@@ -51,5 +54,13 @@
                 -# %td &= fuzzy_time
                 -# %td %a(href='#') %code &= entry.hex[:8]
 
-= render_tree(tree, path)
+
+    - if 'README.md' in tree:
+        -
+            entry = tree['README.md']
+            blob = repo.git[entry.oid]
+        = blob_utils.render_blob(blob, base + ('/' if base else '') + 'README.md')
+
+
+= render_tree(repo, tree, path)
 

@@ -23,14 +23,9 @@
         %p&= 'No description.'
 
 
-= tree_utils.render_tree(head.tree, title=head.message)
 
 
-- if 'README.md' in head.tree:
-    -
-        entry = head.tree['README.md']
-        blob = repo.git[entry.oid]
-    = blob_utils.render_blob(blob, 'README.md')
+= tree_utils.render_tree(repo, head.tree, title=head.message)
 
 
 %h2 Recent Commits
