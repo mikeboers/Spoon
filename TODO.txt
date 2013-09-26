@@ -1,4 +1,10 @@
 
+- ADMIN -> ROOT
+- ADMIN is then an admin of the group
+
+- is_sudoer on user, which has to be turned on in the session
+
+- test the permissions!
 
 - Group/Repo.lookup(..., create=True): create implies a request to create it if
   it does not already exist, but this is still subject to the user having
