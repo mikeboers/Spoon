@@ -52,7 +52,7 @@ class MEMBER(object):
         return (
             current_user.is_authenticated() and
             group and
-            any(m.current_user == current_user for m in group.memberships)
+            any(m.user == current_user for m in group.memberships)
         )
 
 
