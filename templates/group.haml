@@ -42,7 +42,7 @@
                 %small
                     %span.glyphicon.glyphicon-user
                     ${len(group.memberships)} member${'s' if len(group.memberships) != 1 else ''}
-                - if not group.is_public:
+                -# if not group.is_public:
                     %p %small %span.label.label-warning PRIVATE
 
             = caller.body()

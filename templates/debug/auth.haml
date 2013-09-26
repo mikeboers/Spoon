@@ -1,0 +1,35 @@
+%%inherit(file='/_main.haml')
+
+%h1 Permissions
+
+%table.table.table-condensed
+    %thead
+        %th Object
+        %th User
+        %th Perms
+
+    - for group in groups:
+    
+        - for user in users: %tr
+            %td &= group.name
+            %td &= user.name
+            %td
+                - if auth.can('group.read', group, current_user=user):
+                    .span.label.label-success READ
+                - if auth.can('group.write', group, current_user=user):
+                    .span.label.label-warning WRITE
+                - if auth.can('group.delete', group, current_user=user):
+                    .span.label.label-danger DELETE
+
+
+        - for repo in group.repos:
+            - for user in users: %tr
+                %td &= group.name + ' / ' + repo.name
+                %td &= user.name
+                %td
+                    - if auth.can('repo.read', repo, current_user=user):
+                        .span.label.label-success READ
+                    - if auth.can('repo.write', repo, current_user=user):
+                        .span.label.label-warning WRITE
+                    - if auth.can('repo.delete', repo, current_user=user):
+                        .span.label.label-danger DELETE
