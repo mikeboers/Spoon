@@ -28,14 +28,16 @@
 
                 - if link: %a(href=url) = title()
                 - else: = title()
-            %p&= 'No description.'
+            %p
+                - if group.description: &= group.description
+                - else: %em No description.
             %small
                 %span.glyphicon.glyphicon-book
                 ${len(group.readable_repos)} ${'repository' if len(group.readable_repos) == 1 else 'repositories'}
             %br/
             %small
                 %span.glyphicon.glyphicon-user
-                ${len(group.members)} user${'s' if len(group.members) != 1 else ''}
+                ${len(group.memberships)} member${'s' if len(group.memberships) != 1 else ''}
             - if not group.is_public:
                 %p %small %span.label.label-warning PRIVATE
 
@@ -52,9 +54,9 @@
 
 %h2 Members
 
-- if group.members:
-    - for user in group.members:
-        = user_utils.render_card(user)
+- if group.memberships:
+    - for membership in group.memberships:
+        = user_utils.render_card(membership.user)
 
 - else:
     %em No members.

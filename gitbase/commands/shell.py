@@ -12,6 +12,7 @@ from flask.ext.login import login_user, current_user
 from ..main import app, auth, db
 from ..models import Group, Repo, User
 from ..utils import *
+from ..auth import dummy_admin
 
 
 _commands = {}
@@ -41,10 +42,10 @@ def main():
     if len(sys.argv) != 2:
         die('missing user')
 
-    login = sys.argv[1]
-    user = User.query.filter_by(login=login).first()
+    username = sys.argv[1]
+    user = User.query.filter_by(name=username).first()
     if not user:
-        die('unknown user: %r' % login)
+        die('unknown user: %r' % username)
 
     # Log the user in. We need a fake request context to do it.
     app.test_request_context().push()

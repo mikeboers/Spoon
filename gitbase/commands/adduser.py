@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser
 
 from ..core.flask import app, db
-from ..models import User, Group, SSHKey
+from ..models import User, Group, SSHKey, Membership
 
 
 def main():
@@ -11,20 +11,22 @@ def main():
 
     arg_parser.add_argument('-e', '--edit', action='store_true')
 
-    arg_parser.add_argument('--admin', action='store_true')
-    arg_parser.add_argument('--no-admin', action='store_true')
+    arg_parser.add_argument('--admin', action='store_true', default=None)
+    arg_parser.add_argument('--no-admin', dest='admin', action='store_true', default=None)
 
     arg_parser.add_argument('-a', '--append', action='store_true')
-    arg_parser.add_argument('-g', '-G', '--group', dest='groups', action='append')
+    arg_parser.add_argument('-g', '--group', dest='groups', action='append')
+
+    arg_parser.add_argument('--home')
 
     arg_parser.add_argument('-k', '--key', dest='keys', action='append')
     arg_parser.add_argument('-p', '--password')
 
-    arg_parser.add_argument('login')
+    arg_parser.add_argument('name')
 
     args = arg_parser.parse_args()
 
-    user = User.query.filter_by(login=args.login).first()
+    user = User.query.filter_by(name=args.name).first()
 
     if args.edit:
         if not user:
@@ -34,27 +36,31 @@ def main():
         print 'user already exists; did you mean to use --edit?'
         exit(2)
     else:
-        user = User(login=args.login)
+        user = User(name=args.name)
         db.session.add(user)
 
     if args.password:
         user.set_password(args.password)
 
-    if args.admin:
-        user.is_admin = True
-    if args.no_admin:
-        user.is_admin = False
+    if args.admin is not None:
+        user.is_admin = args.admin
     
     if args.groups:
+
         if not args.append:
-            user.groups = []
+            user.memberships = []
+
         for group_name in args.groups:
+
             group = Group.query.filter_by(name=group_name).first()
             if not group:
                 group = Group(name=group_name)
                 db.session.add(group)
-            if group not in user.groups:
-                user.groups.append(group)
+
+            if any(m.group is group for m in user.memberships):
+                continue
+
+            user.memberships.append(Membership(group=group))
 
     if args.keys:
         if not args.append:

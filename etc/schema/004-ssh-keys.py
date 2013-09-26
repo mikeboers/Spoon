@@ -1,12 +1,10 @@
-import datetime
-
 import sqlalchemy as sa
+
 
 def upgrade(engine):
 
     meta = sa.MetaData(bind=engine)
     meta.reflect()
-
 
     keys = sa.Table('ssh_keys', meta,
         sa.Column('id', sa.Integer, primary_key=True),

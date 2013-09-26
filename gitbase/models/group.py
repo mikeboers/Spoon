@@ -1,4 +1,3 @@
-import logging
 import re
 
 import sqlalchemy as sa
@@ -7,12 +6,6 @@ from flask.ext.login import current_user
 
 from ..utils import debug
 from ..core.flask import app, auth, db
-
-
-log = logging.getLogger(__name__)
-
-
-group_memberships_table = db.Table('group_memberships', db.metadata, autoload=True)
 
 
 class Group(db.Model):
@@ -24,28 +17,35 @@ class Group(db.Model):
         extend_existing=True,
     )
 
-    members = db.relationship('User', secondary=group_memberships_table, backref='groups')
 
     @classmethod
     def lookup(cls, name, create=False):
 
+        # Make sure it is a valid name.
         if not re.match(app.config['GROUP_NAME_RE'], name):
             raise ValueError('invalid group name: %r' % name)
 
         group = Group.query.filter_by(name=name).first()
-
         if not group:
 
+            # Bail if it wasn't requested to create it.
             if not create:
                 return
 
+            # Bail if we don't have permission to create it.
+            # TODO: make this check for can('group.create', current_user).
             if not current_user.is_admin:
                 return
 
-            # TODO: make sure they are allowed to do this.
-            debug('importing group %s', name)
+            debug('creating group %s', name)
             group = Group(name=name)
-            group.members.append(current_user)
+
+            # Only create a membership if this is a real user.
+            if current_user.id:
+                group.memberships.append(Membership(
+                    user=current_user,
+                    ))
+
             db.session.add(group)
             db.session.commit()
 

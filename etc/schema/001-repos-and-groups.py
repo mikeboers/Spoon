@@ -1,5 +1,3 @@
-import datetime
-
 import sqlalchemy as sa
 
 
@@ -11,6 +9,7 @@ def upgrade(engine):
     groups = sa.Table('groups', meta,
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('name', sa.String, nullable=False),
+        sa.Column('description', sa.String),
         sa.Column('is_public', sa.Boolean, nullable=False, server_default=sa.text('0')),
     )
     groups.create()
@@ -18,7 +17,11 @@ def upgrade(engine):
     repos = sa.Table('repos', meta,
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('group_id', sa.Integer, sa.ForeignKey('groups.id')),
+
         sa.Column('name', sa.String, nullable=False),
+        sa.Column('description', sa.String),
+        sa.Column('url', sa.String),
+
         sa.Column('is_public', sa.Boolean, nullable=False, server_default=sa.text('0')),
     )
     repos.create()

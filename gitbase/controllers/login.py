@@ -9,7 +9,7 @@ from . import *
 
 @login_manager.user_loader
 def load_user(userid):
-    return User.query.filter_by(login=userid).first()
+    return User.query.filter_by(name=userid).first()
 
 
 class LoginForm(Form):
@@ -27,7 +27,7 @@ def login():
 
     if form.validate_on_submit():
 
-        user = User.query.filter_by(login=form.username.data).first()
+        user = User.query.filter_by(name=form.username.data).first()
         if user and user.check_password(form.password.data):
 
             login_user(user, remember=True)

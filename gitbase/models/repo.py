@@ -12,7 +12,7 @@ from flask.ext.login import current_user
 
 from ..utils import debug, makedirs
 from ..core.flask import app, auth, db
-from . import Group
+from .group import Group
 
 
 log = logging.getLogger(__name__)
@@ -28,7 +28,6 @@ class Repo(db.Model):
     )
 
     group = db.relationship(Group, backref='repos')
-    owner = db.relationship('User', backref='repos')
     
     @property
     def __acl__(self):
@@ -65,24 +64,28 @@ class Repo(db.Model):
     @classmethod
     def lookup(cls, group_name, repo_name, create=False):
 
+        # Make sure it is a valid name.
         if not re.match(r'^%s$' % app.config['REPO_NAME_RE'], repo_name):
             raise ValueError('invalid repo name: %r' % repo_name)
 
+        # Grab/create the group.
         group = Group.lookup(group_name, create=create)
         if not group:
             return
 
+        did_create = False
+
         repo_dir = os.path.join(app.config['REPO_DIR'], group_name, repo_name + '.git')
         if not os.path.exists(repo_dir):
 
-            if not create:
-                return
+            did_create = True
 
-            if not auth.can('write', group):
+            # Make sure there are permissions.
+            if not (create and auth.can('repo.create', group)):
                 return
 
             # TODO: make sure they are allowed to do this.
-            debug('creating bare repository %s/%s', group_name, repo_name)
+            debug('creating repository %s/%s', group_name, repo_name)
             makedirs(repo_dir)
             proc = subprocess.Popen(['git', 'init', '--bare', repo_dir], stdout=subprocess.PIPE)
             for line in proc.stdout:
@@ -95,12 +98,9 @@ class Repo(db.Model):
         # that above.
         repo = Repo.query.filter_by(name=repo_name, group=group).first()
         if not repo:
-
-            if not auth.can('write', group):
-                return
-
-            debug('importing repository %s/%s', group_name, repo_name)
-            repo = Repo(name=repo_name, group=group, owner=current_user)
+            if not did_create:
+                debug('importing repository %s/%s', group_name, repo_name)
+            repo = Repo(name=repo_name, group=group)
             db.session.add(repo)
             db.session.commit()
 

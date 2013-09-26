@@ -28,7 +28,7 @@ def rewrite():
     for user in User.query.all():
         for key in user.ssh_keys:
             try:
-                to_add.append(format % (user.login, key.cleaned))
+                to_add.append(format % (user.name, key.cleaned))
             except ValueError as e:
                 print e
 

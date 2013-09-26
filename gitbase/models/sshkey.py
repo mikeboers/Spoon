@@ -1,15 +1,4 @@
-import logging
-import re
-
-import bcrypt
-import sqlalchemy as sa
-import werkzeug as wz
-
-from ..utils import debug
-from . import app, db
-
-
-log = logging.getLogger(__name__)
+from ..core.flask import db
 
 
 class SSHKey(db.Model):
@@ -28,4 +17,4 @@ class SSHKey(db.Model):
         parts = self.data.strip().split()
         if parts[0] not in ('ssh-rsa', ):
             raise ValueError('unknown key format: %r' % parts[0])
-        return '%s %s %s' % (parts[0], parts[1], self.owner.login)
+        return '%s %s %s' % (parts[0], parts[1], self.owner.name)

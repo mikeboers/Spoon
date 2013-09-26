@@ -2,11 +2,10 @@ import logging
 
 from flask import request
 from flask.ext.acl.predicates import string_predicates
-from flask.ext.login import current_user
+from flask.ext.login import current_user, UserMixin
 
-from .main import app, auth
-from .models.repo import Repo
-from .models.group import Group
+from .core.flask import app, auth
+from .models import Repo, Group
 
 log = logging.getLogger(__name__)
 
@@ -18,21 +17,38 @@ def assert_can_access_url_pieces():
             auth.assert_can('read', v)
 
 
-def check_admin(**kw):
-    # log.info('check if %r is an admin' % current_user)
-    return current_user.is_authenticated() and current_user.is_admin
+class ADMIN(object):
+
+    def __repr__(self):
+        return 'ADMIN'
+    def __call__(self, **kw):
+        # log.info('check if %r is an admin' % current_user)
+        return current_user.is_authenticated() and current_user.is_admin
+
+class OWNER(object):
+
+    def __repr__(self):
+        return 'OWNER'
+    def __call__(self, repo=None, **kw):
+        # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
+        return current_user.is_authenticated() and repo and repo.owner == current_user
+
+class MEMBER(object):
+
+    def __repr__(self):
+        return 'MEMBER'
+    def __call__(self, group=None, **kw):
+        # log.info('check if %r is member of %r' % (current_user, group))
+        return current_user.is_authenticated() and group and current_user in group.members
 
 
-def check_owner(repo=None, group=None, **kw):
-    # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-    return current_user.is_authenticated() and repo.owner == current_user
+string_predicates['OWNER'] = OWNER()
+string_predicates['MEMBER'] = MEMBER()
+string_predicates['ADMIN'] = ADMIN()
 
 
-def check_members(group=None, **kw):
-    # log.info('check if %r is member of %r' % (current_user, group))
-    return current_user.is_authenticated() and current_user in group.members
-
-
-string_predicates['OWNER'] = check_owner
-string_predicates['MEMBER'] = check_members
-string_predicates['ADMIN'] = check_admin
+dummy_admin = UserMixin()
+dummy_admin.id = 0
+dummy_admin.is_admin = True
+dummy_admin.home = None
+dummy_admin.memberships = []

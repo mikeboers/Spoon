@@ -33,3 +33,13 @@ def error(msg, *args):
 
 
 debug = error
+
+
+class classproperty(object):
+
+    def __init__(self, getter):
+        self._getter = getter
+
+    def __get__(self, obj, cls_):
+        return self._getter(cls_, obj)
+

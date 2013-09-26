@@ -1,21 +1,80 @@
 
 
+- Group/Repo.lookup(..., create=True): create implies a request to create it if
+  it does not already exist, but this is still subject to the user having
+  the permission to do so.
+
+- Where do we attach the 'group.create' permission? Perhaps a @descriptor
+  decorator to allow for the Group class to have a different acl from a Group
+  instance?
+
+  @classproperty
+  def __acl__(cls, obj): where obj may be None
+
+
 - make the Users object an implementation detail. Everything is focused on
-  groups. User.home points to a single group, and there is only allowed to be
-  this one pointer (i.e. one-to-one relationship).
+  groups. You never actually render users.
 
-  Perhaps rename Group to be more descriptive? Perhaps:
-    Collection
-    RepoGroup
-    RepoCollection
-    Organization
+  - Users do not have to have a home.
+  
+  We do use a User to determine membership and stuff, but we still render the
+  home repositories of those users.
 
-  The only redundancy is that User.name/login is equal to Group.name
-  Group.is_organization signals that this is not a person. It can still have
-  an owner/creator, but that isn't really displayed.
 
-- what permission is there for creating groups?
-- what permission is there for creating repos in groups?
+- schema relationships
+
+    - User
+        - home: a single repository that is their identity. They are the
+          OWNER of that repo.
+        * memberships
+
+    - Repo
+        - group
+
+    - Group
+        * members: a set of Memberships
+        * repos: a set of repos
+
+    - Membership:
+        - group
+        - user
+        - is_visible
+        - acl_blob
+
+
+
+- Split group/repo permissions from each other, e.g.:
+
+    ALLOW ADMIN ANY
+    ALLOW OWNER ANY
+    ALLOW MEMBER repo.update # Write to a repo.
+    ALLOW MEMBER repo.create # Create a repo.
+
+- Possible permissions following CRUD names:
+    repo.meta.update -> Update name/description.
+    repo.create -> Create a repo in this context.
+    repo.read -> Read a repo in this context.
+    repo.update -> Push to a repo in this context.
+    repo.delete -> Delete a repo in this context.
+
+- Possible permissions following GIT names:
+    - repo.init
+    - repo.fetch
+    - repo.push
+    - repo.pushf (forced?)
+    - repo.delete
+
+- Possible permissions frollowing REST names:
+    - repo.post -> create a repo
+    - repo.put -> write into a repo
+    - repo.get -> read
+    - repo.delete -> delete a repo
+
+    - branch.post -> update a branch
+    - branch.put -> force a branch
+    - branch.
+
+
 
 - separate tree/commits into tabs
 - auth view for repos, showing what everyone can do it with
