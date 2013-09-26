@@ -3,30 +3,34 @@
 %h1 Permissions
 
 
-- for group in groups:
 
-    %table.table.table-condensed
+%table.table.table-condensed
+
+    - for group in groups:
+
         %thead
             %th Object
             - for user in users: %th &= user.name
-    
+
         %tr
             %td &= group.name
             - for user in users: %td
                 - if auth.can('group.read', group, current_user=user):
-                    .span.label.label-success READ
+                    .span.label.label-default group.read
                 - if auth.can('group.write', group, current_user=user):
-                    .span.label.label-warning WRITE
+                    .span.label.label-warning group.write
                 - if auth.can('group.delete', group, current_user=user):
-                    .span.label.label-danger DELETE
+                    .span.label.label-danger group.delete
+                - if auth.can('repo.create', group, current_user=user):
+                    .span.label.label-success repo.create
 
 
         - for repo in group.repos: %tr
             %td &= group.name + ' / ' + repo.name
             - for user in users: %td
                 - if auth.can('repo.read', repo, current_user=user):
-                    .span.label.label-success READ
+                    .span.label.label-default repo.read
                 - if auth.can('repo.write', repo, current_user=user):
-                    .span.label.label-warning WRITE
+                    .span.label.label-warning repo.write
                 - if auth.can('repo.delete', repo, current_user=user):
-                    .span.label.label-danger DELETE
+                    .span.label.label-danger repo.delete
