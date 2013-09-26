@@ -85,7 +85,7 @@ def do_git(command, *args):
         die('unknown repo %s/%s' % (group_name, repo_name))
 
     # Make sure we are allowed to operate on it. Same error as above.
-    permission = 'write' if command == 'git-receive-pack' else 'read'
+    permission = 'repo.write' if command == 'git-receive-pack' else 'repo.read'
     if not auth.can(permission, repo):
         die('unknown repo %s/%s' % (group_name, repo_name))
 

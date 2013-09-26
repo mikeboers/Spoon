@@ -13,8 +13,10 @@ log = logging.getLogger(__name__)
 @app.before_request
 def assert_can_access_url_pieces():
     for v in request.view_args.itervalues():
-        if isinstance(v, (Repo, Group)):
-            auth.assert_can('read', v)
+        if isinstance(v, Repo):
+            auth.assert_can('repo.read', v)
+        if isinstance(v, Group):
+            auth.assert_can('group.read', v)
 
 
 class ADMIN(object):

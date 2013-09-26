@@ -38,13 +38,14 @@ class Repo(db.Model):
         # TODO: user specified goes here.
         
         if not self.is_public:
-            yield 'DENY ANY read'
+            yield 'DENY ANY ANY'
             return
 
         for ace in self.group.__acl__:
             yield ace
+        
         if self.is_public:
-            yield 'ALLOW ANY read'
+            yield 'ALLOW ANY repo.read'
 
     @property
     def __acl_context__(self):

@@ -59,8 +59,12 @@ class Group(db.Model):
         yield 'ALLOW ADMIN ANY'
         # TODO: user specified goes here.
         yield 'ALLOW MEMBER ANY'
+
         if self.is_public:
-            yield 'ALLOW ANY read'
+            yield 'ALLOW ANY group.read'
+
+        else:
+            yield 'DENY ANY ANY'
 
     @property
     def __acl_context__(self):
@@ -70,7 +74,7 @@ class Group(db.Model):
 
     @wz.cached_property
     def readable_repos(self):
-        return [r for r in self.repos if auth.can('read', r)]
+        return [r for r in self.repos if auth.can('repo.read', r)]
 
 
 class GroupConverter(wz.routing.BaseConverter):
