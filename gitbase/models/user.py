@@ -16,7 +16,7 @@ class User(db.Model):
     )
 
     # One-to-one to the repo that represents us.
-    home = db.relationship('Repo', backref=db.backref('owner', uselist=False))
+    home = db.relationship('Group', backref=db.backref('owner', uselist=False))
 
     def set_password(self, password):
         self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())

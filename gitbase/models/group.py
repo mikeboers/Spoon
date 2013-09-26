@@ -17,7 +17,10 @@ class Group(db.Model):
         extend_existing=True,
     )
 
-
+    @property
+    def is_a_home(self):
+        return self.owner is not None
+    
     @classmethod
     def lookup(cls, name, create=False):
 
