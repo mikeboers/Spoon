@@ -1,9 +1,24 @@
 
 
+- make the Users object an implementation detail. Everything is focused on
+  groups. User.home points to a single group, and there is only allowed to be
+  this one pointer (i.e. one-to-one relationship).
+
+  Perhaps rename Group to be more descriptive? Perhaps:
+    Collection
+    RepoGroup
+    RepoCollection
+    Organization
+
+  The only redundancy is that User.name/login is equal to Group.name
+  Group.is_organization signals that this is not a person. It can still have
+  an owner/creator, but that isn't really displayed.
+
 - what permission is there for creating groups?
 - what permission is there for creating repos in groups?
 
 - separate tree/commits into tabs
+- auth view for repos, showing what everyone can do it with
 
 - hook git-base-shell into authx
 
@@ -18,7 +33,8 @@
 
 
 - avatars on groups and users
-- group.is_user_group signals that it holds all of a user's repos
+- group.is_user_group signals that it holds all of a user's repos and should
+  proxy a bunch of the details
 
 - SSH keys for users
     - update .ssh/authorized_keys
