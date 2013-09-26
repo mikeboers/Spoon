@@ -12,7 +12,7 @@ def main():
     arg_parser.add_argument('-e', '--edit', action='store_true')
 
     arg_parser.add_argument('--admin', action='store_true', default=None)
-    arg_parser.add_argument('--no-admin', dest='admin', action='store_true', default=None)
+    arg_parser.add_argument('--noadmin', dest='admin', action='store_false', default=None)
 
     arg_parser.add_argument('-a', '--append', action='store_true')
     arg_parser.add_argument('-g', '--group', dest='groups', action='append')

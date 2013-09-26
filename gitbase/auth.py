@@ -29,9 +29,9 @@ class OWNER(object):
 
     def __repr__(self):
         return 'OWNER'
-    def __call__(self, repo=None, **kw):
+    def __call__(self, group=None, **kw):
         # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-        return current_user.is_authenticated() and repo and repo.owner == current_user
+        return current_user.is_authenticated() and group and group.owner == current_user
 
 class MEMBER(object):
 
@@ -39,7 +39,11 @@ class MEMBER(object):
         return 'MEMBER'
     def __call__(self, group=None, **kw):
         # log.info('check if %r is member of %r' % (current_user, group))
-        return current_user.is_authenticated() and group and current_user in group.members
+        return (
+            current_user.is_authenticated() and
+            group and
+            any(m.user == current_user for m in group.memberships)
+        )
 
 
 string_predicates['OWNER'] = OWNER()
