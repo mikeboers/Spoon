@@ -93,3 +93,7 @@ class GroupConverter(wz.routing.BaseConverter):
 
 
 app.url_map.converters['group'] = GroupConverter
+
+
+# Circular imports
+from .membership import Membership
