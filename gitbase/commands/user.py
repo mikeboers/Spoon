@@ -60,7 +60,16 @@ def main():
             if any(m.group is group for m in user.memberships):
                 continue
 
-            user.memberships.append(Membership(group=group))
+            db.session.add(Membership(user=user, group=group))
+
+    if args.home:
+
+        home = Group.query.filter_by(name=args.home).first()
+        if not home:
+            home = Group(name=args.home)
+            db.session.add(home)
+        user.home = home
+
 
     if args.keys:
         if not args.append:
