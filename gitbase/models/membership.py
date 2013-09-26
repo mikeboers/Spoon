@@ -11,6 +11,6 @@ class Membership(db.Model):
         extend_existing=True,
     )
 
-    user = db.relationship('User', backref='memberships')
-    group = db.relationship('Group', backref='memberships')
+    user = db.relationship('User', backref=db.backref('memberships', cascade="all, delete-orphan"))
+    group = db.relationship('Group', backref=db.backref('memberships', cascade="all, delete-orphan"))
 
