@@ -22,7 +22,7 @@ class User(db.Model):
         self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
 
     def check_password(self, password):
-        return bcrypt.checkpw(password, self.password_hash)
+        return self.password_hash and bcrypt.checkpw(password, self.password_hash)
 
     def is_authenticated(self):
         """For Flask-Login."""

@@ -22,18 +22,18 @@ def register(func):
 
 
 @register
-def passwd(args):
+def passwd(args, pass_=None):
 
-    pass1 = getpass.getpass('Password: ')
-    pass2 = getpass.getpass('Verify: ')
-    
-    if pass1 != pass2:
-        print 'Passwords do not match.'
-        return 1
-    else:
-        current_user.set_password(pass1)
-        db.session.commit()
-        print 'Password updated.'
+    if pass_ is None:
+        pass_ = getpass.getpass('Password: ')
+        pass2 = getpass.getpass('Verify: ')
+        if pass_ != pass2:
+            print 'Passwords do not match.'
+            return 1
+
+    current_user.set_password(pass_)
+    db.session.commit()
+    print 'Password updated.'
 
 
 def main():

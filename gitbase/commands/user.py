@@ -21,6 +21,7 @@ def main():
 
     arg_parser.add_argument('-k', '--key', dest='keys', action='append')
     arg_parser.add_argument('-p', '--password')
+    arg_parser.add_argument('--nopassword', action='store_true')
 
     arg_parser.add_argument('name')
 
@@ -41,7 +42,9 @@ def main():
 
     if args.password:
         user.set_password(args.password)
-
+    if args.nopassword:
+        user.password_hash = None
+    
     if args.admin is not None:
         user.is_admin = args.admin
     
