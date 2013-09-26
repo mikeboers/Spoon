@@ -2,11 +2,11 @@
 %%namespace(name='repo_utils', file='repo.haml')
 %%namespace(name='user_utils', file='user.haml')
 
+
+
 @breadcrumb
     %li
         &= group.name
-    %li
-        repositories
 
 
 @render_card(group, link=True, avatar_size=64)
@@ -24,6 +24,10 @@
                 @title
                     - if not group.is_public:
                         %span.glyphicon.glyphicon-lock
+                    - elif group.is_a_home:
+                        %span.glyphicon.glyphicon-home
+                    - else:
+                        %span.glyphicon.glyphicon-globe
                     = group.name
 
                 - if link: %a(href=url) = title()
@@ -31,18 +35,20 @@
             %p
                 - if group.description: &= group.description
                 - else: %em No description.
-            %small
+            -# %small
                 %span.glyphicon.glyphicon-book
                 ${len(group.readable_repos)} ${'repository' if len(group.readable_repos) == 1 else 'repositories'}
-            %br/
-            %small
-                %span.glyphicon.glyphicon-user
-                ${len(group.memberships)} member${'s' if len(group.memberships) != 1 else ''}
-            - if not group.is_public:
-                %p %small %span.label.label-warning PRIVATE
+            - if not group.is_a_home:
+                %small
+                    %span.glyphicon.glyphicon-user
+                    ${len(group.memberships)} member${'s' if len(group.memberships) != 1 else ''}
+                - if not group.is_public:
+                    %p %small %span.label.label-warning PRIVATE
+
+            = caller.body()
 
 
-= render_card(group, link=False, avatar_size=128)
++render_card(group, link=False, avatar_size=128)
 
 
 %h2 Repositories
@@ -52,11 +58,13 @@
 - if not group.readable_repos:
     .alert.alert-warning No repositories.
 
-%h2 Members
+- if not group.is_a_home:
 
-- if group.memberships:
-    - for membership in group.memberships:
-        = user_utils.render_card(membership.user)
+    %h2 Members
 
-- else:
-    %em No members.
+    - if group.memberships:
+        - for membership in group.memberships:
+            = user_utils.render_card(membership.user)
+
+    - else:
+        %em No members.

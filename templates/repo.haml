@@ -1,6 +1,6 @@
-%%inherit(file="/_main.haml")/
-%%namespace(file="/tree.haml", name="tree_utils")/
-%%namespace(file="/blob.haml", name="blob_utils")/
+%%inherit(file="/_main.haml")
+%%namespace(name='tree_utils', file='tree.haml')
+%%namespace(name='blob_utils', file='blob.haml')
 -!
     import itertools
     import pygit2 as git
@@ -8,40 +8,49 @@
 -
     head = repo.git.head.get_object()
 
+
 @breadcrumb
     %li
-        %a(href=url_for('group', group=group)) &= group.name
+        %a(href=url_for('group', group=group))
+            &= group.name
     %li
         &= repo.name
+
+
+
+@render_title(repo, link=True)
+
+    @_title
+        - if repo.is_public:
+            %span.glyphicon.glyphicon-book
+        - else:
+            %span.glyphicon.glyphicon-lock
+        &= repo.group.name + ' / ' + repo.name
+
+    - if link:
+        %a(href=url_for('repo', repo=repo)) +_title
+    - else:
+        +_title
 
 
 @render_card(repo, avatar_size=64, link=True)
 
     .media
 
-        .pull-left
+        -# .pull-left
             %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
 
         .media-body
-            %h4.media-heading
-
-                @title
-                    - if not repo.is_public:
-                        %span.glyphicon.glyphicon-lock
-                    &= repo.name
-
-                - if link:
-                    %a(href=url_for('repo', repo=repo)) = title()
-                - else:
-                    = title()
-
-            %p&= 'No description.'
+            %h4.media-heading +render_title(repo, link=link)
+            %p
+                - if group.description: &= group.description
+                - else: %em No description.
             - if not repo.is_public:
                 %small %span.label.label-warning PRIVATE
             %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.
 
 
-= render_card(repo, link=False, avatar_size=128)
++render_card(repo, link=False, avatar_size=128)
 
 = tree_utils.render_tree(repo, head.tree, title=head.message)
 

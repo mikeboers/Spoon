@@ -1,11 +1,14 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='group_utils', file='group.haml')
+%%namespace(name='repo_utils', file='repo.haml')
 
-@breadcrumb
-    %li
-        groups
 
 - for group in groups:
-    = group_utils.render_card(group)
+    +group_utils.render_card(group, avatar_size=96)
+        %h4 ${len(group.readable_repos)} ${'Repositories' if len(group.readable_repos) != 1 else 'Repository'}:
+        %ul - for repo in group.readable_repos:
+            %li +repo_utils.render_title(repo)
+
+
 - if not groups:
     .alert.alert-warning No repositories.
