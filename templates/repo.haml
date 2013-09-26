@@ -6,7 +6,10 @@
     import pygit2 as git
     from gitbase.utils import debug
 -
-    head = repo.git.head.get_object()
+    try:
+        head = repo.git.head.get_object()
+    except git.GitError:
+        head = None
 
 
 @breadcrumb
@@ -34,6 +37,12 @@
 
 
 @render_card(repo, avatar_size=64, link=True)
+    
+    -
+        try:
+            head = repo.git.head.get_object()
+        except git.GitError:
+            head = None
 
     .media
 
@@ -47,29 +56,37 @@
                 - else: %em No description.
             - if not repo.is_public:
                 %small %span.label.label-warning PRIVATE
-            %p %small Last updated ${fuzzy_time(repo.git.head.get_object().commit_time)}.
+            %p %small
+                - if head: Last updated ${fuzzy_time(head.commit_time)}.
+                - else: %em No commits.
 
 
 +render_card(repo, link=False, avatar_size=128)
 
-= tree_utils.render_tree(repo, head.tree, title=head.message)
+- if head:
+
+    = tree_utils.render_tree(repo, head.tree, title=head.message)
 
 
-%h2 Recent Commits
+    %h2 Recent Commits
 
--
-    commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
-    commits = itertools.islice(commit_iter, 10)
+    -
+        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
+        commits = itertools.islice(commit_iter, 10)
 
-%ol - for commit in commits:
-    %li
-        %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
-            %code= commit.hex[:8]
-            &= commit.message
+    %ol - for commit in commits:
+        %li
+            %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
+                %code= commit.hex[:8]
+                &= commit.message
 
--
-    next_ = next(commit_iter, None)
-- if next_:
-    There are more, starting with
-    %code &= next_.hex[:8]
+    -
+        next_ = next(commit_iter, None)
+    - if next_:
+        There are more, starting with
+        %code &= next_.hex[:8]
+
+- else:
+    .alert.alert-warning There are no commits.
+
 
