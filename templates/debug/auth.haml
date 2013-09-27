@@ -9,10 +9,12 @@
     - for group in groups:
 
         %thead
-            %th Object
+            %th Type
+            %th Name
             - for user in users: %th &= user.name
 
         %tr
+            %td group
             %td &= group.name
             - for user in users: %td
                 - if auth.can('group.read', group, current_user=user):
@@ -26,6 +28,7 @@
 
 
         - for repo in group.repos: %tr
+            %td repo
             %td &= group.name + ' / ' + repo.name
             - for user in users: %td
                 - if auth.can('repo.read', repo, current_user=user):

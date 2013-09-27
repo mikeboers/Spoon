@@ -1,6 +1,35 @@
 
-- ADMIN -> ROOT
-- ADMIN is then an admin of the group
+- vex for dialogs; https://github.com/HubSpot/vex
+
+- Need either another stage between ADMIN and MEMBER, or above ADMIN:
+    - ROOT or SUDOER as absolute top (e.g. me)
+    - ADMIN or MANAGER or LEAD as admin of a group
+    
+    - WHEEL > ADMIN of site > STAFF of group > MEMBER of group
+        - This makes sense from an implementation standpoint, but in GitHub
+          you can be a group administrator.
+
+    Could also just be more explicit:
+
+    ROOT (when sudo switch is turned on)
+    SITE_ADMIN (the rest of the time)
+    GROUP_ADMIN
+    GROUP_MEMBER
+    REPO_OWNER
+
+    site.admin
+    site.observer
+    group.admin
+    group.owner
+    group.member
+    repo.owner
+
+    Or, add user roles, and the ROOT and OBSERVER can be via 'site.admin' and
+    'site.observer' roles. Then ADMIN is for the group.
+
+
+
+
 
 - is_sudoer on user, which has to be turned on in the session
 
