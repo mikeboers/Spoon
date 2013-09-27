@@ -64,7 +64,8 @@
 
     - if group.memberships:
         - for membership in group.memberships:
-            = user_utils.render_card(membership.user)
+            +user_utils.render_card(membership.user)
+
 
     - else:
         %em No members.

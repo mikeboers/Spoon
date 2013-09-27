@@ -32,6 +32,7 @@ class Repo(db.Model):
     @property
     def __acl__(self):
         
+        yield 'ALLOW ROOT ALL'
         yield 'ALLOW ADMIN ALL'
         yield 'ALLOW OWNER ALL'
 

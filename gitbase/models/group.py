@@ -56,7 +56,7 @@ class Group(db.Model):
 
     @property
     def __acl__(self):
-        yield 'ALLOW ADMIN ANY'
+        yield 'ALLOW ROOT ANY'
         # TODO: user specified goes here.
         yield 'ALLOW MEMBER group.write'
         yield 'ALLOW MEMBER group.read'

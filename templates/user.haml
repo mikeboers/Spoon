@@ -8,7 +8,7 @@
 
 
 @avatar(user, size=64)
-    %img(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
+    %img.img-thumbnail(src=resized_img_src('/img/git-logo-pale.png', width=size, height=size), width=size, height=size)
 
 
 @render_card(user, avatar_size=64, link=True)
@@ -23,13 +23,12 @@
 
                 @title
                     &= user.name
-                    - if user.is_admin:
-                        %small %span.label.label-primary ADMIN
 
                 - if link:
                     %a(href=url_for('user', user=user)) +title
                 - else:
                     +title
+
 
 
 = render_card(user, avatar_size=128, link=False)

@@ -35,6 +35,11 @@
 
 - test the permissions!
 
+- Fix permissions when group is private but repo isnt:
+    user in group should be able to see it
+    public should not be able to see it
+
+
 - Group/Repo.lookup(..., create=True): create implies a request to create it if
   it does not already exist, but this is still subject to the user having
   the permission to do so.

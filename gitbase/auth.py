@@ -2,6 +2,7 @@ import logging
 
 from flask import request
 from flask.ext.acl.predicates import string_predicates
+from flask.ext.acl.permissions import string_permissions
 from flask.ext.login import current_user, UserMixin, AnonymousUserMixin
 
 from .core.flask import app, auth
@@ -25,13 +26,26 @@ def assert_can_access_url_pieces():
             auth.assert_can('group.read', v)
 
 
+class Role(object):
+
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__, self.name)
+    def __call__(self, current_user, **kw):
+        return self.name in getattr(current_user, 'roles', ())
+
+
 class ADMIN(object):
 
     def __repr__(self):
         return 'ADMIN'
-    def __call__(self, current_user, **kw):
+    def __call__(self, current_user, group, **kw):
         # log.info('check if %r is an admin' % current_user)
-        return current_user.is_authenticated() and current_user.is_admin
+        if not current_user.is_authenticated() or not group:
+            return
+        membership = next((m for m in group.memberships if m.user == current_user), None)
+        return membership and membership.is_admin
 
 
 class OWNER(object):
@@ -56,9 +70,15 @@ class MEMBER(object):
         )
 
 
+string_predicates['ROOT'] = Role('wheel')
+string_predicates['OBSERVER'] = Role('observer')
 string_predicates['OWNER'] = OWNER()
 string_predicates['MEMBER'] = MEMBER()
 string_predicates['ADMIN'] = ADMIN()
+
+string_permissions['repo.delete'] = set(('repo.delete', 'repo.write', 'repo.read'))
+string_permissions['repo.write'] = set(('repo.write', 'repo.read'))
+string_permissions['group.write'] = set(('group.write', 'group.read'))
 
 
 dummy_admin = UserMixin()
