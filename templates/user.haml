@@ -2,9 +2,7 @@
 
 @breadcrumb
 
-    %li users
     %li &= user.name
-
 
 
 @avatar(user, size=64)
@@ -22,6 +20,7 @@
             %h4.media-heading
 
                 @title
+                    %span.glyphicon.glyphicon-user
                     &= user.name
 
                 - if link:

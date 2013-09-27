@@ -100,11 +100,17 @@ class UserConverter(wz.routing.BaseConverter):
         raise wz.routing.ValidationError('user does not exist: %r' % name)
 
     def to_url(self, user):
-        return user.name
+        return user.home.name if user.home else user.name
+
+class HomelessUserConverter(UserConverter):
+
+    def to_python(self, name):
+        user = super(HomelessUserConverter, self).to_python(name)
+        if user and user.home:
+            raise wz.routing.ValidationError('user is not homeless: %r' % name)
+        return user
 
 
 app.url_map.converters['user'] = UserConverter
-
-
-
+app.url_map.converters['homeless'] = HomelessUserConverter
 

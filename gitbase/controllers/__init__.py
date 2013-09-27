@@ -7,7 +7,7 @@ from flask.ext.login import current_user
 from ..core.flask import app, db, auth
 from ..core.mako import render_template
 
-from ..models import Group, Repo, User
+from ..models import Group, Repo, User, Membership
 
 # --- Register the pages.
 
@@ -20,3 +20,4 @@ from . import commit
 from . import user
 
 from . import debug
+from . import cpanel

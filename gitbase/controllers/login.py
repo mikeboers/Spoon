@@ -37,9 +37,6 @@ def login():
         else:
             flash("Username and password did not match.", 'warning')
 
-    else:
-        flash('Please login.')
-
     return render_template("login.haml", form=form)
 
 
