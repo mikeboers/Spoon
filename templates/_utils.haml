@@ -7,6 +7,9 @@
     - else:
         %a.permalink(href='#' + target) &para;
 
+@icon(name)
+    %span.glyphicon(class_='glyphicon-' + name)
+
 @render_form(form)
     -
         nonce = os.urandom(4).encode('hex')

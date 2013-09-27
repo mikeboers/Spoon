@@ -1,0 +1,33 @@
+%%inherit(file='_main.haml')
+%%namespace(name='utils', file='_utils.haml')
+-! from markupsafe import Markup
+
+%h1 Control Panel
+
+
+- if 'observer' in current_user.roles:
+    
+    .alert.alert-info.media
+            %img.media-object.img-rounded.pull-left(src=resized_img_src('/img/observer.jpg', quality=90, mode='crop', width=48, height=48))
+            %strong Observers:
+            As an observer, you can view much of the internal workings of this
+            system, but are powerless to effect it. Play nice.
+
+
+.panel.panel-warning
+    .panel-heading Create a New Group
+    .panel-body %form(method='POST')
+        %input(type='hidden', name='action', value='group.create')
+        +utils.render_form(new_group_form)
+        %span.help-block You will be the first administrator of this group.
+        %button.btn.btn-default(type='submit', disabled='wheel' not in current_user.roles) Create Group
+
+.panel.panel-info
+    .panel-heading Authorization
+    .panel-body
+        This site uses
+        %abbr(title='Access Control Lists') ACLs
+        to govern all control to resources. See a complete table of all
+        permission calls to debug access issues:
+        %br
+        %a.btn.btn-primary.pull-right(href=url_for('debug_auth')) Debug Auth

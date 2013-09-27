@@ -1,3 +1,4 @@
+%%namespace(name='utils', file='_utils.haml')
 -!
     from flask.ext.login import current_user
 !!! 5
@@ -17,12 +18,22 @@
 
             - if current_user.is_authenticated():
                 %.pull-right
-                    Logged in as
-                    %a(href=url_for('user', user=current_user)) &= current_user.name
-                    .
-                    %a(href=url_for('logout')) Logout.
-            - else:
-                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login')) Login
+                    %a(href=url_for('user', user=current_user))
+                        %strong &= current_user.name
+
+                    .btn-group.btn-group-xs
+                        - if any(role in current_user.roles for role in ('wheel', 'observer')):
+                            %a.btn.btn-primary(href=url_for('cpanel'))
+                                +utils.icon('cog')
+                                Admin
+                        
+                        %a.btn.btn-default(href=url_for('logout'))
+                            +utils.icon('log-out')
+                            Logout
+            - elif request.endpoint != 'login':
+                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login'))
+                    +utils.icon('log-in')
+                    Login
 
             %li
                 %a(href='/') %img(src="/img/git-logo.png")
