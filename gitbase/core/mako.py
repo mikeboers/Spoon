@@ -16,15 +16,27 @@ except ImportError:
 
 from flask.ext.mako import MakoTemplates as Base, _render, Template
 from flask import g
+import mako
 import haml
+from markupsafe import Markup
 
 from .flask import app, auth
 from .markdown import markdown
 
 
+mako.filters.DEFAULT_ESCAPES['unicode'] = 'unicode_safe'
+
+def unicode_safe(x):
+    return x if isinstance(x, Markup) else unicode(x)
+
+
 class MakoTemplates(Base):
 
     def init_app(self, app):
+
+        app.config.setdefault('MAKO_IMPORTS', []).append(
+            'from %s import unicode_safe' % __name__
+        )
         super(MakoTemplates, self).init_app(app)
         app.context_processor(self.process_context)
 
