@@ -1,17 +1,52 @@
 %%inherit(file='/_main.haml')
+-!
+    from flask import _request_ctx_stack
+    from gitbase.core.flask import app
+
+    http_method_labels = dict(
+        GET='success',
+        POST='warning',
+        PUT='warning',
+        PATCH='warning',
+        DELETE='danger',
+    )
+-
+    url_adapter = _request_ctx_stack.top.url_adapter
 
 %h1 Permissions
 
-
+@header
+    %thead
+        %th Type
+        %th Name
+        - for user in users: %th &= user.name
 
 %table.table.table-condensed
+    
+    +header
+    -
+        urls = '''
+            /debug/auth
+        '''.strip().split()
+    - for url in urls:
+        %td url
+        %td %a(href=url) &= url
+        -
+            try:
+                rule, args = url_adapter.match(url, return_rule=True)
+            except:
+                rule = None
+            else:
+                view_func = app.view_functions[rule.endpoint]
+        - if rule:
+            - for user in users: %td
+                - for method in rule.methods:
+                    - if method in http_method_labels and auth.can('http.' + method.lower(), view_func, current_user=user):
+                        %span.label(class_='label-' + http_method_labels[method]) = 'http.' + method.lower()
 
     - for group in groups:
 
-        %thead
-            %th Type
-            %th Name
-            - for user in users: %th &= user.name
+        +header
 
         %tr
             %td group

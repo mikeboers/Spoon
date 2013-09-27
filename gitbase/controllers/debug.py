@@ -4,9 +4,12 @@ from . import *
 
 
 @app.route('/debug/auth')
+@auth.ACL('''
+    ALLOW ROOT http.get
+    ALLOW OBSERVER http.get
+    DENY ALL ALL
+''')
 def debug_auth():
-    if not (current_user.is_authenticated() and current_user.is_admin):
-        abort(404)
 
     groups = list(Group.query.all())
     users = list(User.query.all())
