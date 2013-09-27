@@ -41,7 +41,7 @@
         - if rule:
             - for user in users: %td
                 - for method in rule.methods:
-                    - if method in http_method_labels and auth.can('http.' + method.lower(), view_func, current_user=user):
+                    - if method in http_method_labels and auth.can('http.' + method.lower(), view_func, user=user):
                         %span.label(class_='label-' + http_method_labels[method]) = 'http.' + method.lower()
 
     - for group in groups:
@@ -52,13 +52,13 @@
             %td group
             %td &= group.name
             - for user in users: %td
-                - if auth.can('group.read', group, current_user=user):
+                - if auth.can('group.read', group, user=user):
                     .span.label.label-default group.read
-                - if auth.can('group.write', group, current_user=user):
+                - if auth.can('group.write', group, user=user):
                     .span.label.label-warning group.write
-                - if auth.can('group.delete', group, current_user=user):
+                - if auth.can('group.delete', group, user=user):
                     .span.label.label-danger group.delete
-                - if auth.can('repo.create', group, current_user=user):
+                - if auth.can('repo.create', group, user=user):
                     .span.label.label-success repo.create
 
 
@@ -66,9 +66,9 @@
             %td repo
             %td &= group.name + ' / ' + repo.name
             - for user in users: %td
-                - if auth.can('repo.read', repo, current_user=user):
+                - if auth.can('repo.read', repo, user=user):
                     .span.label.label-default repo.read
-                - if auth.can('repo.write', repo, current_user=user):
+                - if auth.can('repo.write', repo, user=user):
                     .span.label.label-warning repo.write
-                - if auth.can('repo.delete', repo, current_user=user):
+                - if auth.can('repo.delete', repo, user=user):
                     .span.label.label-danger repo.delete

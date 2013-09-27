@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 @auth.context_processor
 def provide_user():
-    return dict(current_user=current_user)
+    return dict(user=current_user)
 
 
 @app.before_request
@@ -32,19 +32,19 @@ class Role(object):
         self.name = name
     def __repr__(self):
         return '%s(%r)' % (self.__class__.__name__, self.name)
-    def __call__(self, current_user, **kw):
-        return self.name in getattr(current_user, 'roles', ())
+    def __call__(self, user, **kw):
+        return self.name in getattr(user, 'roles', ())
 
 
 class ADMIN(object):
 
     def __repr__(self):
         return 'ADMIN'
-    def __call__(self, current_user, group, **kw):
-        # log.info('check if %r is an admin' % current_user)
-        if not current_user.is_authenticated() or not group:
+    def __call__(self, user, group, **kw):
+        # log.info('check if %r is an admin' % user)
+        if not user.is_authenticated() or not group:
             return
-        membership = next((m for m in group.memberships if m.user == current_user), None)
+        membership = next((m for m in group.memberships if m.user == user), None)
         return membership and membership.is_admin
 
 
@@ -52,21 +52,21 @@ class OWNER(object):
 
     def __repr__(self):
         return 'OWNER'
-    def __call__(self, current_user, group=None, **kw):
+    def __call__(self, user, group=None, **kw):
         # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-        return current_user.is_authenticated() and group and group.owner == current_user
+        return user.is_authenticated() and group and group.owner == user
 
 
 class MEMBER(object):
 
     def __repr__(self):
         return 'MEMBER'
-    def __call__(self, current_user, group=None, **kw):
+    def __call__(self, user, group=None, **kw):
         # log.info('check if %r is member of %r' % (current_user, group))
         return (
-            current_user.is_authenticated() and
+            user.is_authenticated() and
             group and
-            any(m.user == current_user for m in group.memberships)
+            any(m.user == user for m in group.memberships)
         )
 
 
