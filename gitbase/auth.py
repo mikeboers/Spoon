@@ -19,7 +19,7 @@ def provide_user():
 
 @app.before_request
 def assert_can_access_url_pieces():
-    for v in request.view_args.itervalues():
+    for v in (request.view_args or {}).itervalues():
         if isinstance(v, Repo):
             auth.assert_can('repo.read', v)
         if isinstance(v, Group):
