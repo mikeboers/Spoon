@@ -1,4 +1,6 @@
 
+- member of private group does not have access to private repo
+
 - figure out a complete URL layout for:
     - HTTP git access
     - lists of commits

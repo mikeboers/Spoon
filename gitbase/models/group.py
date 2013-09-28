@@ -57,19 +57,16 @@ class Group(db.Model):
     @property
     def __acl__(self):
         yield 'ALLOW ROOT ANY'
+
         # TODO: user specified goes here.
-        yield 'ALLOW MEMBER group.write'
+
+        yield 'ALLOW ADMIN repo.create'
+        yield 'ALLOW ADMIN group.write'
         yield 'ALLOW MEMBER group.read'
-        yield 'ALLOW MEMBER repo.create'
-        yield 'ALLOW MEMBER repo.write'
-        yield 'ALLOW MEMBER repo.read'
-        yield 'ALLOW MEMBER repo.delete'
 
         if self.is_public:
             yield 'ALLOW ANY group.read'
 
-        else:
-            yield 'DENY ANY ANY'
 
     @property
     def __acl_context__(self):

@@ -36,11 +36,13 @@ class Repo(db.Model):
         yield 'ALLOW ADMIN ALL'
         yield 'ALLOW OWNER ALL'
 
+        yield 'ALLOW ADMIN repo.delete'
+        yield 'ALLOW MEMBER repo.write' # read is implied
+
         # TODO: user specified goes here.
         
         if not self.is_public:
-            yield 'DENY ANY ANY'
-            return
+            yield 'DENY ANONYMOUS ANY'
 
         for ace in self.group.__acl__:
             yield ace
