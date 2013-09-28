@@ -1,7 +1,9 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='tree_utils', file='tree.haml')
 %%namespace(name='blob_utils', file='blob.haml')
+%%namespace(name='utils', file='_utils.haml')
 -!
+    import datetime
     import itertools
     import pygit2 as git
     from gitbase.utils import debug
@@ -63,30 +65,55 @@
 
 +render_card(repo, link=False, avatar_size=128)
 
-- if head:
-
-    = tree_utils.render_tree(repo, head.tree, title=head.message)
 
 
-    %h2 Recent Commits
+%ul#repo-tabs.nav.nav-tabs
+    %li.active %a(href='#tree', dataToggle='tab')
+        +utils.icon('folder-open')
+        Files
+    %li %a(href='#commits', dataToggle='tab')
+        +utils.icon('list')
+        Commits
 
-    -
-        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
-        commits = itertools.islice(commit_iter, 10)
+.tab-content
 
-    %ol - for commit in commits:
-        %li
-            %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
-                %code= commit.hex[:8]
-                &= commit.message
+    #tree.tab-pane.active
 
-    -
-        next_ = next(commit_iter, None)
-    - if next_:
-        There are more, starting with
-        %code &= next_.hex[:8]
+        - if head:
+            = tree_utils.render_tree(repo, head.tree, title=head.message)
+        - else:
+            .alert.alert-warning There are no files.
 
-- else:
-    .alert.alert-warning There are no commits.
+    #commits.tab-pane
+
+        - if head:
+            -
+                commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
+                commits = itertools.islice(commit_iter, 50)
+                last_date = None
+                commit_date = lambda c: datetime.datetime.fromtimestamp(c.commit_time).date()
+
+            - for date, commit_group in itertools.groupby(commits, commit_date):
+                - commit_group = list(commit_group)
+                .panel.panel-default
+                    .panel-heading &=commit_date(commit_group[0])
+                    .panel-body
+                        - for commit in commit_group: .media
+                            %.pull-left.media-object
+                                %img.img-rounded(src=resized_img_src('/img/git-logo-pale.png', width=32, height=32), width=32, height=32)
+
+                            %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
+                                %code= commit.hex[:8]
+                                &= commit.message.strip().splitlines()[0]
+
+            -
+                next_ = next(commit_iter, None)
+            - if next_:
+                There are more, starting with
+                %code &= next_.hex[:8]
+
+        - else:
+
+            .alert.alert-warning There are no commits.
 
 
