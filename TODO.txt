@@ -1,4 +1,10 @@
 
+- figure out a complete URL layout for:
+    - HTTP git access
+    - lists of commits
+    - files in a branch
+    - diff in a commit
+
 - vex for dialogs; https://github.com/HubSpot/vex
 
 - test the permissions!

@@ -52,6 +52,7 @@
             %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
 
         .media-body
+
             %h4.media-heading +render_title(repo, link=link)
             %p
                 - if repo.description: &= repo.description
@@ -59,6 +60,10 @@
             %p %small
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.
+
+            .input-group(style='width: 50%')
+                %span.input-group-addon +utils.icon('cloud-download')
+                %input.form-control.input-sm(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
 
 
 +render_card(repo, link=False, avatar_size=128)
