@@ -16,6 +16,30 @@
     %li
         &= commit.hex[:8]
 
+
+.alert.alert-info.media
+    .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
+    %code.pull-right &= commit.hex[:8]
+    .media-body
+        %strong Commit:
+        &= commit.message.strip().splitlines()[0]
+        %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
+        %small
+            &= commit.author.name
+            authored
+            &= fuzzy_time(commit.commit_time)
+    
+
+
+%ul.nav.nav-tabs
+    %li.active %a(href='#')
+        +utils.icon('pencil')
+        Diff
+    -# %li %a(href='#')
+        +utils.icon('folder-open')
+        Files
+
+
 -
     mode_to_class = {
         '+': 'git-diff-plus',
@@ -30,11 +54,6 @@
     .panel.panel-default
 
         .panel-heading
-            .pull-right
-                %code ${prev.hex[:8]}
-                ..
-                %code ${commit.hex[:8]}
-
             &= patch.new_file_path
             = utils.permalink(patch.new_file_path.replace('/', '-'), anchor=True)
 

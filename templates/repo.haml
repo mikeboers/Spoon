@@ -56,8 +56,6 @@
             %p
                 - if repo.description: &= repo.description
                 - else: %em No description.
-            - if not repo.is_public:
-                %small %span.label.label-warning PRIVATE
             %p %small
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.

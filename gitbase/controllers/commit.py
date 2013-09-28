@@ -3,7 +3,7 @@ import pygit2
 from . import *
 
 
-@app.route('/<repo:repo>/commit/<commit>')
+@app.route('/<repo:repo>/diff/<commit>')
 def commit(repo, commit):
 
     try:

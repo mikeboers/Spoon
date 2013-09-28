@@ -10,7 +10,10 @@
     from gitbase.utils import debug
 -
     try:
-        head = repo.git.head.get_object()
+        if 'after' in request.args:
+            head = repo.git.revparse_single(request.args['after'])
+        else:
+            head = repo.git.head.get_object()
     except git.GitError:
         head = None
 
@@ -62,8 +65,10 @@
     -
         next_ = next(commit_iter, None)
     - if next_:
-        There are more, starting with
-        %code &= next_.hex[:8]
+        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + next_.hex[:16])
+            Older Commits
+    - else:
+        .alert.alert-warning There are no more commits.
 
 - else:
 

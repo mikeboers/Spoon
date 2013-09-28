@@ -1,5 +1,12 @@
 -!
+    import hashlib
     import os
+
+
+@gravatar(email, size=200, **kw)
+    - hash_ = hashlib.md5(email.strip().lower()).hexdigest()
+    %img(src='//gravatar.com/avatar/%s.jpg?s=%d' % (hash_, size), width=size, height=size, **kw)
+
 
 @permalink(target, anchor=False)
     - if anchor:
