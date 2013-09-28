@@ -24,7 +24,6 @@ from .flask import app, auth
 from .markdown import markdown
 
 
-mako.filters.DEFAULT_ESCAPES['unicode'] = 'unicode_safe'
 
 def unicode_safe(x):
     return x if isinstance(x, Markup) else unicode(x)
@@ -43,7 +42,8 @@ class MakoTemplates(Base):
     @staticmethod
     def create_lookup(app):
         lookup = Base.create_lookup(app)
-
+        lookup.default_filters = ['unicode_safe']
+        
         get_template = lookup.get_template
         def new_get_template(name):
             g._mako_template_name = name
