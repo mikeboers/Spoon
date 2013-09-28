@@ -40,15 +40,15 @@ class Repo(db.Model):
         yield 'ALLOW MEMBER repo.write' # read is implied
 
         # TODO: user specified goes here.
-        
-        if not self.is_public:
-            yield 'DENY ANONYMOUS ANY'
 
         for ace in self.group.__acl__:
             yield ace
-        
+
         if self.is_public:
             yield 'ALLOW ANY repo.read'
+        else:
+            yield 'DENY ANONYMOUS ANY'
+        
 
     @property
     def __acl_context__(self):

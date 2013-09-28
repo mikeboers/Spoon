@@ -66,6 +66,10 @@ class Group(db.Model):
 
         if self.is_public:
             yield 'ALLOW ANY group.read'
+        else:
+            # Surpress the public's ability to do anything within this
+            # group, without those objects needing to know about it.
+            yield 'DENY ANONYMOUS ANY'
 
 
     @property
