@@ -1,143 +1,13 @@
 
 - vex for dialogs; https://github.com/HubSpot/vex
 
-- Need either another stage between ADMIN and MEMBER, or above ADMIN:
-    - ROOT or SUDOER as absolute top (e.g. me)
-    - ADMIN or MANAGER or LEAD as admin of a group
-    
-    - WHEEL > ADMIN of site > STAFF of group > MEMBER of group
-        - This makes sense from an implementation standpoint, but in GitHub
-          you can be a group administrator.
-
-    Could also just be more explicit:
-
-    ROOT (when sudo switch is turned on)
-    SITE_ADMIN (the rest of the time)
-    GROUP_ADMIN
-    GROUP_MEMBER
-    REPO_OWNER
-
-    site.admin
-    site.observer
-    group.admin
-    group.owner
-    group.member
-    repo.owner
-
-    Or, add user roles, and the ROOT and OBSERVER can be via 'site.admin' and
-    'site.observer' roles. Then ADMIN is for the group.
-
-
-
-
-
-- is_sudoer on user, which has to be turned on in the session
-
 - test the permissions!
 
-- Fix permissions when group is private but repo isnt:
-    user in group should be able to see it
-    public should not be able to see it
+- 'group.autocreate' and 'repo.autocreate'
 
+- 'group.create' permission is effectively 'http.post' on 'group_create' entrypoint
 
-- Group/Repo.lookup(..., create=True): create implies a request to create it if
-  it does not already exist, but this is still subject to the user having
-  the permission to do so.
-
-- Where do we attach the 'group.create' permission? Perhaps a @descriptor
-  decorator to allow for the Group class to have a different acl from a Group
-  instance?
-
-  @classproperty
-  def __acl__(cls, obj): where obj may be None
-
-
-- make the Users object an implementation detail. Everything is focused on
-  groups. You never actually render users.
-
-  - Users do not have to have a home.
-  
-  We do use a User to determine membership and stuff, but we still render the
-  home repositories of those users.
-
-
-- schema relationships
-
-    - User
-        - home: a single repository that is their identity. They are the
-          OWNER of that repo.
-        * memberships
-
-    - Repo
-        - group
-
-    - Group
-        * members: a set of Memberships
-        * repos: a set of repos
-
-    - Membership:
-        - group
-        - user
-        - is_visible
-        - acl_blob
-
-
-
-- Split group/repo permissions from each other, e.g.:
-
-    ALLOW ADMIN ANY
-    ALLOW OWNER ANY
-    ALLOW MEMBER repo.update # Write to a repo.
-    ALLOW MEMBER repo.create # Create a repo.
-
-- Possible permissions following CRUD names:
-    repo.meta.update -> Update name/description.
-    repo.create -> Create a repo in this context.
-    repo.read -> Read a repo in this context.
-    repo.update -> Push to a repo in this context.
-    repo.delete -> Delete a repo in this context.
-
-- Possible permissions following GIT names:
-    - repo.init
-    - repo.fetch
-    - repo.push
-    - repo.pushf (forced?)
-    - repo.delete
-
-- Possible permissions frollowing REST names:
-    - repo.post -> create a repo
-    - repo.put -> write into a repo
-    - repo.get -> read
-    - repo.delete -> delete a repo
-
-    - branch.post -> update a branch
-    - branch.put -> force a branch
-    - branch.
-
-
-
-- separate tree/commits into tabs
-- auth view for repos, showing what everyone can do it with
-
-- hook git-base-shell into authx
-
-    - check for basic write permissions on git-receive-pack and git
-    >>> app.test_request_context().push()
-    >>> login_user(user or AnonymousUserMixin())
-    now the permission checking works
-    if not auth.can('read', repo):
-        die('No repo with read permissions.')
-
-
-
-
-- avatars on groups and users
-- group.is_user_group signals that it holds all of a user's repos and should
-  proxy a bunch of the details
-
-- SSH keys for users
-    - update .ssh/authorized_keys
-    - command="bash -c 'env | grep SSH | sort'",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty KEY
+- avatars are all from gravatar
 
 - add `update` hook to repos on creation. It is run once for every branch being
   pushed BEFORE they are accepted, allowing us to do write/force/merge control.
@@ -150,7 +20,6 @@
 
   http://git-scm.com/book/en/Git-Internals-Transfer-Protocols#The-Dumb-Protocol
 
-
 - auth via GitHub, Facebook, passwords, or one-time links which create cookies
   for access to single projects.
 
@@ -160,48 +29,6 @@
   OR respond when they are hit with a webhook from GitHub or a post-recieve hook.
 
 
-Access control list:
-    
-    Permissions attached to users as a comma seperated list of strings:
-        repo.create
-
-    ACLs are a series of access control lines
-
-        has(PERMISSION) ALLOW PERMISSION
-        repo.name == self.name ALLOW write
-        repo.name == self.name ALLOW force
-
-
-
-
-Schema:
-
-    User: An actual user. Does not contain repos.
-        - name
-        - avatar_url
-        - password_hash
-        - permission_blob: encoded permissions
-
-    Group:
-        - name
-        - avatar_url
-        - description
-        - acl_blob: encoded access control list
-
-    Repo: A repo.
-        - name
-        - description
-        - remote_url
-        - acl_blob: encoded access control list
-
-
-    
-Commands:
-
-    git-base-shell: the ssh shell
-    git-base-ssh-keys: generate a .ssh/authorized_keys file from the
-        database
-    git-base-import: add existing repos to the database
 
     
 Name:

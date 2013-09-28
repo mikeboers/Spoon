@@ -1,0 +1,70 @@
+%%inherit(file="/_main.haml")
+%%namespace(name='tree_utils', file='tree.haml')
+%%namespace(name='blob_utils', file='blob.haml')
+%%namespace(name='repo_utils', file='repo.haml')
+%%namespace(name='utils', file='_utils.haml')
+-!
+    import datetime
+    import itertools
+    import pygit2 as git
+    from gitbase.utils import debug
+-
+    try:
+        head = repo.git.head.get_object()
+    except git.GitError:
+        head = None
+
+
++repo_utils.render_card(repo, link=False, avatar_size=128)
+
+
+
+@breadcrumb
+    %li
+        %a(href=url_for('group', group=repo.group))
+            &= repo.group.name
+    %li
+        &= repo.name
+    %li
+        commits
+
+
+%ul.nav.nav-tabs
+    %li %a(href=url_for('repo', repo=repo))
+        +utils.icon('folder-open')
+        Files
+    %li.active %a(href='#')
+        +utils.icon('list')
+        Commits
+
+
+- if head:
+    -
+        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
+        commits = itertools.islice(commit_iter, 50)
+        last_date = None
+        commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
+        ref_names = repo.git.listall_references()
+        branch_names = [ref.rsplit('/', 1)[1] for ref in ref_names if ref.startswith('refs/heads/')]
+        hex_to_branches = {}
+        for name in branch_names:
+            hex_to_branches.setdefault(repo.git.revparse_single(name).hex, []).append(name)
+
+    %ol.list-unstyled - for commit in commits:
+        %li
+            %small.pull-right &= commit_time(commit)
+            %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
+                %code= commit.hex[:8]
+                - for branch in hex_to_branches.get(commit.hex, ()):
+                    %span.label.label-primary &= branch
+                &= commit.message.strip().splitlines()[0]
+
+    -
+        next_ = next(commit_iter, None)
+    - if next_:
+        There are more, starting with
+        %code &= next_.hex[:8]
+
+- else:
+
+    .alert.alert-warning There are no commits.
