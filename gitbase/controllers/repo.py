@@ -41,9 +41,9 @@ def commits(repo):
     prev_commits = prev_commits[-50:]
     prev_commit = prev_commits[0] if prev_commits else None
 
-    hex_to_refs = {}
+    hex_to_refs = {head.oid: [('head', 'HEAD')]}
     for ref in repo.git.listall_references():
-        hex_to_refs.setdefault(repo.git.revparse_single(ref).oid, []).append(ref)
+        hex_to_refs.setdefault(repo.git.revparse_single(ref).oid, []).append(ref.split('/', 2)[1:])
 
     return render_template('commits.haml',
         repo=repo,

@@ -36,7 +36,7 @@
     %li.active %a(href='#')
         +utils.icon('list')
         Commits
-    
+
     %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
         +utils.icon('folder-open')
         Files
@@ -55,12 +55,24 @@
 
     %ol#commit-list.list-unstyled - for commit in commits:
         %li
-            %small.pull-right &= commit_time(commit)
-            %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
-                %code= commit.hex[:8]
-                - for ref in hex_to_refs.get(commit.oid, ()):
-                    %span.label.label-primary &= ref.split('/', 1)[-1]
+            - url = url_for('commit', repo=repo, commit=commit.hex[:8])
+            -# %a.pull-right.btn.btn-default.btn-sm(href=url) = commit.hex[:8]
+            %a(href=url)
+                %code &= commit.hex[:8]
+                - for type_, name in hex_to_refs.get(commit.oid, ()):
+                    %span.label.label-primary &= name
                 &= commit.message.strip().splitlines()[0]
+            %br
+            %small
+                Authored by
+                ${commit.author.name}
+                ${fuzzy_time(commit_time(commit))}.
+                -# We only really care about the author vs committer if the
+                -# names are different; rebasing doesn't matter.
+                - if any(getattr(commit.author, name) != getattr(commit.committer, name) for name in ('name', 'email')):
+                    Committed by
+                    ${commit.committer.name}
+                    ${fuzzy_time(commit.committer.time)}.
 
 
     - if next_commit:
