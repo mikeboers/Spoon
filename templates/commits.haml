@@ -9,16 +9,8 @@
     import pygit2 as git
     from gitbase.utils import debug
 
-    COMMITS_PER_PAGE = 50
+    commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
 
--
-    try:
-        if 'after' in request.args:
-            head = repo.git.revparse_single(request.args['after'])
-        else:
-            head = repo.git.head.get_object()
-    except git.GitError:
-        head = None
 
 
 +repo_utils.render_card(repo, link=False, avatar_size=128)
@@ -41,58 +33,39 @@
         +utils.icon('signal')
         Overview
 
+    %li.active %a(href='#')
+        +utils.icon('list')
+        Commits
+    
     %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
         +utils.icon('folder-open')
         Files
 
-    %li.active %a(href='#')
-        +utils.icon('list')
-        Commits
 
 
 
 - if head:
 
-    -#
-        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL | git.GIT_SORT_REVERSE)
-        prev = None
-        try:
-            next(commit_iter)
-            for i in xrange(COMMITS_PER_PAGE):
-                prev = next(commit_iter)
-        except StopIteration:
-            pass
 
-    -# if prev:
-        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + prev.hex)
+
+    - if prev_commit:
+        %a.btn.btn-default(href=url_for('commits', repo=repo) + '?after=' + prev_commit.hex)
             +utils.icon('arrow-left')
-            Newer
+            Newer Commits
 
-    -
-        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
-        commits = itertools.islice(commit_iter, COMMITS_PER_PAGE)
-        last_date = None
-        commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
-        ref_names = repo.git.listall_references()
-        branch_names = [ref.rsplit('/', 1)[1] for ref in ref_names if ref.startswith('refs/heads/')]
-        hex_to_branches = {}
-        for name in branch_names:
-            hex_to_branches.setdefault(repo.git.revparse_single(name).hex, []).append(name)
-
-    %ol.list-unstyled - for commit in commits:
+    %ol#commit-list.list-unstyled - for commit in commits:
         %li
             %small.pull-right &= commit_time(commit)
             %a(href=url_for('commit', repo=repo, commit=commit.hex[:8]))
                 %code= commit.hex[:8]
-                - for branch in hex_to_branches.get(commit.hex, ()):
-                    %span.label.label-primary &= branch
+                - for ref in hex_to_refs.get(commit.oid, ()):
+                    %span.label.label-primary &= ref.split('/', 1)[-1]
                 &= commit.message.strip().splitlines()[0]
 
 
-    - next_ = next(commit_iter, None)
-    - if next_:
-        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + next_.hex)
-            Older
+    - if next_commit:
+        %a.btn.btn-default(href=url_for('commits', repo=repo) + '?after=' + next_commit.hex)
+            Older Commits
             +utils.icon('arrow-right')
     - else:
         .alert.alert-warning There are no more commits.

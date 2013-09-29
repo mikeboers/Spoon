@@ -33,13 +33,13 @@
         +utils.icon('signal')
         Overview
 
-    %li.active %a(href='#')
-        +utils.icon('folder-open')
-        Files
-
     %li %a(href=url_for('commits', repo=repo))
         +utils.icon('list')
         Commits
+    
+    %li.active %a(href='#')
+        +utils.icon('folder-open')
+        Files
 
 
 @render_tree(repo, tree, base='', title=None)

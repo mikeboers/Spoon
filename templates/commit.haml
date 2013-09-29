@@ -1,5 +1,6 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='utils', file='_utils.haml')
+%%namespace(name='repo_utils', file='repo.haml')
 -!
     import os
 -
@@ -17,27 +18,43 @@
         &= commit.hex[:8]
 
 
-.alert.alert-info.media
-    .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
-    %code.pull-right &= commit.hex[:8]
-    .media-body
-        %strong Commit:
-        &= commit.message.strip().splitlines()[0]
-        %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
-        %small
-            &= commit.author.name
-            authored
-            &= fuzzy_time(commit.commit_time)
-    
++repo_utils.render_card(repo)
 
 
 %ul.nav.nav-tabs
+
+    %li %a(href=url_for('repo', repo=repo))
+        +utils.icon('signal')
+        Overview
+
+    %li %a(href=url_for('commits', repo=repo))
+        +utils.icon('list')
+        Commits
+
+    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
+        +utils.icon('folder-open')
+        Files
+
     %li.active %a(href='#')
         +utils.icon('pencil')
         Diff
-    -# %li %a(href='#')
-        +utils.icon('folder-open')
-        Files
+
+
+@render_card(commit)
+    .alert.alert-info.media
+        .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
+        %code.pull-right &= commit.hex[:8]
+        .media-body
+            %strong Commit:
+            &= commit.message.strip().splitlines()[0]
+            %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
+            %small
+                &= commit.author.name
+                authored
+                &= fuzzy_time(commit.commit_time)
+    
+
++render_card(commit)
 
 
 -
