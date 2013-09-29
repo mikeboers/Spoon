@@ -60,10 +60,6 @@
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.
 
-            .input-group(style='width: 50%')
-                %span.input-group-addon +utils.icon('cloud-download')
-                %input.form-control.input-sm(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
-
 
 +render_card(repo, link=False, avatar_size=128)
 
@@ -81,6 +77,10 @@
         +utils.icon('folder-open')
         Files
 
+
+.input-group(style='width: 50%; margin-bottom: 12px')
+    %span.input-group-addon +utils.icon('cloud-download')
+    %input.form-control.input-sm(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
 
 
 - if head:

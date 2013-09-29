@@ -1,16 +1,7 @@
 
 
-- figure out a complete URL layout for:
-
-    /<group>/<repo> -> base tree + README.md
-
-    /<group>/<repo>/tree/HEAD
-    /<group>/<repo>/tree/<ref>
-
-    /<group>/<repo>/commits
-    /<group>/<repo>/commits?after=<hex>
-
-    /<group>/<repo>/diff/<ref>
+- repo tabs should be a mixin somewhere
+- repo views should always show the commit that they are working on
 
 - How do the repo view relate to each other?
 
