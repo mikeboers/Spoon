@@ -1,5 +1,7 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='blob_utils', file='blob.haml')
+%%namespace(name='repo_utils', file='repo.haml')
+%%namespace(name='utils', file='_utils.haml')
 
 -!
     import os
@@ -12,6 +14,8 @@
         %a(href=url_for('group', group=repo.group)) &= repo.group.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
+    %li
+        %a(href=url_for('tree', repo=repo, ref=ref)) files
 
     - chunks = path.strip('/').split('/')
     - for i, chunk in enumerate(chunks):
@@ -21,6 +25,21 @@
             - else:
                 &= chunk
 
++repo_utils.render_card(repo, link=False, avatar_size=128)
+
+%ul.nav.nav-tabs
+
+    %li %a(href=url_for('repo', repo=repo))
+        +utils.icon('signal')
+        Overview
+
+    %li.active %a(href='#')
+        +utils.icon('folder-open')
+        Files
+
+    %li %a(href=url_for('commits', repo=repo))
+        +utils.icon('list')
+        Commits
 
 
 @render_tree(repo, tree, base='', title=None)
@@ -53,13 +72,6 @@
                 -# %td << latest commit message >>
                 -# %td &= fuzzy_time
                 -# %td %a(href='#') %code &= entry.hex[:8]
-
-
-    - if 'README.md' in tree:
-        -
-            entry = tree['README.md']
-            blob = repo.git[entry.oid]
-        = blob_utils.render_blob(blob, base + ('/' if base else '') + 'README.md')
 
 
 = render_tree(repo, tree, path)

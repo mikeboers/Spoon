@@ -1,11 +1,36 @@
 
-- member of private group does not have access to private repo
 
 - figure out a complete URL layout for:
-    - HTTP git access
-    - lists of commits
-    - files in a branch
-    - diff in a commit
+
+    /<group>/<repo> -> base tree + README.md
+
+    /<group>/<repo>/tree/HEAD
+    /<group>/<repo>/tree/<ref>
+
+    /<group>/<repo>/commits
+    /<group>/<repo>/commits?after=<hex>
+
+    /<group>/<repo>/diff/<ref>
+
+- How do the repo view relate to each other?
+
+    - main repo view is the README, or instructions on how to push to it, like github
+    
+    Create a new repository on the command line
+
+        touch README.md
+        git init
+        git add README.md
+        git commit -m "first commit"
+        git remote add origin git@github.com:mikeboers/sandbox.git
+        git push -u origin master
+        Push an existing repository from the command line
+
+    Push an existing repository
+
+        git remote add origin git@github.com:mikeboers/sandbox.git
+        git push -u origin master
+
 
 - vex for dialogs; https://github.com/HubSpot/vex
 

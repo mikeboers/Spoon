@@ -8,6 +8,9 @@
     import itertools
     import pygit2 as git
     from gitbase.utils import debug
+
+    COMMITS_PER_PAGE = 50
+
 -
     try:
         if 'after' in request.args:
@@ -33,18 +36,41 @@
 
 
 %ul.nav.nav-tabs
+
     %li %a(href=url_for('repo', repo=repo))
+        +utils.icon('signal')
+        Overview
+
+    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
         +utils.icon('folder-open')
         Files
+
     %li.active %a(href='#')
         +utils.icon('list')
         Commits
 
 
+
 - if head:
+
+    -#
+        commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL | git.GIT_SORT_REVERSE)
+        prev = None
+        try:
+            next(commit_iter)
+            for i in xrange(COMMITS_PER_PAGE):
+                prev = next(commit_iter)
+        except StopIteration:
+            pass
+
+    -# if prev:
+        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + prev.hex)
+            +utils.icon('arrow-left')
+            Newer
+
     -
         commit_iter = repo.git.walk(head.oid, git.GIT_SORT_TOPOLOGICAL)
-        commits = itertools.islice(commit_iter, 50)
+        commits = itertools.islice(commit_iter, COMMITS_PER_PAGE)
         last_date = None
         commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
         ref_names = repo.git.listall_references()
@@ -62,13 +88,16 @@
                     %span.label.label-primary &= branch
                 &= commit.message.strip().splitlines()[0]
 
-    -
-        next_ = next(commit_iter, None)
+
+    - next_ = next(commit_iter, None)
     - if next_:
-        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + next_.hex[:16])
-            Older Commits
+        %a.btn.btn-primary(href=url_for('commits', repo=repo) + '?after=' + next_.hex)
+            Older
+            +utils.icon('arrow-right')
     - else:
         .alert.alert-warning There are no more commits.
+
+
 
 - else:
 

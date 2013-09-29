@@ -1,5 +1,4 @@
 %%inherit(file="/_main.haml")
-%%namespace(name='tree_utils', file='tree.haml')
 %%namespace(name='blob_utils', file='blob.haml')
 %%namespace(name='utils', file='_utils.haml')
 -!
@@ -68,18 +67,34 @@
 
 +render_card(repo, link=False, avatar_size=128)
 
-
 %ul.nav.nav-tabs
+
     %li.active %a(href='#')
+        +utils.icon('signal')
+        Overview
+
+    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
         +utils.icon('folder-open')
         Files
+
     %li %a(href=url_for('commits', repo=repo))
         +utils.icon('list')
         Commits
 
 
+
 - if head:
-    = tree_utils.render_tree(repo, head.tree, title=head.message)
+
+
+    - if 'README.md' in head.tree:
+        -
+            entry = head.tree['README.md']
+            blob = repo.git[entry.oid]
+        = blob_utils.render_blob(blob, 'README.md')
+    - else:
+
+        .alert.alert-info No README.
+
 - else:
     .alert.alert-warning There are no files.
 
