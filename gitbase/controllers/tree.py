@@ -1,4 +1,5 @@
 import mimetypes
+import os
 
 import pygit2
 
@@ -34,7 +35,10 @@ def raw_blob(repo, path, ref='HEAD'):
     if not isinstance(obj, pygit2.Blob):
         abort(404)
 
-    type_, encoding = mimetypes.guess_type(path)
-    type_ = type_ or 'application/octet-stream'
+    if os.path.splitext(path)[1] == '.md':
+        type_ = 'text/x-markdown'
+    else:
+        type_, encoding = mimetypes.guess_type(path)
+        type_ = type_ or 'application/octet-stream'
 
     return obj.data, 200, [('Content-Type', type_)]
