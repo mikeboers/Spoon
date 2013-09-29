@@ -8,6 +8,8 @@
     /<group>/<repo>/raw/objects/<hex><ext>
         ext allows for sending proper content-type for browsers
 
+- "Files @ HEAD" tab should include the branch/rev
+
 - How do the repo view relate to each other?
 
     - main repo view is the README, or instructions on how to push to it, like github
