@@ -69,7 +69,7 @@ class Group(db.Model):
         else:
             # Surpress the public's ability to do anything within this
             # group, without those objects needing to know about it.
-            yield 'DENY ANONYMOUS ANY'
+            yield 'DENY !MEMBER ANY'
 
 
     @property
