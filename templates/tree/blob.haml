@@ -1,5 +1,8 @@
 %%inherit(file="/_main.haml")
 %%namespace(name="tree_utils", file="./_utils.haml")
+%%namespace(name="utils", file="/_utils.haml")
+%%namespace(name="repo_utils", file="/repo/_utils.haml")
+%%namespace(name="commit_utils", file="/commit/_utils.haml")
 -!
     import mimetypes
     import os
@@ -7,6 +10,7 @@
     import pygments
 -
     group = repo.group
+
 
 @breadcrumb
     %li
@@ -23,6 +27,13 @@
                 &= chunk
 
 
++repo_utils.media(repo, link=False)
+
++repo_utils.page_tabs(repo, ref=ref, active=False)
+    %li.active %a(href='#')
+        +utils.icon('file')
+        &= os.path.basename(path)
+
++commit_utils.alert(commit)
 
 +tree_utils.render_blob(repo, blob, path)
-

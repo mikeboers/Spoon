@@ -19,26 +19,14 @@
         &= commit.hex[:8]
 
 
-+repo_utils.media(repo)
++repo_utils.media(repo, link=False)
 
 
-%ul.nav.nav-tabs
-
-    %li %a(href=url_for('repo', repo=repo))
-        +utils.icon('signal')
-        Overview
-
-    %li %a(href=url_for('commits', repo=repo))
-        +utils.icon('list')
-        Commits
-
-    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
-        +utils.icon('folder-open')
-        Files
++repo_utils.page_tabs(repo, ref=commit.hex[:8])
 
     %li.active %a(href='#')
         +utils.icon('pencil')
-        Diff
+        Diff ${commit.hex[:8]|h}
 
 
     
@@ -50,9 +38,10 @@
     mode_to_class = {
         '+': 'git-diff-plus',
         '-': 'git-diff-minus',
-        ' ': 'git-diff-same',
+        ' ': 'git-diff-unchanged',
         '>': 'git-diff-right',
         '<': 'git-diff-left',
+        '=': 'git-diff-both',
     }
 
 - for patch in diff:

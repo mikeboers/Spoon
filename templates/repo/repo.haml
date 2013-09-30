@@ -1,6 +1,7 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='tree_utils', file='/tree/_utils.haml')
 %%namespace(name='repo_utils', file='./_utils.haml')
+%%namespace(name='commit_utils', file='/commit/_utils.haml')
 %%namespace(name='utils', file='/_utils.haml')
 -!
     import datetime
@@ -16,8 +17,8 @@
 
 @breadcrumb
     %li
-        %a(href=url_for('group', group=group))
-            &= group.name
+        %a(href=url_for('group', group=repo.group))
+            &= repo.group.name
     %li
         &= repo.name
 
@@ -25,25 +26,9 @@
 
 
 +repo_utils.media(repo, link=False, avatar_size=128)
-
-%ul.nav.nav-tabs
-
-    %li.active %a(href='#')
-        +utils.icon('signal')
-        Overview
-
-    %li %a(href=url_for('commits', repo=repo))
-        +utils.icon('list')
-        Commits
-
-    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
-        +utils.icon('folder-open')
-        Files
-
-
-.input-group(style='width: 50%; margin-bottom: 12px')
-    %span.input-group-addon +utils.icon('cloud-download')
-    %input.form-control.input-sm(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
++repo_utils.page_tabs(repo)
+- if head:
+    +commit_utils.alert(head)
 
 
 - if head:

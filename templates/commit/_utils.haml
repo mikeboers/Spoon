@@ -1,14 +1,28 @@
 %%namespace(name='utils', file='/_utils.haml')
+-!
+    import datetime
+
+    commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
+
+
+@author_info(commit)
+    
+    Authored by
+    ${commit.author.name}
+    ${fuzzy_time(commit_time(commit))}.
+    -# We only really care about the author vs committer if the
+    -# names are different; rebasing doesn't matter.
+    - if any(getattr(commit.author, name) != getattr(commit.committer, name) for name in ('name', 'email')):
+        Committed by
+        ${commit.committer.name}
+        ${fuzzy_time(commit.committer.time)}.
+
 
 @alert(commit)
     .alert.alert-info.media
         .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
-        %code.pull-right &= commit.hex[:8]
         .media-body
-            %strong Commit:
+            %strong &= commit.hex[:8] + ':'
             &= commit.message.strip().splitlines()[0]
             %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
-            %small
-                &= commit.author.name
-                authored
-                &= fuzzy_time(commit.commit_time)
+            %small +author_info(commit)

@@ -6,7 +6,7 @@ from . import *
 
 @app.route('/<repo:repo>')
 def repo(repo):
-    return render_template('repo/repo.haml', repo=repo, group=repo.group)
+    return render_template('repo/repo.haml', repo=repo)
 
 
 @app.route('/<repo:repo>/commits')

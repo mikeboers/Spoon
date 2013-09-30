@@ -7,7 +7,7 @@
     import pygments.formatters
 
 
-@render_tree(repo, tree, base='', title=None)
+@render_tree(repo, ref, tree, base='', title=None)
 
     .panel.panel-info
 
@@ -19,7 +19,7 @@
             - if base: %tr
                 - parent = os.path.dirname(base)
                 - if parent:
-                    %td %a(href=url_for('tree', repo=repo, path=parent)) ..
+                    %td %a(href=url_for('tree', repo=repo, ref=ref, path=parent)) ..
                 - else:
                     %td %a(href=url_for('repo', repo=repo)) ..
 
@@ -32,7 +32,7 @@
                     - else:
                         %span.glyphicon.glyphicon-file
                 %td
-                    %a(href=url_for('tree', repo=repo, path=os.path.join(base, entry.name)))
+                    %a(href=url_for('tree', repo=repo, ref=ref, path=os.path.join(base, entry.name)))
                         &= entry.name + ('/' if is_tree else '')
                 -# %td << latest commit message >>
                 -# %td &= fuzzy_time
@@ -54,7 +54,16 @@
     .panel.panel-default.git-blob
         .panel-heading
             .pull-right %a.btn.btn-primary.btn-xs(href=raw_url) Raw
-            %h2.panel-title &= path
+            %h2.panel-title
+                - chunks = filter(None, path.strip('/').split('/'))
+                - for i, chunk in enumerate(chunks):
+                    - if i:
+                        = '/'
+                    - if i + 1 < len(chunks):
+                        %a(href=url_for('tree', repo=repo, path='/'.join(chunks[:i + 1]))) &= chunk
+                    - else:
+                        &= chunk
+
         - if ext == '.md':
             .panel-body = markdown(blob.data)
         - elif mimetype and mimetype.startswith('image/'):

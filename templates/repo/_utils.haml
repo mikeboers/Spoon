@@ -1,4 +1,4 @@
-
+%%namespace(name="utils", file="/_utils.haml")
 
 @title(repo, link=True)
 
@@ -25,6 +25,10 @@
 
     .media
 
+        .input-group.pull-right.input-sm(style='width: 35%; margin-bottom: 12px')
+            %span.input-group-addon +utils.icon('cloud-download')
+            %input.form-control(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
+
         -# .pull-left
             %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
 
@@ -37,3 +41,31 @@
             %p %small
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.
+
+
+@page_tabs(repo, ref='HEAD', active=None)
+    - active = active if active is not None else request.endpoint
+    %ul.nav.nav-tabs
+
+        %li.pull-right.disabled(class_='active' if active == 'repo_admin' else '')
+            %a(href='#')
+                +utils.icon('cog')
+                Admin
+
+        %li(class_='active' if active ==  'repo' else '')
+            %a(href='#' if active == 'overview' else url_for('repo', repo=repo))
+                +utils.icon('signal')
+                Overview
+
+        %li(class_='active' if active == 'commits' else '')
+            %a(href='#' if active == 'commits' else url_for('commits', repo=repo))
+                +utils.icon('list')
+                Commits
+
+        %li(class_='active' if active == 'tree' else '')
+            %a(href='#' if active == 'tree' else url_for('tree', repo=repo, ref=ref))
+                +utils.icon('folder-open')
+                Files @ ${ref|h}
+
+        - if caller:
+            +caller.body

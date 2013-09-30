@@ -1,12 +1,14 @@
 %%inherit(file="/_main.haml")
 %%namespace(name='blob_utils', file='/blob/_utils.haml')
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
+%%namespace(name='commit_utils', file='/commit/_utils.haml')
 %%namespace(name='tree_utils', file='./_utils.haml')
 %%namespace(name='utils', file='/_utils.haml')
 -
     group = repo.group
 
 @breadcrumb
+
     %li
         %a(href=url_for('group', group=repo.group)) &= repo.group.name
     %li
@@ -26,21 +28,6 @@
                 &= chunk
 
 +repo_utils.media(repo, link=False, avatar_size=128)
-
-%ul.nav.nav-tabs
-
-    %li %a(href=url_for('repo', repo=repo))
-        +utils.icon('signal')
-        Overview
-
-    %li %a(href=url_for('commits', repo=repo))
-        +utils.icon('list')
-        Commits
-    
-    %li.active %a(href='#')
-        +utils.icon('folder-open')
-        Files
-
-
-+tree_utils.render_tree(repo, tree, path)
-
++repo_utils.page_tabs(repo, ref=ref)
++commit_utils.alert(commit)
++tree_utils.render_tree(repo, ref, tree, path)
