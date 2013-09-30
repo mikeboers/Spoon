@@ -184,8 +184,12 @@ def js(watch=False):
     
     if watch:
         
+        js()
+
+        import watchdog.observers
+
         affected_files = []
-        finals = ['%s.js' % x for x in 'main', 'admin', 'lib'] + ['%s.min.js' % x for x in 'main', 'admin', 'lib']
+        finals = ['%s.js' % x for x in 'main', 'lib'] + ['%s.min.js' % x for x in 'main', 'lib']
         
         class EventHandler(object):
             def dispatch(self, event):
@@ -212,6 +216,7 @@ def js(watch=False):
                     while time.time() - affected_files[-1][1] < 0.25:
                         time.sleep(0.05)
                     affected_files[:] = []
+                    print '#', datetime.datetime.now()
                     js()
 
         except KeyboardInterrupt:
@@ -225,7 +230,7 @@ def js(watch=False):
             os.makedirs('var/static/js')
 
         from jsmin import jsmin
-        for name in 'main', 'admin', 'lib':
+        for name in 'main', 'lib':
 
             print 'js/%s.js' % name
 
