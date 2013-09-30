@@ -42,7 +42,7 @@ $.fn.formIsDangerous = function(opts) {
                 callback: function(res) {
                     if (res == opts.prompt) {
                         submit();
-                    } else {
+                    } else if (res) {
                         vex.dialog.alert("It didn't match. It must be a sign.");
                     }
                 }

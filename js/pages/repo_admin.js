@@ -1,5 +1,5 @@
 app.endpoint_handler('repo_admin', function() {
-
+    
     $('form.git-repo-delete').each(function() {
         var $form = $(this);
         var name = $form.data('repo-name');

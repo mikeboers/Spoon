@@ -19,7 +19,7 @@ def repo_admin(repo):
             flash('Deleted repo "%s/%s"' % (repo.group.name, repo.name))
             return redirect(url_for('group', group=repo.group))
         else:
-            flask('Javascript is required to delete repos.', 'alert')
+            flash('Javascript is required to delete repos.', 'danger')
 
     return render_template('repo/admin.haml', repo=repo)
 

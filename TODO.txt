@@ -1,4 +1,7 @@
 
+- dangerous forms
+    $('form').isDangerousForm()
+    
 - repo creation should assert that the files don't already exist
     - 'group.autocreate' and 'repo.autocreate'
     - groups don't really care if there is a folder there or not
