@@ -1,0 +1,18 @@
+%%namespace(name='utils', file='/_utils.haml')
+
+@page_tabs(active=None)
+    - active = active if active is not None else request.endpoint
+    %ul.nav.nav-tabs
+
+        %li(class_='active' if active == 'cpanel' else '')
+            %a(href='#' if active == 'overview' else url_for('cpanel'))
+                +utils.icon('cog')
+                General
+
+        %li(class_='active' if active == 'cpanel_users' else '')
+            %a(href='#' if active == 'commits' else url_for('cpanel_users'))
+                +utils.icon('list')
+                Users
+
+        - if caller:
+            +caller.body

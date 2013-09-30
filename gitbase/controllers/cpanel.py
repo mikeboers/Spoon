@@ -17,12 +17,15 @@ class NewGroupForm(Form):
     )
 
 
-@app.route('/cpanel', methods=['GET', 'POST'])
-@auth.ACL('''
+acl = '''
     ALLOW ROOT ANY
     ALLOW OBSERVER http.get
     DENY ALL ALL
-''')
+'''
+
+
+@app.route('/cpanel', methods=['GET', 'POST'])
+@auth.ACL(acl)
 def cpanel():
 
     new_group_form = NewGroupForm()
@@ -46,7 +49,14 @@ def cpanel():
 
             new_group_form = NewGroupForm(formdata=None)
 
-    return render_template('cpanel.haml',
+    return render_template('cpanel/general.haml',
         new_group_form=new_group_form
     )
+
+
+@app.route('/cpanel/users', methods=['GET', 'POST'])
+@auth.ACL(acl)
+def cpanel_users():
+    users = User.query.all()
+    return render_template('cpanel/users.haml', users=users)
 

@@ -1,0 +1,25 @@
+%%inherit(file='/_main.haml')
+%%namespace(name='utils', file='/_utils.haml')
+%%namespace(name='cpanel_utils', file='./_utils.haml')
+%%namespace(name='user_utils', file='/user/_utils.haml')
+%%namespace(name='group_utils', file='/group/_utils.haml')
+
+-! from markupsafe import Markup
+
+@breadcrumb
+    %li control panel
+    %li users
+
++cpanel_utils.page_tabs
+
+- for user in users:
+
+    @_content(user)
+        .btn-group
+            %a.btn.btn-sm.btn-warning(href='#', dataAction='auth.token.create', dataUserId=user.id) Create Auth Token
+            %a.btn.btn-sm.btn-danger.disabled(href='#') Delete
+
+    - if user.home:
+        +group_utils.media(user.home, avatar_size=96) +_content(user)
+    - else:
+        +user_utils.media(user, avatar_size=96) +_content(user)

@@ -1,9 +1,13 @@
-%%inherit(file='_main.haml')
+%%inherit(file='/_main.haml')
 %%namespace(name='utils', file='/_utils.haml')
+%%namespace(name='cpanel_utils', file='./_utils.haml')
+
 -! from markupsafe import Markup
 
-%h1 Control Panel
+@breadcrumb
+    %li control panel
 
++cpanel_utils.page_tabs
 
 - if 'observer' in current_user.roles:
     
@@ -12,7 +16,6 @@
             %strong Observers:
             As an observer, you can view much of the internal workings of this
             system, but are powerless to effect it. Play nice.
-
 
 .panel.panel-success
     .panel-heading Create a New Group

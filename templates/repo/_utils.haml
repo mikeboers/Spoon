@@ -1,4 +1,6 @@
 %%namespace(name="utils", file="/_utils.haml")
+-!
+    import pygit2 as git
 
 @title(repo, link=True)
 
@@ -41,6 +43,8 @@
             %p %small
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.
+
+            - if caller: +caller.body
 
 
 @page_tabs(repo, ref='HEAD', active=None)
