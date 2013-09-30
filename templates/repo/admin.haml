@@ -1,0 +1,36 @@
+%%inherit(file="/_main.haml")
+%%namespace(name='tree_utils', file='/tree/_utils.haml')
+%%namespace(name='repo_utils', file='./_utils.haml')
+%%namespace(name='commit_utils', file='/commit/_utils.haml')
+%%namespace(name='utils', file='/_utils.haml')
+-!
+    import datetime
+    import itertools
+    import pygit2 as git
+    from gitbase.utils import debug
+-
+    try:
+        head = repo.git.head.get_object()
+    except git.GitError:
+        head = None
+
+
+@breadcrumb
+    %li
+        %a(href=url_for('group', group=repo.group))
+            &= repo.group.name
+    %li
+        &= repo.name
+
+
+
+
++repo_utils.media(repo, link=False, avatar_size=128)
++repo_utils.page_tabs(repo)
+
+
+- if auth.can('repo.delete', repo): .panel.panel-danger
+    .panel-heading Delete Repository
+    .panel-body
+        This is really really scary.
+        %a.pull-right.btn.btn-danger.disabled(href='#') Delete Repo

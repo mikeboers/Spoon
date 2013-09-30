@@ -22,9 +22,11 @@
     %li %a(href='#members', dataToggle='tab')
         +utils.icon('user')
         Members
-    -# %li.disabled.pull-right %a(href='#')
-        +utils.icon('cog')
-        Admin
+    
+    - if auth.can('repo.create', group):
+        %li.pull-right %a(href='#admin', dataToggle='tab')
+            +utils.icon('cog')
+            Admin
 
 .tab-content
 
@@ -33,7 +35,6 @@
             = repo_utils.media(repo)
         - if not group.readable_repos:
             .alert.alert-warning No repositories.
-
 
     #members.tab-pane
 
@@ -44,3 +45,16 @@
         - else:
             %em No members.
 
+    #admin.tab-pane
+
+        - if auth.can('repo.create', group): .panel.panel-success
+            .panel-heading Create a New Repository
+            .panel-body
+                blah blah blah
+                %a.pull-right.btn.btn-success.disabled(href='#') Create Repo
+
+        - if auth.can('group.delete', group): .panel.panel-danger
+            .panel-heading Delete Group
+            .panel-body
+                This is really really scary.
+                %a.pull-right.btn.btn-danger.disabled(href='#') Delete Group

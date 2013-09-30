@@ -25,7 +25,7 @@
 
     .media
 
-        .input-group.pull-right.input-sm(style='width: 35%; margin-bottom: 12px')
+        .input-group.pull-right.git-repo-clone-url
             %span.input-group-addon +utils.icon('cloud-download')
             %input.form-control(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
 
@@ -47,10 +47,11 @@
     - active = active if active is not None else request.endpoint
     %ul.nav.nav-tabs
 
-        %li.pull-right.disabled(class_='active' if active == 'repo_admin' else '')
-            %a(href='#')
-                +utils.icon('cog')
-                Admin
+        - if auth.can('repo.delete', repo):
+            %li.pull-right(class_='active' if active == 'repo_admin' else '')
+                %a(href=url_for('repo_admin', repo=repo))
+                    +utils.icon('cog')
+                    Admin
 
         %li(class_='active' if active ==  'repo' else '')
             %a(href='#' if active == 'overview' else url_for('repo', repo=repo))

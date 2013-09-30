@@ -14,13 +14,13 @@
             system, but are powerless to effect it. Play nice.
 
 
-.panel.panel-warning
+.panel.panel-success
     .panel-heading Create a New Group
     .panel-body %form(method='POST')
         %input(type='hidden', name='action', value='group.create')
         +utils.render_form(new_group_form)
         %span.help-block You will be the first administrator of this group.
-        %button.btn.btn-default(type='submit', disabled='wheel' not in current_user.roles) Create Group
+        %button.btn.btn-success(type='submit', disabled='wheel' not in current_user.roles) Create Group
 
 .panel.panel-info
     .panel-heading Authorization
@@ -30,4 +30,5 @@
         to govern all control to resources. See a complete table of all
         permission calls to debug access issues:
         %br
-        %a.btn.btn-primary.pull-right(href=url_for('debug_auth')) Debug Auth
+        %br
+        %a.btn.btn-primary(href=url_for('debug_auth')) Debug Auth

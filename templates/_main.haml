@@ -1,5 +1,6 @@
 %%namespace(name='utils', file='/_utils.haml')
 -!
+    from urllib import urlencode
     from flask.ext.login import current_user
 !!! 5
 %head
@@ -34,7 +35,7 @@
                             +utils.icon('log-out')
                             Logout
             - elif request.endpoint != 'login':
-                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login'))
+                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login') + '?' + urlencode(dict(next=request.script_root + request.path)))
                     +utils.icon('log-in')
                     Login
 

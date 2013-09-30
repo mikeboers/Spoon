@@ -8,6 +8,9 @@ from . import *
 def repo(repo):
     return render_template('repo/repo.haml', repo=repo)
 
+@app.route('/<repo:repo>/admin')
+def repo_admin(repo):
+    return render_template('repo/admin.haml', repo=repo)
 
 @app.route('/<repo:repo>/commits')
 def commits(repo):
