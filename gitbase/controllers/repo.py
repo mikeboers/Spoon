@@ -1,4 +1,5 @@
 import itertools
+
 import pygit2 as git
 
 from . import *
@@ -8,8 +9,15 @@ from . import *
 def repo(repo):
     return render_template('repo/repo.haml', repo=repo)
 
-@app.route('/<repo:repo>/admin')
+@app.route('/<repo:repo>/admin', methods=['GET', 'POST'])
 def repo_admin(repo):
+
+    if request.method == 'POST' and request.form.get('action') == 'repo.delete':
+        auth.assert_can('repo.delete', repo)
+        repo.delete()
+        flash('Deleted repo "%s/%s"' % (repo.group.name, repo.name))
+        return redirect(url_for('group', group=repo.group))
+
     return render_template('repo/admin.haml', repo=repo)
 
 @app.route('/<repo:repo>/commits')

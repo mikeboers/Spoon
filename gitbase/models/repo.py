@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -109,6 +110,11 @@ class Repo(db.Model):
             db.session.commit()
 
         return repo
+
+    def delete(self):
+        shutil.rmtree(self.path, ignore_errors=True)
+        db.session.delete(self)
+        db.session.commit()
 
 
 

@@ -1,12 +1,13 @@
 
-- repo tabs should be a mixin somewhere
-- repo views should always show the commit that they are working on
+- repo creation should assert that the files don't already exist
+    - 'group.autocreate' and 'repo.autocreate'
+    - groups don't really care if there is a folder there or not
 
-- "Files @ HEAD" tab should include the branch/rev
+- metadata editing on groups and repos
 
-- How do the repo view relate to each other?
+- flash messages via https://github.com/HubSpot/messenger
 
-    - main repo view is the README, or instructions on how to push to it, like github
+- main repo view is the README, or instructions on how to push to it, like github
     
     Create a new repository on the command line
 
@@ -24,11 +25,8 @@
         git push -u origin master
 
 
-- vex for dialogs; https://github.com/HubSpot/vex
-
 - test the permissions!
 
-- 'group.autocreate' and 'repo.autocreate'
 
 - 'group.create' permission is effectively 'http.post' on 'group_create' entrypoint
 

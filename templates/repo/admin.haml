@@ -29,8 +29,12 @@
 +repo_utils.page_tabs(repo)
 
 
-- if auth.can('repo.delete', repo): .panel.panel-danger
-    .panel-heading Delete Repository
-    .panel-body
-        This is really really scary.
-        %a.pull-right.btn.btn-danger.disabled(href='#') Delete Repo
+- if auth.can('repo.delete', repo):
+    .alert.alert-danger
+        %form(action=url_for('repo_admin', repo=repo), method='POST')
+            %input(type='hidden', name='action', value='repo.delete')
+            %input(type='hidden', name='id', value=repo.id)
+            %button.pull-right.btn.btn-danger.git-repo-delete-btn(href='#', dataId=repo.id) Delete Repo
+        %strong Delete this repository.
+        %br
+        This cannot be undone!
