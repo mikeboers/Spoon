@@ -1,6 +1,6 @@
 
-- dangerous forms
-    $('form').isDangerousForm()
+- move repos/groups/users to trash, instead of deleting them
+    - `is_trash` field on all of those
     
 - repo creation should assert that the files don't already exist
     - 'group.autocreate' and 'repo.autocreate'

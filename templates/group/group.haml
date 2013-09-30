@@ -47,11 +47,24 @@
 
     #admin.tab-pane
 
-        - if auth.can('repo.create', group): .panel.panel-success
-            .panel-heading Create a New Repository
-            .panel-body
-                blah blah blah
-                %a.pull-right.btn.btn-success.disabled(href='#') Create Repo
+        - if auth.can('repo.create', group):
+            .alert.alert-success
+                %a#git-repo-create-button.btn.btn-success.pull-right.disabled(href='#') Create Repository
+                %strong Create a New Repository.
+                %br
+                You can create a new repository in this group.
+                
+                %form#git-repo-create-form.hide
+                    +utils.render_form(new_repo_form)
+
+                -# :javascript
+                    $(function() {
+                        $('#git-repo-create-button').click(function() {
+                            vex.dialog.confirm({
+                                message: $('#git-repo-create-form').html()
+                            })
+                        })
+                    })
 
         - if auth.can('group.delete', group):
             .alert.alert-danger

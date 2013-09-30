@@ -17,6 +17,15 @@
 @icon(name)
     %span.glyphicon(class_='glyphicon-' + name)
 
+
+@field_flags(field)
+    - if field.flags.optional:
+        %small.optional [optional]
+    - elif field.flags.required:
+        %small.required [required]
+    - for error in field.errors:
+        %small &= error
+
 @render_form(form)
     -
         nonce = os.urandom(4).encode('hex')
@@ -28,21 +37,18 @@
             = field()
             - continue
 
-        .form-group(class_=['has-error' if field.errors else '', 'field-' + field.name])
-
-
-            - if field.type in ('BooleanField', ):
+        - if field.type in ('BooleanField', ):
+            .checkbox %label
                 = field()
+                &= field.label.text
+                +field_flags(field)
+            - continue
 
-            = field.label(class_='type-' + field.type)
-        
-            - if field.flags.optional:
-                %small.optional (optional)
-            - elif field.flags.required:
-                %small.required (required)
-    
-            - for error in field.errors:
-                %small &= error
+        .form-group(class_=['has-error' if field.errors else ''])
+
+            %label(**{'for': field.label.field_id})
+                &= field.label.text
+                +field_flags(field)
             
             -# if field.type == 'FormField':
                 .field.type-FormField(class_='form-type-' + field.form_class.__name__)
@@ -63,9 +69,7 @@
                     $(${json('#%s #%s' % (form_id, field.name))}).autodate({type:${field.type[:-5].lower()|json}});
                 })</script>
 
-            - if field.type != 'BooleanField':
-                .field(class_='type-' + field.type)
-                    = field()
+            = field(class_='form-control')
               
               
             -# % if field.type == 'MarkdownField':
