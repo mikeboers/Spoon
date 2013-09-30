@@ -9,6 +9,13 @@ from ..core.mako import render_template
 
 from ..models import Group, Repo, User, Membership
 
+
+requires_root = lambda func: auth.ACL('''
+    ALLOW ROOT ANY
+    DENY ALL ANY
+''')(func)
+
+
 # --- Register the pages.
 
 from . import login

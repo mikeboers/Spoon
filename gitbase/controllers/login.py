@@ -22,7 +22,6 @@ class LoginForm(Form):
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -38,6 +37,19 @@ def login():
             flash("Username and password did not match.", 'warning')
 
     return render_template("login.haml", form=form)
+
+
+@app.route('/login/su')
+@requires_root
+def login_switch_user():
+    username = request.args.get('username')
+    if username:
+        user = User.query.filter_by(name=username).first()
+        if user:
+            login_user(user)
+            flash('Switched to "%s"' % username)
+    return redirect(request.args.get("next") or url_for("index"))
+
 
 
 @app.route("/logout")
