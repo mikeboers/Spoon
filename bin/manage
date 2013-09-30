@@ -17,7 +17,6 @@ import errno
 
 from baker import command
 import baker
-# import watchdog.observers
 
 
 is_vagrant = os.environ.get('USER') == 'vagrant'
@@ -183,64 +182,31 @@ def css(watch=False):
 def js(watch=False):
     
     if watch:
-        
         js()
+        print 'Watching for changes...'
+        os.execvp('watchmedo', ['watchmedo', 'shell-command',
+            '--patterns', '*.js',
+            '--command', 'date; manage js',
+            'js',
+        ])
 
-        import watchdog.observers
+    if not os.path.exists('var/static/js'):
+        os.makedirs('var/static/js')
 
-        affected_files = []
-        finals = ['%s.js' % x for x in 'main', 'lib'] + ['%s.min.js' % x for x in 'main', 'lib']
-        
-        class EventHandler(object):
-            def dispatch(self, event):
-                
-                # Ignore non-JS events.
-                if not event.src_path.endswith('.js'):
-                    return
-                
-                # Ignore the final files.
-                if os.path.basename(event.src_path) in finals:
-                    return
-                
-                affected_files.append((event.src_path, time.time()))
+    from jsmin import jsmin
+    for name in os.listdir('js'):
+        if name.startswith('_') or not name.endswith('.js'):
+            continue
 
-        handler = EventHandler()
-        observer = watchdog.observers.Observer()
-        observer.schedule(handler, path="js", recursive=True)
-        observer.start()
-        
-        try:
-            while True:
-                time.sleep(0.25)
-                if affected_files:
-                    while time.time() - affected_files[-1][1] < 0.25:
-                        time.sleep(0.05)
-                    affected_files[:] = []
-                    print '#', datetime.datetime.now()
-                    js()
+        print 'js/%s.js' % name
 
-        except KeyboardInterrupt:
-            observer.stop()
-        observer.join()
-        return
-    
-    else:
-        
-        if not os.path.exists('var/static/js'):
-            os.makedirs('var/static/js')
+        combined = check_output(('sprockets --include js --include js/include --include var/bower js/%s.js' % name).split())
+        with open('var/static/js/%s.js' % name, 'w') as fh:
+            fh.write(combined)
 
-        from jsmin import jsmin
-        for name in 'main', 'lib':
-
-            print 'js/%s.js' % name
-
-            combined = check_output(('sprockets --include js --include js/include --include var/bower js/%s.js' % name).split())
-            with open('var/static/js/%s.js' % name, 'w') as fh:
-                fh.write(combined)
-
-            minified = jsmin(combined)
-            with open('var/static/js/%s.min.js' % name, 'w') as fh:
-                fh.write(minified)
+        minified = jsmin(combined)
+        with open('var/static/js/%s.min.js' % name, 'w') as fh:
+            fh.write(minified)
 
 @command
 def database():
