@@ -80,16 +80,21 @@ class Repo(db.Model):
 
         did_create = False
 
+        repo = Repo.query.filter_by(name=repo_name, group=group).first()
         repo_dir = os.path.join(app.config['REPO_DIR'], group_name, repo_name + '.git')
-        if not os.path.exists(repo_dir):
+        repo_dir_exists = os.path.exists(repo_dir)
 
-            did_create = True
+        if not repo and repo_dir_exists:
+            raise RuntimeError('repo already exists on disk; delete first')
+        if repo and not repo_dir_exists:
+            raise RuntimeError('repo does not exist on disk; create first')
+
+        if not repo:
 
             # Make sure there are permissions.
             if not (create and auth.can('repo.create', group)):
                 return
 
-            # TODO: make sure they are allowed to do this.
             debug('creating repository %s/%s', group_name, repo_name)
             makedirs(repo_dir)
             proc = subprocess.Popen(['git', 'init', '--bare', repo_dir], stdout=subprocess.PIPE)
@@ -97,14 +102,9 @@ class Repo(db.Model):
                 sys.stderr.write(line.replace(app.config['REPO_DIR'], ''))
             code = proc.wait()
             if code:
+                shutil.rmtree(repo_dir, ignore_errors=True)
                 raise RuntimeError('repo creation failed with code %d' % code)
 
-        # No need to do a create permission check here, since we already did
-        # that above.
-        repo = Repo.query.filter_by(name=repo_name, group=group).first()
-        if not repo:
-            if not did_create:
-                debug('importing repository %s/%s', group_name, repo_name)
             repo = Repo(name=repo_name, group=group)
             db.session.add(repo)
             db.session.commit()
