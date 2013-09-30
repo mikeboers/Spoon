@@ -24,19 +24,5 @@ def tree(repo, path='', ref='HEAD'):
     abort(404)
 
 
-@app.route(r'/<repo:repo>/raw/objects/<re("[0-9a-f]{2}"):prefix>/<re("[0-9a-f]{38}"):suffix>')
-@app.route(r'/<repo:repo>/raw/objects/<re("[0-9a-f]{2}"):prefix>/<re("[0-9a-f]{38}"):suffix><re("\.\w+"):ext>')
-def raw_object(repo, prefix, suffix, ext=''):
 
-    oid_hex = prefix + suffix
-    blob = repo.git.get(oid_hex)
 
-    if not blob or not isinstance(blob, pygit2.Blob):
-        abort(404)
-
-    if ext == '.md':
-        type_ = 'text/x-markdown'
-    else:
-        type_ = mimetypes.types_map.get(ext, 'application/octet-stream')
-
-    return blob.data, 200, [('Content-Type', type_)]
