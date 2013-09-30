@@ -1,4 +1,6 @@
+import os
 import re
+import shutil
 
 import sqlalchemy as sa
 import werkzeug as wz
@@ -21,6 +23,10 @@ class Group(db.Model):
     def is_a_home(self):
         return self.owner is not None
     
+    @property
+    def path(self):
+        return os.path.join(app.config['REPO_DIR'], self.name)
+
     @classmethod
     def lookup(cls, name, create=False):
 
@@ -81,6 +87,11 @@ class Group(db.Model):
     @wz.cached_property
     def readable_repos(self):
         return [r for r in self.repos if auth.can('repo.read', r)]
+
+    def delete(self):
+        shutil.rmtree(self.path, ignore_errors=True)
+        db.session.delete(self)
+        db.session.commit()
 
 
 class GroupConverter(wz.routing.BaseConverter):

@@ -53,8 +53,12 @@
                 blah blah blah
                 %a.pull-right.btn.btn-success.disabled(href='#') Create Repo
 
-        - if auth.can('group.delete', group): .panel.panel-danger
-            .panel-heading Delete Group
-            .panel-body
-                This is really really scary.
-                %a.pull-right.btn.btn-danger.disabled(href='#') Delete Group
+        - if auth.can('group.delete', group):
+            .alert.alert-danger
+                %form(action=url_for('group', group=group), method='POST')
+                    %input(type='hidden', name='action', value='group.delete')
+                    %input(type='hidden', name='id', value=group.id)
+                    %button.pull-right.btn.btn-danger.git-group-delete-btn Delete Group
+                %strong Delete this group.
+                %br
+                This cannot be undone, and will delete all child repositories!
