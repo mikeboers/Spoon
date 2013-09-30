@@ -55,10 +55,10 @@
 
         - if auth.can('group.delete', group):
             .alert.alert-danger
-                %form(action=url_for('group', group=group), method='POST')
+                %form.git-group-delete(action=url_for('group', group=group), method='POST', dataGroupName=group.name)
                     %input(type='hidden', name='action', value='group.delete')
                     %input(type='hidden', name='id', value=group.id)
-                    %button.pull-right.btn.btn-danger.git-group-delete-btn Delete Group
+                    %button.pull-right.btn.btn-danger Delete Group
                 %strong Delete this group.
                 %br
                 This cannot be undone, and will delete all child repositories!

@@ -14,9 +14,12 @@ def repo_admin(repo):
 
     if request.method == 'POST' and request.form.get('action') == 'repo.delete':
         auth.assert_can('repo.delete', repo)
-        repo.delete()
-        flash('Deleted repo "%s/%s"' % (repo.group.name, repo.name))
-        return redirect(url_for('group', group=repo.group))
+        if request.form.get('user_accepted_danger'):
+            repo.delete()
+            flash('Deleted repo "%s/%s"' % (repo.group.name, repo.name))
+            return redirect(url_for('group', group=repo.group))
+        else:
+            flask('Javascript is required to delete repos.', 'alert')
 
     return render_template('repo/admin.haml', repo=repo)
 

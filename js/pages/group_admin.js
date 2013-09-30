@@ -1,18 +1,12 @@
 app.endpoint_handler('group', function() {
 
-    $('.git-group-delete-btn').each(function() {
-        var $this = $(this);
-        console.log(this);
-        $this.click(function(e) {
-            e.preventDefault();
-            vex.dialog.confirm({
-                message: 'Are you sure? This cannot be undone!',
-                callback: function(res) {
-                    if (res) {
-                        $this.closest('form').submit();
-                    }
-                }
-            });
+    $('form.git-group-delete').each(function() {
+        var $form = $(this);
+        var name = $form.data('group-name');
+        var prompt = "DELETE " + name;
+        $form.formIsDangerous({
+            message: 'This can <strong>NOT</strong> be undone.<br/>If you are sure, type <code>' + prompt + '</code>.',
+            prompt: prompt,
         });
     });
 

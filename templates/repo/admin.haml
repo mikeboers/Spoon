@@ -31,10 +31,10 @@
 
 - if auth.can('repo.delete', repo):
     .alert.alert-danger
-        %form(action=url_for('repo_admin', repo=repo), method='POST')
+        %form.git-repo-delete(action=url_for('repo_admin', repo=repo), method='POST', dataRepoName='%s/%s' % (repo.group.name, repo.name))
             %input(type='hidden', name='action', value='repo.delete')
             %input(type='hidden', name='id', value=repo.id)
-            %button.pull-right.btn.btn-danger.git-repo-delete-btn(href='#', dataId=repo.id) Delete Repo
+            %button.pull-right.btn.btn-danger(href='#', dataId=repo.id) Delete Repo
         %strong Delete this repository.
         %br
         This cannot be undone!
