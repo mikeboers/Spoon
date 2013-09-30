@@ -61,7 +61,7 @@ db.metadata.bind = db.engine
 
 
 # Setup routing extensions (regexes).
-# from . import routing
+from . import routing
 
 
 # Setup error handlers.

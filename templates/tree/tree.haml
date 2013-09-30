@@ -10,11 +10,14 @@
     %li
         %a(href=url_for('group', group=repo.group)) &= repo.group.name
     %li
-        %a(href=url_for('repo', repo=repo)) &= repo.name
+        &= repo.name
     %li
-        %a(href=url_for('tree', repo=repo, ref=ref)) files
+        - if path:
+            %a(href=url_for('tree', repo=repo, ref=ref)) files
+        - else:
+            files
 
-    - chunks = path.strip('/').split('/')
+    - chunks = filter(None, path.strip('/').split('/'))
     - for i, chunk in enumerate(chunks):
         %li
             - if i + 1 < len(chunks):

@@ -49,7 +49,7 @@
         except pygments.util.ClassNotFound:
             lexer = pygments.lexers.TextLexer()
 
-        raw_url = url_for('raw_blob', repo=repo, path=path)
+        raw_url = url_for('raw_object', repo=repo, prefix=blob.hex[:2], suffix=blob.hex[2:], ext=ext or '')
 
     .panel.panel-default.git-blob
         .panel-heading

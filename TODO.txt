@@ -2,10 +2,6 @@
 - repo tabs should be a mixin somewhere
 - repo views should always show the commit that they are working on
 
-- rework raw blob url structure
-    /<group>/<repo>/raw/objects/<hex><ext>
-        ext allows for sending proper content-type for browsers
-
 - "Files @ HEAD" tab should include the branch/rev
 
 - How do the repo view relate to each other?

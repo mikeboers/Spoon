@@ -24,21 +24,19 @@ def tree(repo, path='', ref='HEAD'):
     abort(404)
 
 
-@app.route('/<repo:repo>/raw/HEAD/<path:path>')
-@app.route('/<repo:repo>/raw/<ref>/<path:path>')
-def raw_blob(repo, path, ref='HEAD'):
+@app.route(r'/<repo:repo>/raw/objects/<re("[0-9a-f]{2}"):prefix>/<re("[0-9a-f]{38}"):suffix>')
+@app.route(r'/<repo:repo>/raw/objects/<re("[0-9a-f]{2}"):prefix>/<re("[0-9a-f]{38}"):suffix><re("\.\w+"):ext>')
+def raw_object(repo, prefix, suffix, ext=''):
 
-    commit = repo.git.revparse_single(ref)
-    entry = commit.tree[path]
-    obj = repo.git[entry.oid]
+    oid_hex = prefix + suffix
+    blob = repo.git.get(oid_hex)
 
-    if not isinstance(obj, pygit2.Blob):
+    if not blob or not isinstance(blob, pygit2.Blob):
         abort(404)
 
-    if os.path.splitext(path)[1] == '.md':
+    if ext == '.md':
         type_ = 'text/x-markdown'
     else:
-        type_, encoding = mimetypes.guess_type(path)
-        type_ = type_ or 'application/octet-stream'
+        type_ = mimetypes.types_map.get(ext, 'application/octet-stream')
 
-    return obj.data, 200, [('Content-Type', type_)]
+    return blob.data, 200, [('Content-Type', type_)]
