@@ -46,6 +46,9 @@ app.root_path = app.config['ROOT_PATH']
 from . import logs
 
 
+from . import session
+app.session_interface = session.ItsdangerousSessionInterface()
+
 
 login_manager = LoginManager(app)
 auth = AuthManager(app)
