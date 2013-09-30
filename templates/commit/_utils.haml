@@ -1,6 +1,7 @@
 %%namespace(name='utils', file='/_utils.haml')
 -!
     import datetime
+    import re
 
     commit_time = lambda c: datetime.datetime.fromtimestamp(c.commit_time)
 
@@ -22,7 +23,12 @@
     .alert.alert-info.media
         .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
         .media-body
-            %strong &= commit.hex[:8] + ':'
-            &= commit.message.strip().splitlines()[0]
-            %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
+            -
+                message = re.sub(r'([ \t]*\n)+', '\n', commit.message)
+                message = message.splitlines()
+            %
+                %strong &= commit.hex[:8] + ':'
+                &= message[0]
+            - if len(message) > 1:
+                .git-commit-message &= '\n'.join(message[1:])
             %small +author_info(commit)
