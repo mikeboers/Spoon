@@ -1,0 +1,64 @@
+%%inherit(file="/_main.haml")
+%%namespace(name='tree_utils', file='/tree/_utils.haml')
+%%namespace(name='repo_utils', file='./_utils.haml')
+%%namespace(name='utils', file='/_utils.haml')
+-!
+    import datetime
+    import itertools
+    import pygit2 as git
+    from gitbase.utils import debug
+-
+    try:
+        head = repo.git.head.get_object()
+    except git.GitError:
+        head = None
+
+
+@breadcrumb
+    %li
+        %a(href=url_for('group', group=group))
+            &= group.name
+    %li
+        &= repo.name
+
+
+
+
++repo_utils.media(repo, link=False, avatar_size=128)
+
+%ul.nav.nav-tabs
+
+    %li.active %a(href='#')
+        +utils.icon('signal')
+        Overview
+
+    %li %a(href=url_for('commits', repo=repo))
+        +utils.icon('list')
+        Commits
+
+    %li %a(href=url_for('tree', repo=repo, ref='HEAD', path=None))
+        +utils.icon('folder-open')
+        Files
+
+
+.input-group(style='width: 50%; margin-bottom: 12px')
+    %span.input-group-addon +utils.icon('cloud-download')
+    %input.form-control.input-sm(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
+
+
+- if head:
+
+
+    - if 'README.md' in head.tree:
+        -
+            entry = head.tree['README.md']
+            blob = repo.git[entry.oid]
+        +tree_utils.render_blob(repo, blob, 'README.md')
+    - else:
+
+        .alert.alert-info No README.
+
+- else:
+    .alert.alert-warning There are no files.
+
+

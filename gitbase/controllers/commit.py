@@ -14,6 +14,6 @@ def commit(repo, commit):
     if not isinstance(commit, pygit2.Commit):
         abort(404)
 
-    return render_template('commit.haml', repo=repo, commit=commit)
+    return render_template('commit/commit.haml', repo=repo, commit=commit)
 
 

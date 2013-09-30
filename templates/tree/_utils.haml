@@ -1,45 +1,10 @@
-%%inherit(file="/_main.haml")
-%%namespace(name='blob_utils', file='blob.haml')
-%%namespace(name='repo_utils', file='repo.haml')
-%%namespace(name='utils', file='_utils.haml')
-
 -!
+    import mimetypes
     import os
+
     import pygit2
--
-    group = repo.group
-
-@breadcrumb
-    %li
-        %a(href=url_for('group', group=repo.group)) &= repo.group.name
-    %li
-        %a(href=url_for('repo', repo=repo)) &= repo.name
-    %li
-        %a(href=url_for('tree', repo=repo, ref=ref)) files
-
-    - chunks = path.strip('/').split('/')
-    - for i, chunk in enumerate(chunks):
-        %li
-            - if i + 1 < len(chunks):
-                %a(href=url_for('tree', repo=repo, path='/'.join(chunks[:i + 1]))) &= chunk
-            - else:
-                &= chunk
-
-+repo_utils.render_card(repo, link=False, avatar_size=128)
-
-%ul.nav.nav-tabs
-
-    %li %a(href=url_for('repo', repo=repo))
-        +utils.icon('signal')
-        Overview
-
-    %li %a(href=url_for('commits', repo=repo))
-        +utils.icon('list')
-        Commits
-    
-    %li.active %a(href='#')
-        +utils.icon('folder-open')
-        Files
+    import pygments.lexers
+    import pygments.formatters
 
 
 @render_tree(repo, tree, base='', title=None)
@@ -74,5 +39,26 @@
                 -# %td %a(href='#') %code &= entry.hex[:8]
 
 
-= render_tree(repo, tree, path)
+@render_blob(repo, blob, path)
+
+    -
+        mimetype, encoding = mimetypes.guess_type(path)
+        ext = os.path.splitext(path)[1]
+        try:
+            lexer = pygments.lexers.get_lexer_for_filename(path)
+        except pygments.util.ClassNotFound:
+            lexer = pygments.lexers.TextLexer()
+
+        raw_url = url_for('raw_blob', repo=repo, path=path)
+
+    .panel.panel-default.git-blob
+        .panel-heading
+            .pull-right %a.btn.btn-primary.btn-xs(href=raw_url) Raw
+            %h2.panel-title &= path
+        - if ext == '.md':
+            .panel-body = markdown(blob.data)
+        - elif mimetype and mimetype.startswith('image/'):
+            .panel-body %img(src=raw_url)
+        - else:
+            .panel-body.git-blob-pre = pygments.highlight(blob.data, lexer, pygments.formatters.HtmlFormatter(linenos='table'))
 

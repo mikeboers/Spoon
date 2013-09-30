@@ -17,9 +17,9 @@ def tree(repo, path='', ref='HEAD'):
     obj = repo.git[entry.oid]
 
     if isinstance(obj, pygit2.Tree):
-        return render_template('tree.haml', repo=repo, ref=ref, commit=commit, path=path, tree=obj)
+        return render_template('tree/tree.haml', repo=repo, ref=ref, commit=commit, path=path, tree=obj)
     elif isinstance(obj, pygit2.Blob):
-        return render_template('blob.haml', repo=repo, ref=ref, commit=commit, path=path, blob=obj)
+        return render_template('tree/blob.haml', repo=repo, ref=ref, commit=commit, path=path, blob=obj)
 
     abort(404)
 

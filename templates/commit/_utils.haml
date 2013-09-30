@@ -1,0 +1,14 @@
+%%namespace(name='utils', file='/_utils.haml')
+
+@alert(commit)
+    .alert.alert-info.media
+        .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
+        %code.pull-right &= commit.hex[:8]
+        .media-body
+            %strong Commit:
+            &= commit.message.strip().splitlines()[0]
+            %(style='white-space: pre') &= '\n'.join(commit.message.strip().splitlines()[1:])
+            %small
+                &= commit.author.name
+                authored
+                &= fuzzy_time(commit.commit_time)

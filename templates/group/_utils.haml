@@ -1,15 +1,5 @@
-%%inherit(file='/_main.haml')
-%%namespace(name='repo_utils', file='repo.haml')
-%%namespace(name='user_utils', file='user.haml')
-%%namespace(name='utils', file='_utils.haml')
 
-
-@breadcrumb
-    %li
-        &= group.name
-
-
-@render_card(group, link=True, avatar_size=64)
+@media(group, link=True, avatar_size=64)
 
     .media
 
@@ -46,35 +36,4 @@
                     %p %small %span.label.label-warning PRIVATE
 
             = caller.body()
-
-
-+render_card(group, link=False, avatar_size=200)
-
-
-%ul#group-tabs.nav.nav-tabs
-    %li.active %a(href='#repos', dataToggle='tab')
-        +utils.icon('book')
-        Repositories
-    - if not group.is_a_home:
-        %li %a(href='#members', dataToggle='tab')
-            +utils.icon('user')
-            Members
-
-.tab-content
-
-    #repos.tab-pane.active
-        - for repo in group.readable_repos:
-            = repo_utils.render_card(repo)
-        - if not group.readable_repos:
-            .alert.alert-warning No repositories.
-
-
-    - if not group.is_a_home: #members.tab-pane
-
-        - if group.memberships:
-            - for membership in group.memberships:
-                +user_utils.render_card(membership.user)
-
-        - else:
-            %em No members.
 

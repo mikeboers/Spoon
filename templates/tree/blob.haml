@@ -1,0 +1,28 @@
+%%inherit(file="/_main.haml")
+%%namespace(name="tree_utils", file="./_utils.haml")
+-!
+    import mimetypes
+    import os
+
+    import pygments
+-
+    group = repo.group
+
+@breadcrumb
+    %li
+        %a(href=url_for('group', group=repo.group)) &= repo.group.name
+    %li
+        %a(href=url_for('repo', repo=repo)) &= repo.name
+    
+    - chunks = path.strip('/').split('/')
+    - for i, chunk in enumerate(chunks):
+        %li
+            - if i + 1 < len(chunks):
+                %a(href=url_for('tree', repo=repo, path='/'.join(chunks[:i + 1]))) &= chunk
+            - else:
+                &= chunk
+
+
+
++tree_utils.render_blob(repo, blob, path)
+

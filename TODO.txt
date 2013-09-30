@@ -1,6 +1,4 @@
 
-- move all the *_utils mixins into sub-templates
-
 - repo tabs should be a mixin somewhere
 - repo views should always show the commit that they are working on
 

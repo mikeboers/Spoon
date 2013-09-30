@@ -1,0 +1,46 @@
+%%inherit(file='/_main.haml')
+%%namespace(name='repo_utils', file='/repo/_utils.haml')
+%%namespace(name='user_utils', file='/user/_utils.haml')
+%%namespace(name='group_utils', file='_utils.haml')
+%%namespace(name='utils', file='/_utils.haml')
+
+
+@breadcrumb
+    %li
+        &= group.name
+
+
+
+
++group_utils.media(group, link=False, avatar_size=200)
+
+
+%ul#group-tabs.nav.nav-tabs
+    %li.active %a(href='#repos', dataToggle='tab')
+        +utils.icon('book')
+        Repositories
+    %li %a(href='#members', dataToggle='tab')
+        +utils.icon('user')
+        Members
+    -# %li.disabled.pull-right %a(href='#')
+        +utils.icon('cog')
+        Admin
+
+.tab-content
+
+    #repos.tab-pane.active
+        - for repo in group.readable_repos:
+            = repo_utils.media(repo)
+        - if not group.readable_repos:
+            .alert.alert-warning No repositories.
+
+
+    #members.tab-pane
+
+        - if group.memberships:
+            - for membership in group.memberships:
+                +user_utils.media(membership.user)
+
+        - else:
+            %em No members.
+

@@ -1,0 +1,39 @@
+
+
+@title(repo, link=True)
+
+    @_title
+        - if repo.is_public:
+            %span.glyphicon.glyphicon-book
+        - else:
+            %span.glyphicon.glyphicon-lock
+        &= repo.group.name + ' / ' + repo.name
+
+    - if link:
+        %a(href=url_for('repo', repo=repo)) +_title
+    - else:
+        +_title
+
+
+@media(repo, avatar_size=64, link=True)
+    
+    -
+        try:
+            head = repo.git.head.get_object()
+        except git.GitError:
+            head = None
+
+    .media
+
+        -# .pull-left
+            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
+
+        .media-body
+
+            %h4.media-heading +title(repo, link=link)
+            %p
+                - if repo.description: &= repo.description
+                - else: %em No description.
+            %p %small
+                - if head: Last updated ${fuzzy_time(head.commit_time)}.
+                - else: %em No commits.
