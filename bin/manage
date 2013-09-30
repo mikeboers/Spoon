@@ -187,6 +187,7 @@ def js(watch=False):
         os.execvp('watchmedo', ['watchmedo', 'shell-command',
             '--patterns', '*.js',
             '--command', 'date; manage js',
+            '--recursive',
             'js',
         ])
 
@@ -195,10 +196,12 @@ def js(watch=False):
 
     from jsmin import jsmin
     for name in os.listdir('js'):
-        if name.startswith('_') or not name.endswith('.js'):
+
+        name, ext = os.path.splitext(name)
+        if name.startswith('_') or ext != '.js':
             continue
 
-        print 'js/%s.js' % name
+        print name
 
         combined = check_output(('sprockets --include js --include js/include --include var/bower js/%s.js' % name).split())
         with open('var/static/js/%s.js' % name, 'w') as fh:
