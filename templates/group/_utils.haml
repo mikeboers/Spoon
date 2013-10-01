@@ -18,7 +18,7 @@
                         %span.glyphicon.glyphicon-home
                     - else:
                         %span.glyphicon.glyphicon-globe
-                    = group.name
+                    = group.display_name
 
                 - if link: %a(href=url) = title()
                 - else: = title()

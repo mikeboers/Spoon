@@ -9,7 +9,7 @@
             %span.glyphicon.glyphicon-book
         - else:
             %span.glyphicon.glyphicon-lock
-        &= repo.group.name + ' / ' + repo.name
+        &= repo.group.display_name + ' / ' + repo.display_name
 
     - if link:
         %a(href=url_for('repo', repo=repo)) +_title

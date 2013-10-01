@@ -18,9 +18,9 @@
 @breadcrumb
     %li
         %a(href=url_for('group', group=repo.group))
-            &= repo.group.name
+            &= repo.group.display_name
     %li
-        &= repo.name
+        &= repo.display_name
 
 
 

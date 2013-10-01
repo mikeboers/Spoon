@@ -57,10 +57,23 @@ class User(db.Model):
         extend_existing=True,
     )
 
+
     roles = db.Column('roles', MutableSet.as_mutable(RoleSet))
 
     # One-to-one to the repo that represents us.
     home = db.relationship('Group', backref=db.backref('owner', uselist=False))
+
+
+    _display_name = db.Column('display_name', db.String)
+
+    @property
+    def display_name(self):
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, v):
+        self._display_name = v
+
 
     def set_password(self, password):
         self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())

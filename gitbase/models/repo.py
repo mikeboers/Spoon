@@ -66,6 +66,18 @@ class Repo(db.Model):
     def path(self):
         return os.path.join(app.config['REPO_DIR'], self.group.name, self.name + '.git')
 
+
+    _display_name = db.Column('display_name', db.String)
+
+    @property
+    def display_name(self):
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, v):
+        self._display_name = v
+
+
     @classmethod
     def lookup(cls, group_name, repo_name, create=False):
 
