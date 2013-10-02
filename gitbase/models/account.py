@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 
+import bcrypt
 import sqlalchemy as sa
 import werkzeug as wz
 from flask.ext.login import current_user
@@ -42,11 +43,11 @@ class Account(db.Model):
 
             # Bail if we don't have permission to create it.
             # TODO: make this check for can('account.create', current_user).
-            if not current_user.is_admin:
+            if 'wheel' not in current_user.roles:
                 return
 
-            debug('creating account %s', name)
-            account = Account(name=name)
+            debug('creating group %s', name)
+            account = Account(name=name, is_group=True)
 
             # Only create a membership if this is a real user.
             if current_user.id:

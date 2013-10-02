@@ -16,7 +16,7 @@ setup(
         'console_scripts': [
             'git-base-shell = gitbase.commands.shell:main',
             'git-base-import = gitbase.commands.import:main',
-            'git-base-user = gitbase.commands.user:main',
+            'git-base-account = gitbase.commands.account:main',
             'git-base-setupkeys = gitbase.sshkeys:rewrite',
         ],
     },

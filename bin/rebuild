@@ -2,23 +2,26 @@
 
 rm var/sqlite/main.sqlite
 migrate
+
+echo Importing existing repos
 git-base-import
 
-echo Creating 'mikeboers'
-git-base-user add -r wheel -p password mikeboers
+echo Converting mikeboers to a user
+git-base-account -t user -r wheel -p password mikeboers
+
 echo Adding SSH key...
-git-base-user edit -k "$(cat ~/.ssh/id_rsa-localgit.pub)" mikeboers
-echo Setting home...
-git-base-user edit --home mikeboers mikeboers
+git-base-account -k "$(cat ~/.ssh/id_rsa-localgit.pub)" mikeboers
+
 # echo Adding 'westernx' group...
-# git-base-user --edit --group westernx mikeboers
+# git-base-account edit --group westernx mikeboers
+
 echo Adding 'swisssol' group...
-git-base-user edit --append --group swisssol mikeboers
+git-base-account --append --group swisssol mikeboers
 
 echo Setting base visibility...
 sqlite3 var/sqlite/main.sqlite <<EOF
 
-UPDATE groups SET is_public = 1 WHERE name in ('mikeboers', 'westernx');
+UPDATE accounts SET is_public = 1 WHERE name in ('mikeboers', 'westernx');
 UPDATE repos SET is_public = 1;
 
 EOF

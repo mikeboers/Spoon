@@ -22,7 +22,7 @@ def main():
                 continue
 
             try:
-                repo = Repo.lookup(group_name, repo_name, create=True)
+                repo = Repo.lookup(group_name, repo_name, create=True, allow_existing=True)
             except ValueError as e:
                 stderr(e)
 

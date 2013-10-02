@@ -6,7 +6,7 @@ from flask.ext.acl.permissions import string_permissions
 from flask.ext.login import current_user, UserMixin, AnonymousUserMixin
 
 from .core.flask import app, auth
-from .models import Repo, Group
+from .models import Repo, Account
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ def assert_can_access_url_pieces():
     for v in (request.view_args or {}).itervalues():
         if isinstance(v, Repo):
             auth.assert_can('repo.read', v)
-        if isinstance(v, Group):
+        if isinstance(v, Account):
             auth.assert_can('group.read', v)
 
 
@@ -40,7 +40,7 @@ class ADMIN(object):
 
     def __repr__(self):
         return 'ADMIN'
-    def __call__(self, user, group, **kw):
+    def __call__(self, user, group=None, **kw):
         # log.info('check if %r is an admin' % user)
         if not user.is_authenticated() or not group:
             return
@@ -84,14 +84,12 @@ string_permissions['group.write'] = set(('group.write', 'group.read'))
 dummy_admin = UserMixin()
 dummy_admin.id = 0
 dummy_admin.name='<ADMIN>'
-dummy_admin.is_admin = True
-dummy_admin.home = None
-dummy_admin.memberships = []
+dummy_admin.groups = []
+dummy_admin.roles = set(('wheel', ))
 
 dummy_anon = AnonymousUserMixin()
 dummy_anon.name='<ANON>'
 dummy_anon.id = 0
-dummy_anon.is_admin = False
-dummy_anon.home = None
-dummy_anon.memberships = []
+dummy_anon.groups = []
+dummy_anon.roles = set()
 

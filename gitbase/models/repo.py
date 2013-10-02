@@ -67,7 +67,7 @@ class Repo(db.Model):
         return os.path.join(app.config['REPO_DIR'], self.account.name, self.name + '.git')
 
     @classmethod
-    def lookup(cls, account_name, repo_name, create=False):
+    def lookup(cls, account_name, repo_name, create=False, allow_existing=False):
 
         # Make sure it is a valid name.
         if not re.match(r'^%s$' % app.config['REPO_NAME_RE'], repo_name):
@@ -84,18 +84,18 @@ class Repo(db.Model):
         repo_dir = os.path.join(app.config['REPO_DIR'], account_name, repo_name + '.git')
         repo_dir_exists = os.path.exists(repo_dir)
 
-        if not repo and repo_dir_exists:
+        if not repo and repo_dir_exists and not allow_existing:
             raise RuntimeError('repo already exists on disk; delete first')
         if repo and not repo_dir_exists:
             raise RuntimeError('repo does not exist on disk; create first')
 
-        if not repo:
-
-            # Make sure there are permissions.
+        # Make sure there are permissions.
+        if not repo or not repo_dir_exists:
             if not (create and auth.can('repo.create', account)):
                 return
-
             debug('creating repository %s/%s', account_name, repo_name)
+
+        if not repo_dir_exists:
             makedirs(repo_dir)
             proc = subprocess.Popen(['git', 'init', '--bare', repo_dir], stdout=subprocess.PIPE)
             for line in proc.stdout:
@@ -105,6 +105,7 @@ class Repo(db.Model):
                 shutil.rmtree(repo_dir, ignore_errors=True)
                 raise RuntimeError('repo creation failed with code %d' % code)
 
+        if not repo:
             repo = Repo(name=repo_name, account=account)
             db.session.add(repo)
             db.session.commit()
