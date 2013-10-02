@@ -47,6 +47,14 @@
 
     #admin.tab-pane
 
+        - if auth.can('account.write', account):
+
+            .alert.alert-info %form(method='POST')
+
+                %input(type='hidden', name='action', value='account.meta.write')
+                +utils.render_form(account_meta_form)
+                %button.btn.btn-primary Update Account
+
         - if auth.can('repo.create', account):
             .alert.alert-success
                 %a#git-repo-create-button.btn.btn-success.pull-right.disabled(href='#') Create Repository

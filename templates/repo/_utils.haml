@@ -5,11 +5,10 @@
 @title(repo, link=True)
 
     @_title
-        - if repo.is_public:
-            %span.glyphicon.glyphicon-book
-        - else:
-            %span.glyphicon.glyphicon-lock
+        %span.glyphicon.glyphicon-book
         &= repo.account.name + ' / ' + repo.name
+        - if not repo.is_public:
+            %span.glyphicon.glyphicon-lock
 
     - if link:
         %a(href=url_for('repo', repo=repo)) +_title
@@ -37,9 +36,7 @@
         .media-body
 
             %h4.media-heading +title(repo, link=link)
-            %p
-                - if repo.description: &= repo.description
-                - else: %em No description.
+            - if repo.description: %p = markdown(repo.description)
             %p %small
                 - if head: Last updated ${fuzzy_time(head.commit_time)}.
                 - else: %em No commits.

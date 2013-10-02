@@ -5,8 +5,8 @@
 
 - for group in groups:
     +account_utils.media(group, avatar_size=96)
-        %h4 ${len(group.readable_repos)} ${'Repositories' if len(group.readable_repos) != 1 else 'Repository'}:
-        %ul - for repo in group.readable_repos:
+        %h4 ${len(group.readable_repos)} ${'Repositories' if len(group.readable_repos) != 1 else 'Repository'}${':' if group.readable_repos else ''}
+        %ul.list-unstyled - for repo in group.readable_repos:
             %li +repo_utils.title(repo)
 
 

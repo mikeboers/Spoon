@@ -1,34 +1,36 @@
+%%namespace(name='utils', file='/_utils.haml')
 
-@media(group, link=True, avatar_size=64)
+@media(account, link=True, avatar_size=64)
 
-    .media
+    .media.git-account
 
-        - url = url_for('account', account=group)
+        - url = url_for('account', account=account)
         
         %a.pull-left(href=url)
-            %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
+            - if account.email:
+                +utils.gravatar(account.email, size=avatar_size, class_='thumbnail media-object')
+            - else:
+                %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
 
         .media-body
             %h4.media-heading
                 
                 @title
-                    - if not group.is_public:
-                        %span.glyphicon.glyphicon-lock
-                    - elif group.is_group:
+                    - if account.is_group:
                         %span.glyphicon.glyphicon-globe
                     - else:
                         %span.glyphicon.glyphicon-user
-                    = group.name
+                    = account.name
+                    - if not account.is_public:
+                        %span.glyphicon.glyphicon-lock
 
                 - if link: %a(href=url) = title()
                 - else: = title()
-            %p
-                - if group.description: &= group.description
-                - else: %em No description.
-            - if group.is_group:
+            - if account.description: %p = markdown(account.description)
+            - if account.members:
                 %small
                     %span.glyphicon.glyphicon-user
-                    ${len(group.members)} member${'s' if len(group.members) != 1 else ''}
+                    ${len(account.members)} member${'s' if len(account.members) != 1 else ''}
 
             = caller.body()
 
