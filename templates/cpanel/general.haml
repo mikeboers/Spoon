@@ -20,7 +20,7 @@
 .panel.panel-success
     .panel-heading Create a New Group
     .panel-body %form(method='POST')
-        %input(type='hidden', name='action', value='group.create')
+        %input(type='hidden', name='action', value='account.create')
         +utils.render_form(new_group_form)
         %span.help-block You will be the first administrator of this group.
         %button.btn.btn-success(type='submit', disabled='wheel' not in current_user.roles) Create Group

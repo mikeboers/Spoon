@@ -11,8 +11,8 @@ from . import *
 ''')
 def debug_auth():
 
-    groups = list(Group.query.all())
-    users = list(User.query.all())
+    groups = list(Account.query.all())
+    users = [g for g in groups if not g.is_group]
     users.append(dummy_anon)
 
     return render_template('debug/auth.haml', groups=groups, users=users)
