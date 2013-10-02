@@ -2,7 +2,7 @@
 %%namespace(name='utils', file='/_utils.haml')
 %%namespace(name='cpanel_utils', file='./_utils.haml')
 %%namespace(name='user_utils', file='/user/_utils.haml')
-%%namespace(name='group_utils', file='/group/_utils.haml')
+%%namespace(name='account_utils', file='/account/_utils.haml')
 
 -! from markupsafe import Markup
 
@@ -28,6 +28,6 @@
 
 
     - if user.home:
-        +group_utils.media(user.home, avatar_size=96)
+        +account_utils.media(user.home, avatar_size=96)
     - else:
         +user_utils.media(user, avatar_size=96)

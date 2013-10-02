@@ -1,7 +1,7 @@
 %%inherit(file='/_main.haml')
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
 %%namespace(name='user_utils', file='/user/_utils.haml')
-%%namespace(name='group_utils', file='_utils.haml')
+%%namespace(name='account_utils', file='./_utils.haml')
 %%namespace(name='utils', file='/_utils.haml')
 
 
@@ -12,7 +12,7 @@
 
 
 
-+group_utils.media(group, link=False, avatar_size=200)
++account_utils.media(group, link=False, avatar_size=200)
 
 
 %ul#group-tabs.nav.nav-tabs

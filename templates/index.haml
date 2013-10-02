@@ -1,11 +1,10 @@
 %%inherit(file="/_main.haml")
-%%namespace(name='group_utils', file='/group/_utils.haml')
+%%namespace(name='account_utils', file='/account/_utils.haml')
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
-%%namespace(name='user_utils', file='/user/_utils.haml')
 
 
 - for group in groups:
-    +group_utils.media(group, avatar_size=96)
+    +account_utils.media(group, avatar_size=96)
         %h4 ${len(group.readable_repos)} ${'Repositories' if len(group.readable_repos) != 1 else 'Repository'}:
         %ul - for repo in group.readable_repos:
             %li +repo_utils.title(repo)
