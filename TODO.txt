@@ -1,6 +1,11 @@
 
 - test:
     - ssh access control
+        - run our own SSH server
+        - run nose inside an ssh-agent:
+            (ssh-agent; ssh-add var/ssh/id_rsa; nosetests)
+        - authorized_keys call to git-base-shell could include --testing, or
+          something similar so that it can work
     - basic web access control
 
 - group access controls via roles on GroupMembership

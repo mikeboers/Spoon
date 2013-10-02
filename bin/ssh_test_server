@@ -1,0 +1,26 @@
+#!/bin/bash
+
+root="$(cd "$(dirname "$0")/.."; pwd)"
+
+mkdir -p $root/var/ssh
+cd $root/var/ssh
+
+if [[ ! -f $root/var/ssh/id_rsa ]]; then
+    ssh-keygen -q -t rsa -P '' -f $root/var/ssh/id_rsa
+fi
+
+touch $root/var/ssh/authorized_keys
+
+cat > $root/var/ssh/sshd_config <<EOF
+
+    Port 2222
+    ListenAddress 127.0.0.1
+    ListenAddress ::1
+
+    HostKey $root/var/ssh/id_rsa
+    AuthorizedKeysFile  $root/var/ssh/authorized_keys
+    PidFile $root/var/ssh/pid
+
+EOF
+
+$(which sshd) -D -e -f $root/var/ssh/sshd_config
