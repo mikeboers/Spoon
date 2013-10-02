@@ -13,7 +13,7 @@ from flask.ext.login import current_user
 
 from ..utils import debug, makedirs
 from ..core.flask import app, auth, db
-from .group import Group
+from .account import Account
 
 
 log = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ class Repo(db.Model):
         extend_existing=True,
     )
 
-    group = db.relationship(Group, backref='repos')
+    account = db.relationship(Account, backref='repos')
     
     @property
     def __acl__(self):
@@ -42,7 +42,7 @@ class Repo(db.Model):
 
         # TODO: user specified goes here.
 
-        for ace in self.group.__acl__:
+        for ace in self.account.__acl__:
             yield ace
 
         if self.is_public:
@@ -55,7 +55,7 @@ class Repo(db.Model):
     def __acl_context__(self):
         return dict(
             repo=self,
-            group=self.group,
+            account=self.account,
         )
 
     @property
@@ -64,24 +64,24 @@ class Repo(db.Model):
 
     @property
     def path(self):
-        return os.path.join(app.config['REPO_DIR'], self.group.name, self.name + '.git')
+        return os.path.join(app.config['REPO_DIR'], self.account.name, self.name + '.git')
 
     @classmethod
-    def lookup(cls, group_name, repo_name, create=False):
+    def lookup(cls, account_name, repo_name, create=False):
 
         # Make sure it is a valid name.
         if not re.match(r'^%s$' % app.config['REPO_NAME_RE'], repo_name):
             raise ValueError('invalid repo name: %r' % repo_name)
 
-        # Grab/create the group.
-        group = Group.lookup(group_name, create=create)
-        if not group:
+        # Grab/create the account.
+        account = Account.lookup(account_name, create=create)
+        if not account:
             return
 
         did_create = False
 
-        repo = Repo.query.filter_by(name=repo_name, group=group).first()
-        repo_dir = os.path.join(app.config['REPO_DIR'], group_name, repo_name + '.git')
+        repo = Repo.query.filter_by(name=repo_name, account=account).first()
+        repo_dir = os.path.join(app.config['REPO_DIR'], account_name, repo_name + '.git')
         repo_dir_exists = os.path.exists(repo_dir)
 
         if not repo and repo_dir_exists:
@@ -92,10 +92,10 @@ class Repo(db.Model):
         if not repo:
 
             # Make sure there are permissions.
-            if not (create and auth.can('repo.create', group)):
+            if not (create and auth.can('repo.create', account)):
                 return
 
-            debug('creating repository %s/%s', group_name, repo_name)
+            debug('creating repository %s/%s', account_name, repo_name)
             makedirs(repo_dir)
             proc = subprocess.Popen(['git', 'init', '--bare', repo_dir], stdout=subprocess.PIPE)
             for line in proc.stdout:
@@ -105,7 +105,7 @@ class Repo(db.Model):
                 shutil.rmtree(repo_dir, ignore_errors=True)
                 raise RuntimeError('repo creation failed with code %d' % code)
 
-            repo = Repo(name=repo_name, group=group)
+            repo = Repo(name=repo_name, account=account)
             db.session.add(repo)
             db.session.commit()
 
@@ -122,13 +122,13 @@ class RepoConverter(wz.routing.BaseConverter):
 
     def __init__(self, url_map):
         super(RepoConverter, self).__init__(url_map)
-        self.regex = app.config['GROUP_NAME_RE'] + '/' + app.config['REPO_NAME_RE']
+        self.regex = app.config['ACCOUNT_NAME_RE'] + '/' + app.config['REPO_NAME_RE']
 
     def to_python(self, value):
-        group_name, repo_name = value.split('/', 1)
+        account_name, repo_name = value.split('/', 1)
 
         try:
-            repo = Repo.lookup(group_name, repo_name)
+            repo = Repo.lookup(account_name, repo_name)
             if repo:
                 return repo
         except ValueError:
@@ -136,7 +136,7 @@ class RepoConverter(wz.routing.BaseConverter):
         raise wz.routing.ValidationError('repo does not exist: %r' % value)
 
     def to_url(self, repo):
-        return '%s/%s' % (repo.group.name, repo.name)
+        return '%s/%s' % (repo.account.name, repo.name)
 
 
 app.url_map.converters['repo'] = RepoConverter

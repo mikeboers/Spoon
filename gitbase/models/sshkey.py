@@ -9,8 +9,7 @@ class SSHKey(db.Model):
         extend_existing=True,
     )
 
-    owner = db.relationship('User', backref=db.backref('ssh_keys', cascade='save-update,delete,delete-orphan'))
-
+    owner = db.relationship('Account', backref=db.backref('ssh_keys', cascade='save-update,delete,delete-orphan'))
 
     @property
     def cleaned(self):
