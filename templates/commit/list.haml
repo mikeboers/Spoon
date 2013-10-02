@@ -20,7 +20,7 @@
 
 @breadcrumb
     %li
-        %a(href=url_for('group', group=repo.account))
+        %a(href=url_for('account', account=repo.account))
             &= repo.account.name
     %li
         &= repo.name

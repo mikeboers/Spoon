@@ -20,7 +20,7 @@ requires_root = lambda func: auth.ACL('''
 
 from . import login
 from . import index
-from . import group
+from . import account
 from . import repo
 from . import tree
 from . import commit

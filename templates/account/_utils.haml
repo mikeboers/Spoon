@@ -3,7 +3,7 @@
 
     .media
 
-        - url = url_for('group', group=group)
+        - url = url_for('account', account=group)
         
         %a.pull-left(href=url)
             %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)

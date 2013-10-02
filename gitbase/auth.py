@@ -95,7 +95,7 @@ class _DummyAdmin(UserMixin):
 
     __repr__ = lambda self: '<DummyAccount user:ADMIN>'
 
-dummy_admin = _DummyAdmin
+dummy_admin = _DummyAdmin()
 
 
 class _DummyAnonymous(UserMixin):
@@ -108,6 +108,6 @@ class _DummyAnonymous(UserMixin):
 
     __repr__ = lambda self: '<DummyAccount user:ANONYMOUS>'
 
-dummy_anon = _DummyAnonymous
+dummy_anon = _DummyAnonymous()
 
 

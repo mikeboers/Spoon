@@ -1,29 +1,29 @@
 %%inherit(file='/_main.haml')
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
-%%namespace(name='user_utils', file='/user/_utils.haml')
 %%namespace(name='account_utils', file='./_utils.haml')
 %%namespace(name='utils', file='/_utils.haml')
 
 
 @breadcrumb
     %li
-        &= group.name
+        &= account.name
 
 
 
 
-+account_utils.media(group, link=False, avatar_size=200)
++account_utils.media(account, link=False, avatar_size=200)
 
 
-%ul#group-tabs.nav.nav-tabs
+%ul.nav.nav-tabs
     %li.active %a(href='#repos', dataToggle='tab')
         +utils.icon('book')
         Repositories
-    %li %a(href='#members', dataToggle='tab')
+    
+    - if account.is_group: %li %a(href='#members', dataToggle='tab')
         +utils.icon('user')
         Members
     
-    - if auth.can('repo.create', group):
+    - if auth.can('repo.create', account):
         %li.pull-right %a(href='#admin', dataToggle='tab')
             +utils.icon('cog')
             Admin
@@ -31,28 +31,28 @@
 .tab-content
 
     #repos.tab-pane.active
-        - for repo in group.readable_repos:
+        - for repo in account.readable_repos:
             = repo_utils.media(repo)
-        - if not group.readable_repos:
+        - if not account.readable_repos:
             .alert.alert-warning No repositories.
 
-    #members.tab-pane
+    - if account.is_group: #members.tab-pane
 
-        - if group.memberships:
-            - for membership in group.memberships:
-                +user_utils.media(membership.user)
+        - if account.members:
+            - for membership in account.members:
+                +account_utils.media(membership.user)
 
         - else:
             %em No members.
 
     #admin.tab-pane
 
-        - if auth.can('repo.create', group):
+        - if auth.can('repo.create', account):
             .alert.alert-success
                 %a#git-repo-create-button.btn.btn-success.pull-right.disabled(href='#') Create Repository
                 %strong Create a New Repository.
                 %br
-                You can create a new repository in this group.
+                You can create a new repository in this account.
                 
                 %form#git-repo-create-form.hide
                     +utils.render_form(new_repo_form)
@@ -66,12 +66,12 @@
                         })
                     })
 
-        - if auth.can('group.delete', group):
+        - if auth.can('account.delete', account):
             .alert.alert-danger
-                %form.git-group-delete(action=url_for('group', group=group), method='POST', dataGroupName=group.name)
-                    %input(type='hidden', name='action', value='group.delete')
-                    %input(type='hidden', name='id', value=group.id)
-                    %button.pull-right.btn.btn-danger Delete Group
-                %strong Delete this group.
+                %form.git-account-delete(action=url_for('account', account=account), method='POST', dataAccountName=account.name)
+                    %input(type='hidden', name='action', value='account.delete')
+                    %input(type='hidden', name='id', value=account.id)
+                    %button.pull-right.btn.btn-danger Delete Account
+                %strong Delete this account.
                 %br
                 This cannot be undone, and will delete all child repositories!
