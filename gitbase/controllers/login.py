@@ -26,7 +26,7 @@ def login():
 
     if form.validate_on_submit():
 
-        user = User.query.filter_by(name=form.username.data).first()
+        user = Account.query.filter_by(name=form.username.data).first()
         if user and user.check_password(form.password.data):
 
             login_user(user, remember=True)
@@ -41,13 +41,13 @@ def login():
 
 @app.route('/login/su')
 @requires_root
-def login_switch_user():
-    username = request.args.get('username')
-    if username:
-        user = User.query.filter_by(name=username).first()
-        if user:
-            login_user(user)
-            flash('Switched to "%s"' % username)
+def login_switch_account():
+    name = request.args.get('name')
+    if name:
+        account = Account.query.filter_by(name=name).first()
+        if account:
+            login_user(account)
+            flash('Switched to "%s"' % name)
     return redirect(request.args.get("next") or url_for("index"))
 
 

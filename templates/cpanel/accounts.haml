@@ -1,0 +1,22 @@
+%%inherit(file='/_main.haml')
+%%namespace(name='utils', file='/_utils.haml')
+%%namespace(name='cpanel_utils', file='./_utils.haml')
+%%namespace(name='account_utils', file='/account/_utils.haml')
+
+-! from markupsafe import Markup
+
+@breadcrumb
+    %li control panel
+    %li accounts
+
++cpanel_utils.page_tabs
+
+- for account in accounts:
+
+
+    +account_utils.media(account, avatar_size=96)
+
+        %
+            %a.btn.btn-xs.btn-primary(href=url_for('login_switch_account', name=account.name)) Switch to Account
+            -# %li %a.btn.btn-xs.btn-warning(href='#', dataAction='auth.token.create', dataUserId=account.id) Create Auth Token
+            %a.btn.btn-xs.btn-danger.disabled(href='#') Delete

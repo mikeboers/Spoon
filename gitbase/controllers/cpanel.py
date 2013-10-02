@@ -11,7 +11,7 @@ class NewGroupForm(Form):
     name = wtf.fields.TextField(validators=[wtf.validators.required()])
     public = wtf.fields.BooleanField()
     admin = wtf.ext.sqlalchemy.fields.QuerySelectField('Administrator',
-        query_factory=lambda: User.query,
+        query_factory=lambda: Account.query.filter_by(is_group=False),
         get_label='name',
         get_pk=lambda x: x.id,
     )
@@ -30,20 +30,20 @@ def cpanel():
 
     new_group_form = NewGroupForm()
 
-    if request.form.get('action') == 'group.create' and new_group_form.validate():
+    if request.form.get('action') == 'account.create' and new_group_form.validate():
 
         name = new_group_form.name.data.strip()
-        group = Group.query.filter_by(name=name).first()
+        group = Account.query.filter_by(name=name).first()
         if group:
-            flash('Group "%s" already exists.', 'danger')
+            flash('Account "%s" already exists.', 'danger')
         else:
 
-            group = Group(name=name, is_public=new_group_form.public.data)
-            group.memberships.append(GroupMembership(user=new_group_form.admin.data, is_admin=True))
+            group = Account(name=name, is_group=True, is_public=new_group_form.public.data)
+            group.members.append(GroupMembership(user=new_group_form.admin.data, is_admin=True))
             db.session.add(group)
             db.session.commit()
-            flash(Markup('Group <a href="%s">%s</a> was created.') % (
-                url_for('group', group=group),
+            flash(Markup('Account <a href="%s">%s</a> was created.') % (
+                url_for('account', account=group),
                 new_group_form.name.data,
             ))
 
@@ -54,9 +54,9 @@ def cpanel():
     )
 
 
-@app.route('/cpanel/users', methods=['GET', 'POST'])
+@app.route('/cpanel/accounts', methods=['GET', 'POST'])
 @auth.ACL(acl)
-def cpanel_users():
-    users = User.query.all()
-    return render_template('cpanel/users.haml', users=users)
+def cpanel_accounts():
+    accounts = Account.query.all()
+    return render_template('cpanel/accounts.haml', accounts=accounts)
 
