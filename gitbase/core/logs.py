@@ -75,7 +75,7 @@ class RequestContextInjector(logging.Filter):
 
 
 root = logging.getLogger()
-root.setLevel(logging.INFO)
+root.setLevel(logging.DEBUG if app.debug else logging.INFO)
 injector = RequestContextInjector()
 formatter = logging.Formatter('%(asctime)s %(levelname)-8s pid:%(pid)d req:%(request_counter)d ip:%(remote_addr)s %(name)s - %(message)s')
 

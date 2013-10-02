@@ -23,7 +23,7 @@ def assert_can_access_url_pieces():
         if isinstance(v, Repo):
             auth.assert_can('repo.read', v)
         if isinstance(v, Account):
-            auth.assert_can('group.read', v)
+            auth.assert_can('account.read', v)
 
 
 class Role(object):
@@ -40,11 +40,11 @@ class ADMIN(object):
 
     def __repr__(self):
         return 'ADMIN'
-    def __call__(self, user, group=None, **kw):
+    def __call__(self, user, account=None, **kw):
         # log.info('check if %r is an admin' % user)
-        if not user.is_authenticated() or not group:
+        if not user.is_authenticated() or not account:
             return
-        membership = next((m for m in group.memberships if m.user == user), None)
+        membership = next((m for m in account.memberships if m.user == user), None)
         return membership and membership.is_admin
 
 
@@ -52,21 +52,21 @@ class OWNER(object):
 
     def __repr__(self):
         return 'OWNER'
-    def __call__(self, user, group=None, **kw):
+    def __call__(self, user, account=None, **kw):
         # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-        return user.is_authenticated() and group and group.owner == user
+        return user.is_authenticated() and account and account.owner == user
 
 
 class MEMBER(object):
 
     def __repr__(self):
         return 'MEMBER'
-    def __call__(self, user, group=None, **kw):
+    def __call__(self, user, account=None, **kw):
         # log.info('check if %r is member of %r' % (current_user, group))
         return (
             user.is_authenticated() and
-            group and
-            any(m.user == user for m in group.memberships)
+            account and
+            any(m.user == user for m in account.memberships)
         )
 
 
@@ -78,18 +78,36 @@ string_predicates['ADMIN'] = ADMIN()
 
 string_permissions['repo.delete'] = set(('repo.delete', 'repo.write', 'repo.read'))
 string_permissions['repo.write'] = set(('repo.write', 'repo.read'))
-string_permissions['group.write'] = set(('group.write', 'group.read'))
+string_permissions['account.write'] = set(('account.write', 'account.read'))
+
+# TODO: remove this quick fix.
+string_permissions['group.write'] = set(('account.write', 'account.read'))
+string_permissions['group.read'] = set(('account.read', ))
 
 
-dummy_admin = UserMixin()
-dummy_admin.id = 0
-dummy_admin.name='<ADMIN>'
-dummy_admin.groups = []
-dummy_admin.roles = set(('wheel', ))
+class _DummyAdmin(UserMixin):
 
-dummy_anon = AnonymousUserMixin()
-dummy_anon.name='<ANON>'
-dummy_anon.id = 0
-dummy_anon.groups = []
-dummy_anon.roles = set()
+    id = 0
+    is_group = False
+    name = 'ADMIN'
+    groups = []
+    roles = set(('wheel', ))
+
+    __repr__ = lambda self: '<DummyAccount user:ADMIN>'
+
+dummy_admin = _DummyAdmin
+
+
+class _DummyAnonymous(UserMixin):
+
+    id = 0
+    is_group = False
+    name = 'ANONYMOUS'
+    groups = []
+    roles = set()
+
+    __repr__ = lambda self: '<DummyAccount user:ANONYMOUS>'
+
+dummy_anon = _DummyAnonymous
+
 

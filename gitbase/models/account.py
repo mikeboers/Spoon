@@ -23,6 +23,13 @@ class Account(db.Model):
     
     roles = RoleSetColumn()
 
+    def __repr__(self):
+        return '<%s %s:%s>' % (
+            self.__class__.__name__,
+            'group' if self.is_group else 'user',
+            self.name
+        )
+
     @property
     def path(self):
         return os.path.join(app.config['REPO_DIR'], self.name)
