@@ -16,8 +16,8 @@ def repo_admin(repo):
         auth.assert_can('repo.delete', repo)
         if request.form.get('user_accepted_danger'):
             repo.delete()
-            flash('Deleted repo "%s/%s"' % (repo.group.name, repo.name))
-            return redirect(url_for('group', group=repo.group))
+            flash('Deleted repo "%s/%s"' % (repo.account.name, repo.name))
+            return redirect(url_for('group', group=repo.account))
         else:
             flash('Javascript is required to delete repos.', 'danger')
 

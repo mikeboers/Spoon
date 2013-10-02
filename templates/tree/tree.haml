@@ -5,12 +5,12 @@
 %%namespace(name='tree_utils', file='./_utils.haml')
 %%namespace(name='utils', file='/_utils.haml')
 -
-    group = repo.group
+    group = repo.account
 
 @breadcrumb
 
     %li
-        %a(href=url_for('group', group=repo.group)) &= repo.group.name
+        %a(href=url_for('group', group=repo.account)) &= repo.account.name
     %li
         &= repo.name
     %li

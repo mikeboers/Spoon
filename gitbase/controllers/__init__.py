@@ -7,7 +7,7 @@ from flask.ext.login import current_user
 from ..core.flask import app, db, auth
 from ..core.mako import render_template
 
-from ..models import Group, Repo, User, GroupMembership
+from ..models import Account, Repo, GroupMembership
 
 
 requires_root = lambda func: auth.ACL('''
@@ -24,7 +24,6 @@ from . import group
 from . import repo
 from . import tree
 from . import commit
-from . import user
 
 from . import debug
 from . import cpanel

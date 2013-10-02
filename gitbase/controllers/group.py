@@ -10,7 +10,7 @@ class NewRepoForm(Form):
     public = wtf.fields.BooleanField(default=True)
 
 
-@app.route('/<group:group>', methods=['GET', 'POST'])
+@app.route('/<account:group>', methods=['GET', 'POST'])
 def group(group):
 
     new_repo_form = NewRepoForm()

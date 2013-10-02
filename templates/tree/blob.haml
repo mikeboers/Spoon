@@ -9,12 +9,12 @@
 
     import pygments
 -
-    group = repo.group
+    group = repo.account
 
 
 @breadcrumb
     %li
-        %a(href=url_for('group', group=repo.group)) &= repo.group.name
+        %a(href=url_for('group', group=repo.account)) &= repo.account.name
     %li
         %a(href=url_for('repo', repo=repo)) &= repo.name
     

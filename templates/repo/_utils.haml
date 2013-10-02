@@ -9,7 +9,7 @@
             %span.glyphicon.glyphicon-book
         - else:
             %span.glyphicon.glyphicon-lock
-        &= repo.group.name + ' / ' + repo.name
+        &= repo.account.name + ' / ' + repo.name
 
     - if link:
         %a(href=url_for('repo', repo=repo)) +_title
@@ -29,7 +29,7 @@
 
         .input-group.pull-right.git-repo-clone-url
             %span.input-group-addon +utils.icon('cloud-download')
-            %input.form-control(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.group.name, repo.name))
+            %input.form-control(type='text', readonly=True, onclick='this.select()', value='git@%s:%s/%s' % (request.host, repo.account.name, repo.name))
 
         -# .pull-left
             %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)

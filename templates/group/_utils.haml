@@ -14,7 +14,7 @@
                 @title
                     - if not group.is_public:
                         %span.glyphicon.glyphicon-lock
-                    - elif group.is_a_home:
+                    - elif group.is_group:
                         %span.glyphicon.glyphicon-home
                     - else:
                         %span.glyphicon.glyphicon-globe
@@ -28,10 +28,10 @@
             -# %small
                 %span.glyphicon.glyphicon-book
                 ${len(group.readable_repos)} ${'repository' if len(group.readable_repos) == 1 else 'repositories'}
-            - if not group.is_a_home:
+            - if not group.is_group:
                 %small
                     %span.glyphicon.glyphicon-user
-                    ${len(group.memberships)} member${'s' if len(group.memberships) != 1 else ''}
+                    ${len(group.members)} member${'s' if len(group.members) != 1 else ''}
                 -# if not group.is_public:
                     %p %small %span.label.label-warning PRIVATE
 

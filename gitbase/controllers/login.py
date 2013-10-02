@@ -9,7 +9,7 @@ from . import *
 
 @login_manager.user_loader
 def load_user(userid):
-    return User.query.filter_by(name=userid).first()
+    return Account.query.filter_by(name=userid).first()
 
 
 class LoginForm(Form):
