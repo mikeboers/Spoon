@@ -44,7 +44,7 @@ class ADMIN(object):
         # log.info('check if %r is an admin' % user)
         if not user.is_authenticated() or not account:
             return
-        membership = next((m for m in account.memberships if m.user == user), None)
+        membership = next((m for m in account.members if m.user == user), None)
         return membership and membership.is_admin
 
 
@@ -54,7 +54,7 @@ class OWNER(object):
         return 'OWNER'
     def __call__(self, user, account=None, **kw):
         # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-        return user.is_authenticated() and account and account.owner == user
+        return user.is_authenticated() and account and account == user
 
 
 class MEMBER(object):
@@ -66,7 +66,7 @@ class MEMBER(object):
         return (
             user.is_authenticated() and
             account and
-            any(m.user == user for m in account.memberships)
+            any(m.user == user for m in account.members)
         )
 
 

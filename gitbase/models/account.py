@@ -58,9 +58,10 @@ class Account(db.Model):
 
             # Only create a membership if this is a real user.
             if current_user.id:
-                account.memberships.append(GroupMembership(
+                account.members.append(GroupMembership(
                     user=current_user,
-                    ))
+                    is_admin=True, # Should this be the case?
+                ))
 
             db.session.add(account)
             db.session.commit()
