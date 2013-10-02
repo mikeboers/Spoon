@@ -9,7 +9,7 @@ import sys
 from argparse import ArgumentParser
 
 from ..core.flask import app, db
-from ..models import User, Group, SSHKey, Membership
+from ..models import User, Group, SSHKey, GroupMembership
 
 
 def do_add(args, edit=False):
@@ -68,7 +68,7 @@ def do_add(args, edit=False):
             group = Group(name=group_name)
             db.session.add(group)
 
-        user.memberships.append(Membership(user=user, group=group, is_admin=is_admin))
+        user.memberships.append(GroupMembership(user=user, group=group, is_admin=is_admin))
 
     if args.home:
 

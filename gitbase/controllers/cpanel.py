@@ -39,7 +39,7 @@ def cpanel():
         else:
 
             group = Group(name=name, is_public=new_group_form.public.data)
-            group.memberships.append(Membership(user=new_group_form.admin.data, is_admin=True))
+            group.memberships.append(GroupMembership(user=new_group_form.admin.data, is_admin=True))
             db.session.add(group)
             db.session.commit()
             flash(Markup('Group <a href="%s">%s</a> was created.') % (

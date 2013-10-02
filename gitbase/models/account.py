@@ -8,7 +8,7 @@ from flask.ext.login import current_user
 
 from ..utils import debug
 from ..core.flask import app, auth, db
-from .membership import Membership
+from .groupmembership import GroupMembership
 from .roleset import RoleSetColumn
 
 
@@ -50,7 +50,7 @@ class Account(db.Model):
 
             # Only create a membership if this is a real user.
             if current_user.id:
-                account.memberships.append(Membership(
+                account.memberships.append(GroupMembership(
                     user=current_user,
                     ))
 

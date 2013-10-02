@@ -6,7 +6,7 @@ from flask.ext.login import current_user, login_user
 
 from gitbase.core.flask import app, auth, db
 from gitbase.auth import dummy_admin, dummy_anon
-from gitbase.models import User, Group, Repo, Membership
+from gitbase.models import User, Group, Repo, GroupMembership
 
 
 sandbox = os.path.join(
