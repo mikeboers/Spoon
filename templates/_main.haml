@@ -1,64 +1,31 @@
-%%namespace(name='utils', file='/_utils.haml')
--!
-    from urllib import urlencode
-    from flask.ext.login import current_user
-!!! 5
-%head
-
-    %link(rel="stylesheet", href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css")
-    %link(rel="stylesheet", href=static('/css/lib.css'))
-    %link(rel="stylesheet", href=static('/css/screen.css'))
-    %link(rel="icon", href="/favicon.ico")
-    
-    %script(src='//code.jquery.com/jquery-1.10.1.min.js')
-    %script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js')
-    %script(src=static('/js/lib.min.js'))
-    %script(src=static('/js/main.min.js'))
-
-    %title Git Base
-
-%body(class_='view-' + request.endpoint, dataEndpoint=request.endpoint)
-
-    #root.container
-        
-        %ol.breadcrumb
-
-            - if current_user.is_authenticated():
-                %.pull-right
-                    %a(href=url_for('user', user=current_user))
-                        %strong &= current_user.name
-
-                    .btn-group.btn-group-xs
-                        - if any(role in current_user.roles for role in ('wheel', 'observer')):
-                            %a.btn.btn-primary(href=url_for('cpanel'))
-                                +utils.icon('cog')
-                                Admin
-                        
-                        %a.btn.btn-default(href=url_for('logout'))
-                            +utils.icon('log-out')
-                            Logout
-            - elif request.endpoint != 'login':
-                %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login') + '?' + urlencode(dict(next=request.script_root + request.path)))
-                    +utils.icon('log-in')
-                    Login
-
-            %li
-                %a(href='/') %img(src="/img/git-logo.png")
-            = next.breadcrumb()
+%%inherit(file="/_base.haml")
+%%namespace(name="utils", file="/_utils.haml")
 
 
-        - for class_, message in get_flashed_messages(with_categories=True):
-            - class_ = 'info' if class_ == 'message' else class_
-            %.alert(class_='alert-' + class_) &= message
+@breadcrumb_head
 
-        = next.body()
+    - if current_user.is_authenticated():
+        %.pull-right
+            %a(href=url_for('account', account=current_user))
+                %strong &= current_user.name
 
-        #root-footer
+            .btn-group.btn-group-xs
+                - if any(role in current_user.roles for role in ('wheel', 'observer')):
+                    %a.btn.btn-primary(href=url_for('cpanel'))
+                        +utils.icon('cog')
+                        Admin
+                
+                %a.btn.btn-default(href=url_for('logout'))
+                    +utils.icon('log-out')
+                    Logout
+    - elif request.endpoint != 'login':
+        %.pull-right %a.btn.btn-primary.btn-xs(href=url_for('login', next=request.script_root + request.path))
+            +utils.icon('log-in')
+            Login
 
-    #footer.container
-        %%include(file='_footer.haml')
 
+- for class_, message in get_flashed_messages(with_categories=True):
+    - class_ = 'info' if class_ == 'message' else class_
+    %.alert(class_='alert-' + class_) &= message
 
--# Just a stub.
-@breadcrumb
-
+= next.body()
