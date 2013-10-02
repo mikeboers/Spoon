@@ -1,7 +1,7 @@
 //= require_self
 //= require pages/cpanel_users
 //= require pages/repo_admin
-//= require pages/group_admin
+//= require pages/account_admin
 
 
 var app = {};

@@ -10,9 +10,9 @@ import sys
 from flask.ext.login import login_user, current_user
 
 from ..main import app, auth, db
-from ..models import Group, Repo, User
+from ..models import Account, Repo
 from ..utils import *
-from ..auth import dummy_admin
+from ..auth import dummy_anon
 
 
 _commands = {}
@@ -43,7 +43,7 @@ def main():
         die('missing user')
 
     username = sys.argv[1]
-    user = User.query.filter_by(name=username).first()
+    user = Account.query.filter_by(name=username).first()
     if not user:
         die('unknown user: %r' % username)
 
@@ -72,24 +72,24 @@ def do_git(command, *args):
     if not m:
         die('bad command argument: %r', joined_name)
 
-    group_name, repo_name = m.groups()
+    account_name, repo_name = m.groups()
 
     # TODO: pass results of user.has_permission('repo.create')
     try:
-        repo = Repo.lookup(group_name, repo_name, create=True)
+        repo = Repo.lookup(account_name, repo_name, create=True)
     except (ValueError, RuntimeError) as e:
         die(str(e))
 
     # It doesn't exist, and we don't have permission to create it.
     if not repo:
-        die('unknown repo %s/%s' % (group_name, repo_name))
+        die('unknown repo %s/%s' % (account_name, repo_name))
 
     # Make sure we are allowed to operate on it. Same error as above.
     permission = 'repo.write' if command == 'git-receive-pack' else 'repo.read'
     if not auth.can(permission, repo):
-        die('unknown repo %s/%s' % (group_name, repo_name))
+        die('unknown repo %s/%s' % (account_name, repo_name))
 
     # Allow the call to go through.
-    debug('calling %s %s/%s', command, group_name, repo_name)
+    debug('calling %s %s/%s', command, account_name, repo_name)
     os.execvp(command, [command, repo.path])
 

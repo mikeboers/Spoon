@@ -1,8 +1,8 @@
-app.endpoint_handler('group', function() {
+app.endpoint_handler('account', function() {
 
-    $('form.git-group-delete').each(function() {
+    $('form.git-account-delete').each(function() {
         var $form = $(this);
-        var name = $form.data('group-name');
+        var name = $form.data('account-name');
         var prompt = "DELETE " + name;
         $form.formIsDangerous({
             message: 'This can <strong>NOT</strong> be undone.<br/>If you are sure, type <code>' + prompt + '</code>.',

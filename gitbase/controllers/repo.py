@@ -17,7 +17,7 @@ def repo_admin(repo):
         if request.form.get('user_accepted_danger'):
             repo.delete()
             flash('Deleted repo "%s/%s"' % (repo.account.name, repo.name))
-            return redirect(url_for('group', group=repo.account))
+            return redirect(url_for('account', account=repo.account))
         else:
             flash('Javascript is required to delete repos.', 'danger')
 
@@ -38,7 +38,7 @@ def commits(repo):
             head = None
 
     if not head:
-        return render_template('commits.haml', repo=repo)
+        return render_template('commit/list.haml', repo=repo)
 
     # Getting the set of commits and the next one are easy. Getting the
     # start of the previous set? Not so much...
