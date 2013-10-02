@@ -32,11 +32,6 @@
             @breadcrumb
             +self.breadcrumb
 
-
-        - for class_, message in get_flashed_messages(with_categories=True):
-            - class_ = 'info' if class_ == 'message' else class_
-            %.alert(class_='alert-' + class_) &= message
-
         = next.body()
 
         #root-footer
