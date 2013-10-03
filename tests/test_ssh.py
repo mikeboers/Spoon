@@ -1,32 +1,48 @@
 from . import *
 
 
-class TestSSH(TestCase):
+class SSHTestCase(TestCase):
 
     def setUp(self):
 
-        self.account_name = 'test_' + mini_timestamp()
+        self.account_name = 'test_' + mini_start + '_' + self.__class__.__name__
+        self.log.info('creating account %s' % self.account_name)
+        self.key = self.genkey()
         shell('''
-            echo Creating account: %(account_name)s
-            git-base-account --delete 'test_*'
-            git-base-account -k var/ssh/id_rsa.pub %(account_name)s
+            git-base-account -k {self.key}.pub {self.account_name}
             git-base-keys --rewrite var/ssh/authorized_keys
-        ''' % self.__dict__)
+        '''.format(self=self))
 
     def tearDown(self):
-        pass
+        if CLEAN_DB:
+            self.log.info('cleaning up account')
+            shell('''
+                git-base-account --delete 'test_*_{self.__class__.__name__}'
+            '''.format(self=self))
 
-    def test_echo(self):
+    def shell(self, source, **kwargs):
+        return shell(source, key=self.key, **kwargs)
+
+    def shell_output(self, source, **kwargs):
+        return shell_output(source, key=self.key, **kwargs)
+
+
+class TestSSHEcho(SSHTestCase):
+
+    def test(self):
         self.assertEqual(
-            shell_output('''
+            self.shell_output('''
                 ssh -p 2222 localhost echo hello
             ''').strip(),
-            'echo hello'
+            'I got: hello'
         )
 
-    def test_passwd(self):
 
-        shell('''
+class TestSSHPasswd(SSHTestCase):
+
+    def test(self):
+
+        self.shell('''
             ssh -p 2222 localhost passwd password
         ''')
 
@@ -35,9 +51,12 @@ class TestSSH(TestCase):
             account = Account.query.filter_by(name=self.account_name).first()
             self.assertTrue(account.check_password('password'))
 
-    def test_autocreate(self):
 
-        shell('''
+class TestSSHAutoCreate(SSHTestCase):
+
+    def test(self):
+
+        self.assertFalse(self.shell('''
 
             cd "{self.sandbox}"
             mkdir hello
@@ -49,7 +68,12 @@ class TestSSH(TestCase):
             git remote add origin ssh://localhost:2222/{self.account_name}/hello
             git push origin
 
-        '''.format(self=self))
+        '''.format(self=self)))
+
+        with app.test_request_context():
+
+            account = Account.query.filter_by(name=self.account_name).first()
+            self.assertEqual(account.repos[0].name, 'hello')
 
 
 

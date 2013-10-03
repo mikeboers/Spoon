@@ -22,8 +22,8 @@ def register(func):
 
 
 @register
-def echo(*args):
-    print ' '.join(args)
+def echo(command, *args):
+    print 'I got: %s' % ' '.join(args)
 
 
 @register

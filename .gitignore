@@ -7,3 +7,4 @@
 
 /var
 /vendor/git*
+/tests/sandbox
