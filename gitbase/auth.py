@@ -1,8 +1,8 @@
 import logging
 
 from flask import request
-from flask.ext.acl.predicates import string_predicates
-from flask.ext.acl.permissions import string_permissions
+from flask.ext.acl.predicate import string_predicates
+from flask.ext.acl.permission import string_permissions
 from flask.ext.login import current_user, UserMixin, AnonymousUserMixin
 
 from .core.flask import app, auth
@@ -77,13 +77,15 @@ string_predicates['OWNER'] = OWNER()
 string_predicates['MEMBER'] = MEMBER()
 string_predicates['ADMIN'] = ADMIN()
 
+string_permissions['repo.create'] = set(('repo.create', ))
 string_permissions['repo.delete'] = set(('repo.delete', 'repo.write', 'repo.read'))
 string_permissions['repo.write'] = set(('repo.write', 'repo.read'))
-string_permissions['account.write'] = set(('account.write', 'account.read'))
+string_permissions['repo.read'] = set(('repo.read', ))
 
-# TODO: remove this quick fix.
-string_permissions['group.write'] = set(('account.write', 'account.read'))
-string_permissions['group.read'] = set(('account.read', ))
+string_permissions['account.create'] = set(('account.create', ))
+string_permissions['account.delete'] = set(('account.delete', 'account.write', 'account.read'))
+string_permissions['account.write'] = set(('account.write', 'account.read'))
+string_permissions['account.read'] = set(('account.read', ))
 
 
 class _DummyAdmin(UserMixin):
