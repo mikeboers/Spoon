@@ -8,7 +8,7 @@
         
         %a.pull-left(href=url)
             - if account.email:
-                +utils.gravatar(account.email, size=avatar_size, class_='thumbnail media-object')
+                +utils.gravatar(account.email, size=avatar_size, robohash=not account.is_group, class_='thumbnail media-object')
             - else:
                 %img.thumbnail.media-object(src=resized_img_src('/img/git-logo-pale.png', width=avatar_size, height=avatar_size), width=avatar_size, height=avatar_size)
 

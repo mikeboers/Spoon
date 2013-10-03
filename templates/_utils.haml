@@ -1,11 +1,18 @@
 -!
     import hashlib
     import os
+    from urllib import urlencode
 
 
-@gravatar(email, size=200, **kw)
-    - hash_ = hashlib.md5(email.strip().lower()).hexdigest()
-    %img(src='//gravatar.com/avatar/%s.jpg?s=%d' % (hash_, size), width=size, height=size, **kw)
+@gravatar(email, size=200, robohash=False, **kw)
+    -
+        hash_ = hashlib.md5(email.strip().lower()).hexdigest()
+        gravatar_url = '//gravatar.com/avatar/%s?s=%s' % (hash_, size)
+        if robohash:
+            robohash_url = 'http://robohash.org/%s.png?size=%sx%s&bgset=any' % (hash_, size, size)
+            gravatar_url = '%s&%s' % (gravatar_url,  urlencode(dict(d=robohash_url)))
+
+    %img(src=gravatar_url, width=size, height=size, **kw)
 
 
 @permalink(target, anchor=False)
