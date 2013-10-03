@@ -48,7 +48,7 @@ class Repo(db.Model):
         if self.is_public:
             yield 'ALLOW ANY repo.read'
         else:
-            yield 'DENY ANONYMOUS ANY'
+            yield 'DENY ANONYMOUS ALL'
         
 
     @property

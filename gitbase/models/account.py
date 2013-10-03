@@ -70,7 +70,7 @@ class Account(db.Model):
 
     @property
     def __acl__(self):
-        yield 'ALLOW ROOT ANY'
+        yield 'ALLOW ROOT ALL'
 
         # TODO: user specified goes here.
 
@@ -86,7 +86,7 @@ class Account(db.Model):
         else:
             # Surpress the public's ability to do anything within this
             # account, without those objects needing to know about it.
-            yield 'DENY !MEMBER ANY'
+            yield 'DENY !MEMBER ALL'
 
 
     @property
