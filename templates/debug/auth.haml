@@ -52,12 +52,12 @@
             %td group
             %td &= group.name
             - for user in users: %td
-                - if auth.can('group.read', group, user=user):
-                    .span.label.label-default group.read
-                - if auth.can('group.write', group, user=user):
-                    .span.label.label-warning group.write
-                - if auth.can('group.delete', group, user=user):
-                    .span.label.label-danger group.delete
+                - if auth.can('account.read', group, user=user):
+                    .span.label.label-default account.read
+                - if auth.can('account.write', group, user=user):
+                    .span.label.label-warning account.write
+                - if auth.can('account.delete', group, user=user):
+                    .span.label.label-danger account.delete
                 - if auth.can('repo.create', group, user=user):
                     .span.label.label-success repo.create
 
