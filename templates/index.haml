@@ -3,12 +3,19 @@
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
 
 
-- for group in groups:
-    +account_utils.media(group, avatar_size=96)
-        %h4 ${len(group.readable_repos)} ${'Repositories' if len(group.readable_repos) != 1 else 'Repository'}${':' if group.readable_repos else ''}
-        %ul.list-unstyled - for repo in group.readable_repos:
+@go(account)
+    +account_utils.media(account, avatar_size=96)
+        %h4 ${len(account.readable_repos)} ${'Repositories' if len(account.readable_repos) != 1 else 'Repository'}${':' if account.readable_repos else ''}
+        %ul.list-unstyled - for repo in account.readable_repos:
             %li +repo_utils.title(repo)
 
+.row
+    .col-sm-6
+        %h2 Users
+        - for account in groups: - if not account.is_group: +go(account)
+    .col-sm-6
+        %h2 Groups
+        - for account in groups: - if     account.is_group: +go(account)
 
 - if not groups:
     .alert.alert-warning No repositories.
