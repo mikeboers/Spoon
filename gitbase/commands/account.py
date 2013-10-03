@@ -23,7 +23,11 @@ def main():
     arg_parser.add_argument('-g', '--group', dest='groups', action='append')
     arg_parser.add_argument('-G', '--group-admin', dest='admin_groups', action='append')
 
+    arg_parser.add_argument('-m', '--member', dest='members', action='append')
+
     arg_parser.add_argument('-r', '--role', dest='roles', action='append')
+
+    arg_parser.add_argument('-e', '--email')
 
     arg_parser.add_argument('-k', '--key', dest='keys', action='append')
 
@@ -81,6 +85,9 @@ def process_account(account, args):
     if args.nopassword:
         account.password_hash = None
         
+    if args.email:
+        account.email = args.email
+
     if (args.groups or args.admin_groups) and not args.append:
         account.groups = []
 
@@ -113,6 +120,16 @@ def process_account(account, args):
             account.roles = set()
         account.roles.update(args.roles)
 
+    if args.members:
+        if not args.append:
+            account.members = []
+        for name in args.members:
+            user = Account.query.filter_by(name=name).first()
+            if not user:
+                print 'warning: user %s does not exist' % name
+            else:
+                account.members.append(GroupMembership(user=user))
+    
     if args.keys:
         if account.is_group:
             print 'warning: adding SSH keys to group account'
