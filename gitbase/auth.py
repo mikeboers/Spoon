@@ -1,8 +1,6 @@
 import logging
 
 from flask import request
-from flask.ext.acl.predicate import string_predicates
-from flask.ext.acl.permission import string_permissions
 from flask.ext.login import current_user, UserMixin, AnonymousUserMixin
 
 from .core.flask import app, auth
@@ -26,6 +24,7 @@ def assert_can_access_url_pieces():
             auth.assert_can('account.read', v)
 
 
+
 class Role(object):
 
     def __init__(self, name):
@@ -35,57 +34,42 @@ class Role(object):
     def __call__(self, user, **kw):
         return self.name in getattr(user, 'roles', ())
 
+auth.predicates['ROOT'] = Role('wheel')
+auth.predicates['OBSERVER'] = Role('observer')
 
-class ADMIN(object):
+@auth.predicate('ADMIN')
+def Admin(user, account=None, **kw):
+    # log.info('check if %r is an admin' % user)
+    if not user.is_authenticated() or not account:
+        return
+    membership = next((m for m in account.members if m.user == user), None)
+    return membership and membership.is_admin
 
-    def __repr__(self):
-        return 'ADMIN'
-    def __call__(self, user, account=None, **kw):
-        # log.info('check if %r is an admin' % user)
-        if not user.is_authenticated() or not account:
-            return
-        membership = next((m for m in account.members if m.user == user), None)
-        return membership and membership.is_admin
+@auth.predicate('OWNER')
+@auth.predicate('SELF')
+def Owner(user, account=None, **kw):
+    # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
+    return user.is_authenticated() and account and account == user
 
-
-class OWNER(object):
-
-    def __repr__(self):
-        return 'OWNER'
-    def __call__(self, user, account=None, **kw):
-        # log.info('check if %r is owner of %r/%r' % (current_user, group, repo))
-        return user.is_authenticated() and account and account == user
-
-
-class MEMBER(object):
-
-    def __repr__(self):
-        return 'MEMBER'
-    def __call__(self, user, account=None, **kw):
-        # log.info('check if %r is member of %r' % (current_user, group))
-        return (
-            user.is_authenticated() and
-            account and
-            any(m.user == user for m in account.members)
-        )
+@auth.predicate('MEMBER')
+def Member(user, account=None, **kw):
+    # log.info('check if %r is member of %r' % (current_user, group))
+    return (
+        user.is_authenticated() and
+        account and
+        any(m.user == user for m in account.members)
+    )
 
 
-string_predicates['ROOT'] = Role('wheel')
-string_predicates['OBSERVER'] = Role('observer')
-string_predicates['SELF'] = OWNER()
-string_predicates['OWNER'] = OWNER()
-string_predicates['MEMBER'] = MEMBER()
-string_predicates['ADMIN'] = ADMIN()
+auth.permission_sets['repo.create'] = set(('repo.create', ))
+auth.permission_sets['repo.delete'] = set(('repo.delete', 'repo.write', 'repo.read'))
+auth.permission_sets['repo.write'] = set(('repo.write', 'repo.read'))
+auth.permission_sets['repo.read'] = set(('repo.read', ))
 
-string_permissions['repo.create'] = set(('repo.create', ))
-string_permissions['repo.delete'] = set(('repo.delete', 'repo.write', 'repo.read'))
-string_permissions['repo.write'] = set(('repo.write', 'repo.read'))
-string_permissions['repo.read'] = set(('repo.read', ))
-
-string_permissions['account.create'] = set(('account.create', ))
-string_permissions['account.delete'] = set(('account.delete', 'account.write', 'account.read'))
-string_permissions['account.write'] = set(('account.write', 'account.read'))
-string_permissions['account.read'] = set(('account.read', ))
+auth.permission_sets['account.create'] = set(('account.create', ))
+auth.permission_sets['account.delete'] = set(('account.delete', 'account.write', 'account.read'))
+auth.permission_sets['account.write'] = set(('account.write', 'account.read'))
+auth.permission_sets['account.read'] = set(('account.read', ))
 
 
 class _DummyAdmin(UserMixin):

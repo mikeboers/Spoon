@@ -3,6 +3,8 @@ from . import *
 
 class TestPermissions(TestCase):
 
+    needs_context = True
+    
     def test_wheel(self):
 
         repo = Repo(name='private_repo', is_public=False)
