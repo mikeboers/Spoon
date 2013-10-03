@@ -17,12 +17,22 @@ class SSHKey(db.Model):
 
     owner = db.relationship('Account', backref=db.backref('ssh_keys', cascade='save-update,delete,delete-orphan'))
 
+    def __init__(self, *args, **kwargs):
+        super(SSHKey, self).__init__(*args, **kwargs)
+        if not self.clean:
+            raise ValueError('badly formatted ssh key')
+
     @property
     def clean(self):
-        parts = self.data.strip().split()
-        if parts[0] not in ('ssh-rsa', ):
-            raise ValueError('unknown key format: %r' % parts[0])
-        return '%s %s %s' % (parts[0], parts[1], self.owner.name)
+
+        m = re.match(r'(ssh-rsa|ssh-dsa)\s+([a-zA-Z0-9+/]+=*)', self.data)
+        if not m:
+            return
+
+        type_, key = m.groups()
+        # comment = re.sub(r'[^\w@\.-]+', '-', comment.strip())
+
+        return '%s %s %s' % (type_, key, self.owner.name if self.owner else 'unowned')
 
 
 

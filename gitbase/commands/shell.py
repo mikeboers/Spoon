@@ -22,6 +22,11 @@ def register(func):
 
 
 @register
+def echo(*args):
+    print ' '.join(args)
+
+
+@register
 def passwd(args, pass_=None):
 
     if pass_ is None:

@@ -1,6 +1,9 @@
 import itertools
+import os
 import sys
 from argparse import ArgumentParser
+
+import sqlalchemy as sa
 
 from ..core.flask import app, db
 from ..models import Account, SSHKey, GroupMembership
@@ -10,6 +13,8 @@ def main():
 
     arg_parser = ArgumentParser()
 
+    arg_parser.add_argument('--delete', action='store_true')
+    arg_parser.add_argument('--list', action='store_true')
 
     arg_parser.add_argument('-t', '--type')
 
@@ -25,14 +30,40 @@ def main():
     arg_parser.add_argument('-p', '--password')
     arg_parser.add_argument('--nopassword', action='store_true')
 
-    arg_parser.add_argument('name')
+    arg_parser.add_argument('name', nargs='+')
 
     args = arg_parser.parse_args()
 
-    account = Account.query.filter_by(name=args.name).first()
-    if not account:
-        account = Account(name=args.name)
-        db.session.add(account)
+    for name in args.name:
+
+        accounts = list(Account.query.filter(sa.func.glob(name, Account.name)).all())
+
+        if args.list:
+            for account in accounts:
+                print account.name
+            continue
+
+        if not accounts:
+
+            # Don't bother processing them.
+            if args.delete:
+                continue
+
+            account = Account(name=name)
+            db.session.add(account)
+            accounts = [account]
+        
+        for account in accounts:
+            process_account(account, args)
+
+
+def process_account(account, args):
+
+    if args.delete:
+        if account:
+            db.session.delete(account)
+            db.session.commit()
+        return
 
     if args.type:
         if args.type == 'user':
@@ -88,8 +119,14 @@ def main():
         if not args.append:
             account.ssh_keys = []
         for raw_key in args.keys:
-            ssh_key = SSHKey(data=raw_key)
-            account.ssh_keys.append(ssh_key)
+            if os.path.exists(raw_key):
+                raw_key = open(raw_key).read()
+            try:
+                ssh_key = SSHKey(data=raw_key)
+            except ValueError:
+                print 'warning: SSH key was malformed, and not added'
+            else:
+                account.ssh_keys.append(ssh_key)
 
     db.session.commit()
 
