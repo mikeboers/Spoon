@@ -1,47 +1,25 @@
 
-- combine user/group into a single entity:
+- test:
+    - ssh access control
+    - basic web access control
 
-    Everything turns into an Account.
+- group access controls via roles on GroupMembership
 
-    Account.is_group flags is something is a group or not. Only groups
-    can contain repositories, unless the user is marked as a 'publisher'
-    (either via a role or a `is_publisher`) flag.
-
-        Change roles to use '|wheel|observer|publisher|' with delimiters on the
-        ends so that LIKE will work (e.g. `roles LIKE '%|wheel|%').
-
-    group_membership must be rejiggered to be two Account objects
-
-        rename to "group_memberships"
-        Account.parents -> list of groups this is a member of
-        Account.children -> list of accounts that are members of this
-
-    Permissions must be changed:
-
-        'account.read' -> see and list contents of the account
-        'account.write' -> edit the metadata, and push new repos
-        'account.delete' -> delete the account, duh!
-
+- pick from branches at the top of the commit list
 
 - move repos/groups/users to trash, instead of deleting them
     - `is_trash` field on all of those
     
-- repo creation should assert that the files don't already exist
-    - 'group.autocreate' and 'repo.autocreate'
-    - groups don't really care if there is a folder there or not
+- 'Account.autocreate' and 'repo.autocreate'
+    - Where do these get attached? A classproperty on Account could do...
 
-- metadata editing on groups and repos
+- Should a user with `'wheel' in roles` get an instant pass?
 
 - flash messages via https://github.com/HubSpot/messenger
 
 - creating repos
-- deleting repos
 - editing repo metadata (description, email, etc.)
-- creating groups
-- deleting groups
-- editing group metadata
 - editing group memberships (inviting other users)
-
 
 - main repo view is the README, or instructions on how to push to it, like github
     
