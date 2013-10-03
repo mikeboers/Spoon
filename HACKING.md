@@ -1,6 +1,19 @@
+Development Notes
+=================
+
+Running a Development Server
+----------------------------
+
+~~~
+manage css --watch &
+manage js --watch &
+ssh_test_server &
+manage serve
+~~~
+
 
 Accounts for Users and Groups
-=============================
+-----------------------------
 
 Users and groups are both represented by a single class, the `Account`. The different is made via a single `account.is_group` flag.
 
@@ -18,7 +31,7 @@ It is technically possible to have members of a user group, and also to set pass
 
 
 Role Sets
-=========
+---------
 
 Sets of roles are represented by a `String` column, where the individual roles are delimited and terminated by a `|` (vertical bar).
 
@@ -37,7 +50,7 @@ Known roles include:
 
 
 Permissions
-===========
+-----------
 
 The following are some permissions that are checked:
 

@@ -1,4 +1,13 @@
 
+`git-base-account --delete` should warn if there are files there
+`git-base-account` subcommands:
+    add
+    edit
+    delete
+    list
+    group [-r role] -g group user
+    group [-r role] -u user group
+
 - test:
     - ssh access control
         - run our own SSH server
@@ -7,6 +16,8 @@
         - authorized_keys call to git-base-shell could include --testing, or
           something similar so that it can work
     - basic web access control
+
+- move SSH_PORT into the main config, and the tests should pick up on that
 
 - group access controls via roles on GroupMembership
 
