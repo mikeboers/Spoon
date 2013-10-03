@@ -3,16 +3,51 @@ from . import *
 
 class TestPermissions(TestCase):
 
-    def test_anonymous_user_with_private_repo_in_public_group(self):
+    def test_private_repo_in_public_group(self):
 
-        user = dummy_anon
         repo = Repo(name='private_repo', is_public=False)
-        group = Group(name='public_group', is_public=True)
-        group.repos.append(repo)
+        account = Account(name='public_group', is_public=True, is_group=True)
+        account.repos.append(repo)
+        another_user = Account(name='another_user', roles=set(), id=1)
+        member = Account(name='group_member', roles=set(), id=2)
+        account.members.append(GroupMembership(user=member))
 
-        ctx = dict(current_user=user, repo=repo, group=group)
-
-        # I would also like to test for not group.read on the repo, but
-        # they don't work like that... yet.
-        self.assertTrue(auth.can('group.read', group, **ctx))
+        # Anonymous user.
+        ctx = dict(user=dummy_anon, account=account, repo=repo)
+        self.assertTrue(auth.can('account.read', account, **ctx))
         self.assertFalse(auth.can('repo.read', repo, **ctx))
+
+        # Authenticated user.
+        ctx = dict(user=dummy_anon, account=account, repo=repo)
+        self.assertTrue(auth.can('account.read', account, **ctx))
+        self.assertFalse(auth.can('repo.read', repo, **ctx))
+
+        # Group member.
+        ctx = dict(user=member, account=account, repo=repo)
+        self.assertTrue(auth.can('account.read', account, **ctx))
+        self.assertTrue(auth.can('repo.read', repo, **ctx))
+
+    def test_public_repo_in_private_group(self):
+
+        repo = Repo(name='private_repo', is_public=True)
+        account = Account(name='public_group', is_public=False, is_group=True)
+        account.repos.append(repo)
+        another_user = Account(name='another_user', roles=set(), id=1)
+        member = Account(name='group_member', roles=set())
+        account.members.append(GroupMembership(user=member))
+
+        # Anonymous user.
+        ctx = dict(user=dummy_anon, account=account, repo=repo)
+        self.assertFalse(auth.can('account.read', account, **ctx))
+        self.assertFalse(auth.can('repo.read', repo, **ctx))
+
+        # Authenticated user.
+        ctx = dict(user=another_user, account=account, repo=repo)
+        self.assertFalse(auth.can('account.read', account, **ctx))
+        self.assertFalse(auth.can('repo.read', repo, **ctx))
+
+        # Group member.
+        ctx = dict(user=member, account=account, repo=repo)
+        self.assertTrue(auth.can('account.read', account, **ctx))
+        self.assertTrue(auth.can('repo.read', repo, **ctx))
+
