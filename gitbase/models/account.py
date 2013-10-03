@@ -74,6 +74,9 @@ class Account(db.Model):
 
         # TODO: user specified goes here.
 
+        yield 'ALLOW SELF repo.create'
+        yield 'ALLOW SELF accoun.write'
+
         yield 'ALLOW ADMIN repo.create'
         yield 'ALLOW ADMIN account.write'
         yield 'ALLOW MEMBER account.read'

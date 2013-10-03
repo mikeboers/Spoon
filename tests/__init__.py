@@ -50,7 +50,7 @@ class TestCase(BaseTestCase):
 
     @property
     def sandbox(self):
-        path = os.path.join(sandbox, self.full_name)
+        path = os.path.join(sandbox, self.__class__.__name__)
         try:
             os.makedirs(path)
         except OSError as e:

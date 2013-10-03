@@ -14,10 +14,7 @@ class TestSSH(TestCase):
         ''' % self.__dict__)
 
     def tearDown(self):
-        shell('''
-            echo Cleaning up test accounts...
-            git-base-account --delete 'test_*'
-        ''' % self.__dict__)
+        pass
 
     def test_echo(self):
         self.assertEqual(
@@ -37,6 +34,22 @@ class TestSSH(TestCase):
 
             account = Account.query.filter_by(name=self.account_name).first()
             self.assertTrue(account.check_password('password'))
+
+    def test_autocreate(self):
+
+        shell('''
+
+            cd "{self.sandbox}"
+            mkdir hello
+            cd hello
+            git init
+            echo "Hello, world!" > README.txt
+            git add README.txt
+            git commit -m 'Greet the world.'
+            git remote add origin ssh://localhost:2222/{self.account_name}/hello
+            git push origin
+
+        '''.format(self=self))
 
 
 

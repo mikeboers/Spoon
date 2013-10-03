@@ -72,6 +72,7 @@ class MEMBER(object):
 
 string_predicates['ROOT'] = Role('wheel')
 string_predicates['OBSERVER'] = Role('observer')
+string_predicates['SELF'] = OWNER()
 string_predicates['OWNER'] = OWNER()
 string_predicates['MEMBER'] = MEMBER()
 string_predicates['ADMIN'] = ADMIN()
