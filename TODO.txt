@@ -20,6 +20,7 @@
 - move SSH_PORT into the main config, and the tests should pick up on that
 
 - group access controls via roles on GroupMembership
+- repo access controls via roles on RepoCollaborator
 
 - pick from branches at the top of the commit list
 
@@ -34,7 +35,6 @@
 - flash messages via https://github.com/HubSpot/messenger
 
 - creating repos
-- editing repo metadata (description, email, etc.)
 - editing group memberships (inviting other users)
 
 - main repo view is the README, or instructions on how to push to it, like github
@@ -56,11 +56,6 @@
 
 
 - test the permissions!
-
-
-- 'group.create' permission is effectively 'http.post' on 'group_create' entrypoint
-
-- avatars are all from gravatar
 
 - add `update` hook to repos on creation. It is run once for every branch being
   pushed BEFORE they are accepted, allowing us to do write/force/merge control.
