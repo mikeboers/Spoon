@@ -1,6 +1,17 @@
 
-`git-base-account --delete` should warn if there are files there
-`git-base-account` subcommands:
+- rename to "Spoon"
+    - spoon-accounts
+    - spoon-install
+
+- repo name checking is generally case sensitive, unless you are renaming or
+  autocreating
+
+- reflog
+
+- activity log on the landing page; this requires a reflog
+
+`spoon-account --delete` should warn if there are files there
+`spoon-account` subcommands:
     add
     edit
     delete
@@ -8,12 +19,16 @@
     group [-r role] -g group user
     group [-r role] -u user group
 
+- repository collaborators, so I can share my personal private repos with
+  friends
+
+
 - test:
     - ssh access control
         - run our own SSH server
         - run nose inside an ssh-agent:
             (ssh-agent; ssh-add var/ssh/id_rsa; nosetests)
-        - authorized_keys call to git-base-shell could include --testing, or
+        - authorized_keys call to spoon-shell could include --testing, or
           something similar so that it can work
     - basic web access control
 
@@ -76,31 +91,6 @@
 - be able to mark repos as clones from other locations. Periodically pull them,
   OR respond when they are hit with a webhook from GitHub or a post-recieve hook.
 
-
-Name:
-    git.ly
-    gitly
-    gitlight (too much like gitolite)
-    gitter
-
-    git pipe
-    git house
-    git-pump
-
-    git-only
-    gitsplore
-
-    Git Get
-    
-    Git One (git-one)
-    Git Me
-    Git Base
-    Git by Git
-    Git Map
-
-    git-stop
-    git-town
-
-
-
+- make a logo
+    - the git logo uses Adelle
 
