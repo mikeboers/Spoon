@@ -34,3 +34,25 @@
 
             = caller.body()
 
+
+@page_tabs(account, active=None)
+    - active = active if active is not None else request.endpoint
+
+    %ul.nav.nav-tabs
+
+        %li(class_='active' if active == 'account' else '')
+            %a(href=url_for('account', account=account))
+                +utils.icon('book')
+                Repositories
+        
+        - if account.is_group:
+            %li(class_='active' if active == 'account_members' else '')
+                %a(href=url_for('account_members', account=account))
+                    +utils.icon('user')
+                    Members
+        
+        - if auth.can('repo.create', account):
+            %li.pull-right(class_='active' if active == 'account_admin' else '')
+                %a(href=url_for('account_admin', account=account))
+                    +utils.icon('cog')
+                    Admin

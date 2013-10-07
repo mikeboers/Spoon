@@ -17,8 +17,18 @@ class AccountMetaForm(Form):
     description = wtf.fields.TextAreaField()
 
 
-@app.route('/<account:account>', methods=['GET', 'POST'])
+@app.route('/<account:account>')
 def account(account):
+    return render_template('account/account.haml', account=account)
+
+
+@app.route('/<account:account>/members')
+def account_members(account):
+    return render_template('account/members.haml', account=account)
+
+
+@app.route('/<account:account>/admin', methods=['GET', 'POST'])
+def account_admin(account):
 
     new_repo_form = NewRepoForm()
     account_meta_form = AccountMetaForm(obj=account)
@@ -38,8 +48,9 @@ def account(account):
         else:
             flash('Javascript is required to delete groups.', 'danger')
 
-    return render_template('account/account.haml',
+    return render_template('account/admin.haml',
         account=account,
         new_repo_form=new_repo_form,
         account_meta_form=account_meta_form,
     )
+

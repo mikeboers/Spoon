@@ -1,0 +1,56 @@
+%%inherit(file='/_main.haml')
+%%namespace(name='repo_utils', file='/repo/_utils.haml')
+%%namespace(name='account_utils', file='./_utils.haml')
+%%namespace(name='utils', file='/_utils.haml')
+
+
+@breadcrumb
+    %li
+        &= account.name
+
+
+
+
++account_utils.media(account, link=False, avatar_size=200)
++account_utils.page_tabs(account)
+
+
+- if auth.can('account.write', account):
+
+    .alert.alert-info %form(method='POST')
+
+        %input(type='hidden', name='action', value='account.meta.write')
+        +utils.render_form(account_meta_form)
+        %button.btn.btn-primary Update Account
+
+
+- if auth.can('repo.create', account):
+    .alert.alert-success
+        %a#git-repo-create-button.btn.btn-success.pull-right.disabled(href='#') Create Repository
+        %strong Create a New Repository.
+        %br
+        You can create a new repository in this account.
+        
+        %form#git-repo-create-form.hide
+            +utils.render_form(new_repo_form)
+
+        -# :javascript
+            $(function() {
+                $('#git-repo-create-button').click(function() {
+                    vex.dialog.confirm({
+                        message: $('#git-repo-create-form').html()
+                    })
+                })
+            })
+
+
+- if auth.can('account.delete', account):
+    .alert.alert-danger
+        %form.git-account-delete(action=url_for('account', account=account), method='POST', dataAccountName=account.name)
+            %input(type='hidden', name='action', value='account.delete')
+            %input(type='hidden', name='id', value=account.id)
+            %button.pull-right.btn.btn-danger Delete Account
+        %strong Delete this account.
+        %br
+        This cannot be undone, and will delete all child repositories!
+
