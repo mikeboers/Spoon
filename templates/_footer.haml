@@ -2,7 +2,12 @@
     import datetime
 
 
-%ol.breadcrumb %li
+%footer %ol.breadcrumb %li %small
+
+    All rights to site content reserved by original committers, unless noted otherwise.
+
+    %br
+
 
     Spoon
     -
@@ -15,10 +20,10 @@
             http://git-scm.com
             http://python.org
         '''.strip().split()
-        words = 'is built on the shoulders of others.'.split()
+        words = 'is built on the shoulders of others,'.split()
     
     - for url, word in zip(links, words):
         %a(href=url) &= word
 
-    Source code <a href="https://github.com/mikeboers/Spoon">available on GitHub</a> under BSD license.
-    <a href="https://github.com/mikeboers/Spoon/blob/master/LICENSE.txt">View license details.</a>
+    and <a href="https://github.com/mikeboers/Spoon">available on GitHub</a>.
+
