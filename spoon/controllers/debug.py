@@ -7,7 +7,7 @@ from . import *
 @auth.ACL('''
     ALLOW ROOT http.get
     ALLOW OBSERVER http.get
-    DENY ALL ALL
+    DENY ANY ALL
 ''')
 def debug_auth():
 

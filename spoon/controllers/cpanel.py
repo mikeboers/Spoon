@@ -18,9 +18,9 @@ class NewGroupForm(Form):
 
 
 acl = '''
-    ALLOW ROOT ANY
+    ALLOW ROOT ALL
     ALLOW OBSERVER http.get
-    DENY ALL ALL
+    DENY ANY ALL
 '''
 
 
