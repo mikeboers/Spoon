@@ -19,10 +19,14 @@
         ${fuzzy_time(commit.committer.time)}.
 
 
-@alert(commit)
+@alert(repo, commit)
     .alert.alert-info.media
         .media-object.pull-left +utils.gravatar(commit.author.email, size=48, class_='img-rounded')
         .media-body
+            .btn-group.pull-right
+                %a.btn.btn-xs.btn-primary(disabled=request.endpoint == 'tree', href=url_for('tree', repo=repo, ref=commit.oid.hex[:8])) Tree
+                %a.btn.btn-xs.btn-primary(disabled=request.endpoint == 'commit', href=url_for('commit', repo=repo, commit=commit.oid.hex[:8])) Diff
+
             -
                 message = re.sub(r'([ \t]*\n)+', '\n', commit.message)
                 message = message.splitlines()
