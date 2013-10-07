@@ -4,28 +4,28 @@ rm var/sqlite/main.sqlite
 migrate
 
 echo Importing existing repos
-git-base-import
+spoon-import
 
 echo Converting mikeboers to a user
-git-base-account -t user -r wheel -p password mikeboers
-git-base-account --email 'github@mikeboers.com' mikeboers
+spoon-account -t user -r wheel -p password mikeboers
+spoon-account --email 'github@mikeboers.com' mikeboers
 
 echo Adding SSH key...
-git-base-account -k "$(cat ~/.ssh/id_rsa-localgit.pub)" mikeboers
+spoon-account -k "$(cat ~/.ssh/id_rsa-localgit.pub)" mikeboers
 
 echo Adding westernx group...
-git-base-account --append --group westernx mikeboers
-git-base-account --email 'mboers@keypics.com' westernx
+spoon-account --append --group westernx mikeboers
+spoon-account --email 'mboers@keypics.com' westernx
 
 echo Adding swisssol group...
-git-base-account --append --group swisssol mikeboers
+spoon-account --append --group swisssol mikeboers
 
 echo Adding shadowsinthegrass group...
-git-base-account --append --group subsurface mikeboers
-git-base-account --email 'subsurface@mikeboers.com' subsurface
+spoon-account --append --group subsurface mikeboers
+spoon-account --email 'subsurface@mikeboers.com' subsurface
 
 echo Adding swd-at-sfu group...
-git-base-account --append --member mikeboers --email 'swd-at-sfu@mikeboers.com' swd-at-sfu
+spoon-account --append --member mikeboers --email 'swd-at-sfu@mikeboers.com' swd-at-sfu
 
 echo Setting base visibility...
 sqlite3 var/sqlite/main.sqlite <<EOF

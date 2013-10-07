@@ -36,12 +36,12 @@ class SSHKey(db.Model):
 
 
 
-_flags = ('# git-base start', '# git-base end')
+_flags = ('# spoon start', '# spoon end')
 
 
 def iter_authorized_keys():
 
-    command_path = os.path.join(os.path.dirname(sys.executable), 'git-base-shell')
+    command_path = os.path.join(os.path.dirname(sys.executable), 'spoon-shell')
     format = 'command="%s %%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %%s' % command_path
 
     to_add = []
@@ -64,7 +64,7 @@ def rewrite_authorized_keys(path=None):
         content = ''
 
     # re.sub doesn't work here?
-    m = re.search(r'# git-base start.+git-base end', content, re.DOTALL)
+    m = re.search(r'# spoon start.+spoon end', content, re.DOTALL)
     if m:
         content = content[:m.start()] + content[m.end():]
         content = content.rstrip()

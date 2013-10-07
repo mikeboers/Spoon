@@ -22,4 +22,4 @@ fi
 PORT=$(manage config PORT)
 
 exec 2>&1
-exec $PRELUDE gunicorn -k gevent -b 0.0.0.0:$PORT -p $service/pid gitbase.main:app
+exec $PRELUDE gunicorn -k gevent -b 0.0.0.0:$PORT -p $service/pid spoon.main:app

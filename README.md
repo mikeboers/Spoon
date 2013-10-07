@@ -1,7 +1,7 @@
-Git Base
-========
+Spoon
+=====
 
-A lightweight personal git server.
+A lightweight website for your git forks.
 
 
 Installation
@@ -10,8 +10,8 @@ Installation
 Install [libgit2][libgit2]. Then:
 
 ~~~
-git clone git@github.com:mikeboers/git-base
-cd git-base
+git clone git@github.com:mikeboers/Spoon
+cd Spoon
 . bin/bootstrap
 ~~~
 

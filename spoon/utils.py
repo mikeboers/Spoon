@@ -29,7 +29,7 @@ def stderr(*args):
 def error(msg, *args):
     if args:
         msg = msg % args
-    stderr('git-base-ssh:', msg)
+    stderr('spoon:', msg)
 
 
 debug = error

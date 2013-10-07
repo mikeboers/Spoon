@@ -1,23 +1,23 @@
 from distutils.core import setup
 
 setup(
-    name='gitbase',
+    name='spoon',
     version='0.0.1',
     description='Lightweight personal git server.',
-    url='http://github.com/mikeboers/git-base',
+    url='http://github.com/mikeboers/spoon',
     
-    packages=['gitbase'],
+    packages=['spoon'],
     
     author='Mike Boers',
-    author_email='git-base@mikeboers.com',
+    author_email='spoon@mikeboers.com',
     license='BSD-3',
     
     entry_points={
         'console_scripts': [
-            'git-base-shell = gitbase.commands.shell:main',
-            'git-base-import = gitbase.commands.import:main',
-            'git-base-account = gitbase.commands.account:main',
-            'git-base-keys = gitbase.commands.keys:main',
+            'spoon-shell = spoon.commands.shell:main',
+            'spoon-import = spoon.commands.import:main',
+            'spoon-account = spoon.commands.account:main',
+            'spoon-keys = spoon.commands.keys:main',
         ],
     },
 

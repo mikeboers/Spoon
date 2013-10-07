@@ -37,7 +37,7 @@ app = Flask(__name__,
 
 )
 
-app.config.from_object('gitbase.core.config')
+app.config.from_object('spoon.core.config')
 app.root_path = app.config['ROOT_PATH']
 
 

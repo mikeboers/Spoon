@@ -9,15 +9,15 @@ class SSHTestCase(TestCase):
         self.log.info('creating account %s' % self.account_name)
         self.key = self.genkey()
         shell('''
-            git-base-account -k {self.key}.pub {self.account_name}
-            git-base-keys --rewrite var/ssh/authorized_keys
+            spoon-account -k {self.key}.pub {self.account_name}
+            spoon-keys --rewrite var/ssh/authorized_keys
         '''.format(self=self))
 
     def tearDown(self):
         if CLEAN_DB:
             self.log.info('cleaning up account')
             shell('''
-                git-base-account --delete 'test_*_{self.__class__.__name__}'
+                spoon-account --delete 'test_*_{self.__class__.__name__}'
             '''.format(self=self))
 
     def shell(self, source, **kwargs):

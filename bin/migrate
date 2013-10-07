@@ -13,7 +13,7 @@ root_path = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardi
 if root_path not in sys.path:
     sys.path.insert(0, root_path)
 
-from gitbase.core import config
+from spoon.core import config
 
 
 opt_parser = OptionParser()

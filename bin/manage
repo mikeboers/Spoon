@@ -60,7 +60,7 @@ def secret_key():
 @command
 def nginx():
     from mako.lookup import TemplateLookup
-    from gitbase.core import config
+    from spoon.core import config
 
     lookup = TemplateLookup(directories=[os.path.join(config.ROOT_PATH, 'etc')])
 
@@ -104,11 +104,11 @@ def get_group():
 def config(all=False, *args):
 
     if all:
-        from gitbase.core.flask import app
-        obj = gitbase.config
+        from spoon.core.flask import app
+        obj = spoon.config
     else:
-        import gitbase.core.config
-        obj = gitbase.core.config.__dict__
+        import spoon.core.config
+        obj = spoon.core.config.__dict__
 
     if args:
         print obj.get(args[0])
@@ -244,7 +244,7 @@ def kill(signal='kill'):
 def serve(debug=True, watch=True):
 
     if debug:
-        from gitbase.main import app
+        from spoon.main import app
         app.run(
             debug=True,
             use_reloader=watch,

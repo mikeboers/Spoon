@@ -4,20 +4,21 @@
 
 %ol.breadcrumb %li
 
-    Git Base is
+    Spoon
     -
         links = '''
-            http://python.org
+            http://libgit2.github.com
             http://flask.pocoo.org
             http://sqlalchemy.org
-            http://jquery.com
             http://makotemplates.org
             http://getbootstrap.com
+            http://git-scm.com
+            http://python.org
         '''.strip().split()
-        words = 'built on the shoulders of others.'.split()
+        words = 'is built on the shoulders of others.'.split()
     
     - for url, word in zip(links, words):
         %a(href=url) &= word
 
-    Source code <a href="https://github.com/mikeboers/git-base">available on GitHub</a> under BSD license.
-    <a href="https://github.com/mikeboers/git-base/blob/master/LICENSE.txt">View license details.</a>
+    Source code <a href="https://github.com/mikeboers/Spoon">available on GitHub</a> under BSD license.
+    <a href="https://github.com/mikeboers/Spoon/blob/master/LICENSE.txt">View license details.</a>

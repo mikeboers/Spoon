@@ -30,4 +30,4 @@ echo 'Running migrations...'
 migrate
 
 echo 'Importing existing repos...'
-git-base-import
+spoon-import
