@@ -12,6 +12,14 @@ def repo(repo):
 @app.route('/<repo:repo>/admin', methods=['GET', 'POST'])
 def repo_admin(repo):
 
+    if request.method == 'POST' and request.form.get('action') == 'repo.public_toggle':
+        repo.is_public = not repo.is_public
+        db.session.commit()
+        if repo.is_public:
+            flash('Repo is now public.', 'success')
+        else:
+            flash('Repo is now private.', 'warning')
+
     if request.method == 'POST' and request.form.get('action') == 'repo.delete':
         auth.assert_can('repo.delete', repo)
         if request.form.get('user_accepted_danger'):

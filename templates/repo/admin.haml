@@ -30,10 +30,27 @@
 
 
 - if auth.can('repo.delete', repo):
+
+    .alert(class_ = 'alert-warning' if repo.is_public else 'alert-success')
+        %form.repo-public-toggle(method='POST', action=url_for('repo_admin', repo=repo))
+            %input(type='hidden', name='action', value='repo.public_toggle')
+            - if repo.is_public:
+                %button.pull-right.btn.btn-warning Lock Repo
+                %strong Lock this repository.
+                %br
+                Make this repository private; only members of the account will be able
+                to see it
+            - else:
+                %button.pull-right.btn.btn-success Unlock Repo
+                %strong Unlock this repository.
+                %br
+                Make this repository public; everyone will be able to see and clone it.
+
+
+- if auth.can('repo.delete', repo):
     .alert.alert-danger
         %form.git-repo-delete(action=url_for('repo_admin', repo=repo), method='POST', dataRepoName=repo.name)
             %input(type='hidden', name='action', value='repo.delete')
-            %input(type='hidden', name='id', value=repo.id)
             %button.pull-right.btn.btn-danger(href='#', dataId=repo.id) Delete Repo
         %strong Delete this repository.
         %br
