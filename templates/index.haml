@@ -8,6 +8,6 @@
 
     +account_utils.media(account)
 
-        - for repo in account.readable_repos:
-            +repo_utils.media(repo)
+        %ul.list-unstyled.repo-list - for repo in account.readable_repos:
+            %li.repo +repo_utils.title(repo)
 
