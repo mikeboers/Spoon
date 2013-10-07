@@ -24,7 +24,7 @@
         %button.btn.btn-primary Update Account
 
 
-- if auth.can('repo.create', account):
+-# if auth.can('repo.create', account):
     .alert.alert-success
         %a#git-repo-create-button.btn.btn-success.pull-right.disabled(href='#') Create Repository
         %strong Create a New Repository.
@@ -42,6 +42,24 @@
                     })
                 })
             })
+
+
+- if auth.can('account.delete', account):
+
+    .alert(class_ = 'alert-warning' if account.is_public else 'alert-success')
+        %form.account-public-toggle(method='POST', action=url_for('account_admin', account=account))
+            %input(type='hidden', name='action', value='account.public_toggle')
+            - if account.is_public:
+                %button.pull-right.btn.btn-warning Lock Account
+                %strong Lock this account.
+                %br
+                Make this account private; only members of the account will be able
+                to see it
+            - else:
+                %button.pull-right.btn.btn-success Unlock Account
+                %strong Unlock this Account.
+                %br
+                Make this account public; everyone will be able to see and browse it.
 
 
 - if auth.can('account.delete', account):

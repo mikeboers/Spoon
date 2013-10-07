@@ -33,6 +33,15 @@ def account_admin(account):
     new_repo_form = NewRepoForm()
     account_meta_form = AccountMetaForm(obj=account)
 
+
+    if request.method == 'POST' and request.form.get('action') == 'account.public_toggle':
+        account.is_public = not account.is_public
+        db.session.commit()
+        if account.is_public:
+            flash('Account is now public.', 'success')
+        else:
+            flash('Account is now private.', 'warning')
+
     if request.method == 'POST' and request.form.get('action') == 'account.meta.write':
         auth.assert_can('account.write', account)
         account_meta_form.populate_obj(account)
