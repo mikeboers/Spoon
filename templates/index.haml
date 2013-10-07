@@ -2,20 +2,12 @@
 %%namespace(name='account_utils', file='/account/_utils.haml')
 %%namespace(name='repo_utils', file='/repo/_utils.haml')
 
+- for i, account in enumerate(a for a in accounts if a.is_public or a.readable_repos):
+    
+    - if i: %hr
 
-@go(account)
-    +account_utils.media(account, avatar_size=96)
-        %h4 ${len(account.readable_repos)} ${'Repositories' if len(account.readable_repos) != 1 else 'Repository'}${':' if account.readable_repos else ''}
-        %ul.list-unstyled - for repo in account.readable_repos:
-            %li +repo_utils.title(repo)
+    +account_utils.media(account)
 
-.row
-    .col-sm-6
-        %h2 Users
-        - for account in groups: - if not account.is_group: +go(account)
-    .col-sm-6
-        %h2 Groups
-        - for account in groups: - if     account.is_group: +go(account)
+        - for repo in account.readable_repos:
+            +repo_utils.media(repo)
 
-- if not groups:
-    .alert.alert-warning No repositories.

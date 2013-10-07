@@ -1,8 +1,4 @@
 
-- rename to "Spoon"
-    - spoon-accounts
-    - spoon-install
-
 - repo name checking is generally case sensitive, unless you are renaming or
   autocreating
 
@@ -10,7 +6,9 @@
 
 - activity log on the landing page; this requires a reflog
 
-`spoon-account --delete` should warn if there are files there
+`spoon-account --delete` should warn if there are files there, or just delete
+  them
+
 `spoon-account` subcommands:
     add
     edit
@@ -90,7 +88,4 @@
 
 - be able to mark repos as clones from other locations. Periodically pull them,
   OR respond when they are hit with a webhook from GitHub or a post-recieve hook.
-
-- make a logo
-    - the git logo uses Adelle
 
