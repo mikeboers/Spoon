@@ -20,16 +20,8 @@
 
 
 +repo_utils.media(repo, link=False)
-
-
 +repo_utils.page_tabs(repo, ref=commit.hex[:8])
 
-    %li.active %a(href='#')
-        +utils.icon('pencil')
-        Diff ${commit.hex[:8]|h}
-
-
-    
 
 +commit_utils.alert(commit)
 

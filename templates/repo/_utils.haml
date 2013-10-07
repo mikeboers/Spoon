@@ -44,7 +44,7 @@
             - if caller: +caller.body
 
 
-@page_tabs(repo, ref='HEAD', active=None)
+@page_tabs(repo, ref='master', active=None)
     - active = active if active is not None else request.endpoint
     %ul.nav.nav-tabs
 
@@ -68,6 +68,13 @@
             %a(href='#' if active == 'tree' else url_for('tree', repo=repo, ref=ref))
                 +utils.icon('folder-open')
                 Files @ ${ref|h}
+
+        - if ref != 'master':
+            %li(class_='active' if active == 'commit' else '')
+                %a(href='#' if active == 'commit' else url_for('commit', repo=repo, commit=ref))
+                    +utils.icon('pencil')
+                    Diff @
+                    &= ref
 
         - if caller:
             +caller.body

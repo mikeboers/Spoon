@@ -6,11 +6,11 @@ import pygit2
 from . import *
 
 
-@app.route('/<repo:repo>/tree/HEAD')
+@app.route('/<repo:repo>/tree/master')
 @app.route('/<repo:repo>/tree/<ref>')
-@app.route('/<repo:repo>/tree/HEAD/<path:path>')
+@app.route('/<repo:repo>/tree/master/<path:path>')
 @app.route('/<repo:repo>/tree/<ref>/<path:path>')
-def tree(repo, path='', ref='HEAD'):
+def tree(repo, path='', ref='master'):
 
     commit = repo.git.revparse_single(ref)
     entry = commit.tree[path] if path else commit.tree
