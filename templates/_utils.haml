@@ -27,11 +27,11 @@
 
 @field_flags(field)
     - if field.flags.optional:
-        %small.optional [optional]
+        %span.label(class_='label-danger' if field.errors else 'label-default') Optional
     - elif field.flags.required:
-        %small.required [required]
+        %span.label(class_='label-danger' if field.errors else 'label-primary') Required
     - for error in field.errors:
-        %small &= error
+        %span.label.label-danger &= error
 
 @render_form(form)
     -
