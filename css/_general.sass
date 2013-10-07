@@ -2,8 +2,19 @@
 @import "compass/layout/sticky-footer"
 @include sticky-footer(36px, "#root", "#root-footer", "#footer")
 
-.breadcrumb .logo
-    margin-right: 1ex
+#primary-breadcrumb
+
+    .logo
+        margin-right: 2px
+
+    li
+        font-size: 20px
+        font-family: "Helvetica Neue", Helvetica, sans-serif
+        font-weight: 200
+
+    li + li:before
+        padding: 0 0 0 4px
+        content: '/'
 
 .media
     margin-bottom: 15px
@@ -32,3 +43,4 @@ label
             content: '['
         &:after
             content: ']'
+
