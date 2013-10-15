@@ -1,0 +1,23 @@
+#!/bin/bash
+
+APP_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_ROOT="$(dirname "$APP_BIN")"
+
+# Create a Python virtual environment, and drop into it.
+VENV="$APP_ROOT/var/venv-$(uname)-$(arch)"
+if [[ ! -e "$VENV/bin/python" ]]
+then
+
+    # Make sure we even have virtualenv.
+    if [[ ! -e "$APP_BIN/virtualenv" ]]
+    then
+        curl -o "$APP_BIN/virtualenv" https://raw.github.com/pypa/virtualenv/master/virtualenv.py
+        chmod +x "$APP_BIN/virtualenv"
+    fi
+
+    # Create it.
+    mkdir -p "$VENV"
+    "$APP_BIN/virtualenv" --no-site-packages --distribute "$VENV"
+fi
+
+. "$VENV/bin/activate"

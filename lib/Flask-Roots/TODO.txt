@@ -1,0 +1,51 @@
+
+
+- `bin/roots-bootstrap` creates the `bin/activate` script, which is likely just
+  a copy of the `bin/activate` in Flask-Roots, although it may create some extra
+  information in the form of a `bin/.rootsenv` script that describes the project
+  (such as the Python package name).
+
+- `bin/roots-bootstrap --var=/tmp/myapp` stuffs runtime stuff there instead
+  of in "$APP_ROOT/var". It stores this in `$ROOTS_VAR` via the `bin/.rootsenv`
+  script.
+
+- APP_ROOT vs FLASK_APP_ROOT (so that FLASK_* envvars can be pulled in automatically?)
+
+- activate/bootstrap pulls package name from:
+python setup.py --name 2>/dev/null
+
+- pull wsgi_app via entrypoint; see http://stackoverflow.com/a/9615473/66502
+
+- It will provide an easy mechanism for Python/Ruby/Node/general packages, but
+  won't actually administer them itself.
+
+- configuration decorators:
+
+    @provides('logging')
+    @requires('ADMINS')
+    def setup_logging(config):
+        config.setdefault('LOG_DEFAULT_LEVEL', logging.INFO)
+        for admin in config.get('ADMINS', []):
+            # Setup email logger.
+            pass
+
+    -- OR --
+
+    @deferred(requires='ADMINS', provides='logging')
+    def setup_logging(config):
+        pass
+
+    @deferred(priority=500)
+    def _something(config):
+        pass
+
+- subcommands via argparse. flask_roots.commands package will be walked looking
+  for `register_command` functions.
+
+- base commands for fabric in flask_roots.fabric.exports:
+    in manage.py: from flask.ext.roots.fabric.exports import *
+
+- for path in flask_roots.file_files('etc/requirements.txt'):
+    iterate across the various paths: roots/etc, app/etc, app/var/etc
+
+
