@@ -3,7 +3,7 @@
 APP_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_ROOT="$(dirname "$APP_BIN")"
 
-# Create a Python virtual environment, and drop into it.
+# Create a Python virtual environment.
 VENV="$APP_ROOT/var/venv-$(uname)-$(arch)"
 if [[ ! -e "$VENV/bin/python" ]]
 then
@@ -19,5 +19,26 @@ then
     mkdir -p "$VENV"
     "$APP_BIN/virtualenv" --no-site-packages --distribute "$VENV"
 fi
-
 . "$VENV/bin/activate"
+
+# Drop into Python virtualenv.
+. "$VENV/bin/activate"
+
+
+# All variables are set below this point so that the critical ones will
+# get reset when the venv is deactivated.
+
+export PATH="$APP_ROOT/bin:$VENV/bin:$PATH"
+
+export PYTHONPATH="$PYTHONPATH:$APP_ROOT"
+
+# Ruby gems.
+export GEM_HOME="$VENV"
+export GEM_PATH=""
+
+# Node packages.
+export NPM_CONFIG_GLOBAL="true"
+export NPM_CONFIG_PREFIX="$VENV"
+
+# Bower packages.
+export bower_cwd="$VENV"
