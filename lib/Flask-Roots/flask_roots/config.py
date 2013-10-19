@@ -32,10 +32,11 @@ def make_config(app):
         ROOT_PATH=root_path,
         INSTANCE_PATH=instance_path,
     )
-    namespace = dict(basics)
+    namespace = {}
     basics['setdefault'] = namespace.setdefault
     for path in config_files:
         namespace.update(basics)
         execfile(path, namespace)
 
+    namespace.update(basics)
     return namespace

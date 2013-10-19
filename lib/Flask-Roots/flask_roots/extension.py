@@ -24,6 +24,7 @@ class Roots(object):
         from .config import make_config
         app.config.update(make_config(app))
         app.root_path = app.config['ROOT_PATH']
+        app.instance_path = app.config['INSTANCE_PATH']
 
         from .logs import setup_logs
         setup_logs(app)

@@ -63,7 +63,7 @@ def setup_logs(app):
 
 
     # Main file logging.
-    log_dir = os.path.join(app.root_path, 'var', 'log', 'http')
+    log_dir = os.path.join(app.instance_path, 'log', 'http')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     add_handler(PatternedFileHandler(os.path.join(log_dir, '{datetime}.{pid}.log')))
