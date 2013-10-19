@@ -1,41 +1,56 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-if [[ "$VIRTUAL_ENV" ]]; then
-    if [[ "$(type -t deactivate)" == "function" ]]; then
-        echo "Deactivating existing virtualenv..."
-        deactivate
-    else
-        echo "Cannot deactivate existing virtualenv!"
+APP_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_ROOT="$(dirname "$APP_BIN")"
+
+# Create a Python virtual environment.
+VIRTUAL_ENV="$APP_ROOT/var/venv-$(uname)-$(arch)"
+if [[ ! -e "$VIRTUAL_ENV/bin/python" ]]
+then
+
+    # Make sure we even have virtualenv.
+    if [[ ! -e "$APP_BIN/virtualenv" ]]
+    then
+        curl -o "$APP_BIN/virtualenv" https://raw.github.com/pypa/virtualenv/master/virtualenv.py
+        chmod +x "$APP_BIN/virtualenv"
     fi
-fi
 
-# Move to the root of the project.
-PROJECT="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )" && pwd )"
-cd "$PROJECT"
+    # Create it.
+    mkdir -p "$VIRTUAL_ENV"
+    "$APP_BIN/virtualenv" --no-site-packages --distribute "$VIRTUAL_ENV"
+fi
+. "$VIRTUAL_ENV/bin/activate"
 
 # Drop into Python virtualenv.
-VENV="$PROJECT/var/venv-$(uname)-$(arch)"
-. $VENV/bin/activate
+. "$VIRTUAL_ENV/bin/activate"
+
 
 # All variables are set below this point so that the critical ones will
 # get reset when the venv is deactivated.
 
-export PATH="$PROJECT/bin:$VENV/node_modules/.bin:$PATH"
-export PYTHONPATH="$PYTHONPATH:$PROJECT"
+NEW_PATH="$APP_ROOT/bin"
 
-# Ruby gems.
-export GEM_HOME="$VENV"
-export GEM_PATH=""
-
-# Node package manager (NPM) wrapper.
-if [[ ! -e $VENV/bin/npm ]]; then
-cat > $VENV/bin/npm <<EOF
-#!/usr/bin/env bash
-exec $(PATH=/usr/bin:/usr/local/bin which npm) --prefix="$VENV" \$@
-
-EOF
-chmod +x $VENV/bin/npm
+# Find Flask-Roots
+ROOTS_INIT="$(python -c 'import flask.ext.roots as r; print r.__file__' 2>/dev/null)"
+ROOTS_ROOT="$(dirname "$(dirname "$ROOTS_INIT")")"
+if [[ "$ROOTS_ROOT" ]]; then
+    NEW_PATH="$NEW_PATH:$ROOTS_ROOT/bin"
 fi
 
-export bower_directory="var/bower"
+export PATH="$NEW_PATH:$PATH"
+export PYTHONPATH="$PYTHONPATH:$APP_ROOT"
+
+# Ruby gems.
+export GEM_HOME="$VIRTUAL_ENV"
+export GEM_PATH=""
+
+# Node packages.
+export NPM_CONFIG_GLOBAL="true"
+export NPM_CONFIG_PREFIX="$VIRTUAL_ENV"
+
+# Bower packages.
+export bower_cwd="$VIRTUAL_ENV"
+export bower_directory="lib/bower"
+
+
 

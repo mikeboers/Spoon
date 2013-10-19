@@ -11,4 +11,5 @@ ROOTS_DIR="$(dirname "$ROOTS_BIN")"
 
 mkdir -p bin
 cp "$ROOTS_BIN/activate" bin/
+
 chmod +x bin/activate
