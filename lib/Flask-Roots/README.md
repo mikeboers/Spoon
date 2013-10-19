@@ -8,8 +8,8 @@ A collection of shell scripts and the core of a Flask application to support the
 Specifically, this is designed for my own sites, and may be of little use to outsiders.
 
 
-What Flask-Roots Provides
--------------------------
+What Flask-Roots (Will) Provide
+-------------------------------
 
 In no particular order:
 
@@ -37,5 +37,17 @@ In no particular order:
 Bootstrapping
 -------------
 
-For now, Flask-Roots assumes that you want to operate the web app out of the directory that it is in. All of the run-time information should be stored in `var`, so you can destroy that to start with a clean slate.
+For now, Flask-Roots assumes that you want to operate the web app out of the directory that it is in. It will set the `app.instance_path` to `os.path.join(app.root_path, 'var')`.
+
+All of the run-time information should be stored in `app.instance_path`, so you can destroy that to start with a clean slate.
+
+
+Configuration
+-------------
+
+The Flask config is build by executing a series of config files.
+
+Roots will look for Python files in `{app.root_path}/etc/flask`, `{app.instance_path}/etc/flask`, and `<Flask-Roots>/etc/flask`. It will execute them ordered by their name. I tend to prefix these files with a three-digit sequence number to achieve a good order.
+
+These files will be executed in the same namespace, which will always have `ROOT_PATH`, `INSTANCE_PATH`, and `setdefault` (which operates on the execution namespace).
 
