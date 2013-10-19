@@ -54,3 +54,8 @@ class ItsdangerousSessionInterface(SessionInterface):
         response.set_cookie(app.session_cookie_name, val,
                             expires=expires, httponly=True,
                             domain=domain)
+
+
+def setup_session(app):
+    app.session_interface = ItsdangerousSessionInterface()
+

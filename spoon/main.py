@@ -1,4 +1,4 @@
-from spoon.core.flask import app, auth, db
+from spoon.core import app, auth, db
 
 
 # Register things.

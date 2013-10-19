@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 
-from ..core.flask import db
+from ..core import db
 
 
 class GroupMembership(db.Model):

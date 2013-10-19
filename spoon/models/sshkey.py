@@ -3,7 +3,7 @@ import os
 import re
 import sys
 
-from ..core.flask import app, db
+from ..core import app, db
 from .account import Account
 
 

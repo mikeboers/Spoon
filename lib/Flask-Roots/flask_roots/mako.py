@@ -15,12 +15,11 @@ except ImportError:
     from flask import _request_ctx_stack as stack
 
 from flask.ext.mako import MakoTemplates as Base, _render, Template
-from flask import g
+from flask import g, current_app
 import mako
 import haml
 from markupsafe import Markup
 
-from .flask import app, auth
 from .markdown import markdown
 
 
@@ -30,6 +29,9 @@ def unicode_safe(x):
 
 
 class MakoTemplates(Base):
+
+    def __init__(self, *args, **kwargs):
+        super(MakoTemplates, self).__init__(*args, **kwargs)
 
     def init_app(self, app):
 
@@ -55,7 +57,13 @@ class MakoTemplates(Base):
         return lookup
 
     def process_context(self):
-        return defaults
+        return dict(
+            fuzzy_time=fuzzy_time,
+            markdown=markdown,
+            json=json.dumps,
+            static=static,
+            auth=current_app.extensions.get('acl'),
+        )
 
 
 def _lookup(app):
@@ -94,6 +102,9 @@ def render_template_string(source, **context):
 _static_etags = {}
 
 def static(file_name):
+
+    app = stack.top.app
+
     file_name = file_name.strip('/')
 
     # Serve out of 'static' and 'var/static'.
@@ -134,15 +145,6 @@ def fuzzy_time(d, now=None):
     else:
         out = '{0} hours'.format(s/3600)
     return prefix + out + postfix
-
-
-defaults = dict(
-    fuzzy_time=fuzzy_time,
-    markdown=markdown,
-    json=json.dumps,
-    static=static,
-    auth=auth,
-)
 
 
 _inline_control_re = re.compile(r'%{([^}]+)}')

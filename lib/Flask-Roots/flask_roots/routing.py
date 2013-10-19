@@ -1,7 +1,5 @@
 from werkzeug.routing import BaseConverter
 
-from .flask import app
-
 
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, *items):
@@ -9,4 +7,5 @@ class RegexConverter(BaseConverter):
         self.regex = items[0]
 
 
-app.url_map.converters['re'] = RegexConverter
+def setup_routing(app):
+    app.url_map.converters['re'] = RegexConverter

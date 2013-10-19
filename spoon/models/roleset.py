@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 import sqlalchemy.ext.mutable
 
-from ..core.flask import db
+from ..core import db
 
 
 class RoleSetType(sa.types.TypeDecorator):

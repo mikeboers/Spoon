@@ -30,43 +30,48 @@ class Flask(Base):
                                    cache_timeout=cache_timeout)
 
 
-app = Flask(__name__,
+def make_app(*args, **kwargs):
 
-    # Expose everything in the static folder at the URL root.
-    static_url_path='',
+    kwargs.setdefault('static_url_path', '')
+    app = Flask(*args, **kwargs)
 
-)
+    from .config import make_config
+    app.config.update(make_config(app))
 
-app.config.from_object('spoon.core.config')
-app.root_path = app.config['ROOT_PATH']
+    app.root_path = app.config['ROOT_PATH']
 
+    from .logs import setup_logs
+    setup_logs(app)
 
-# Setup logging before any extensions. Must be imported *after* the app is
-# configured so that logging can use that configuration.
-from . import logs
+    from .session import setup_session
+    setup_session(app)
 
+    login_manager = LoginManager(app)
+    auth = AuthManager(app)
 
-from . import session
-app.session_interface = session.ItsdangerousSessionInterface()
+    from .mako import MakoTemplates
+    mako = MakoTemplates(app)
 
+    imgsizer = ImgSizer(app)
 
-login_manager = LoginManager(app)
-auth = AuthManager(app)
+    db = SQLAlchemy(app)
+    # WTF do I need to do this for?!
+    db.metadata.bind = db.engine
 
-from .mako import MakoTemplates
-mako = MakoTemplates(app)
-imgsizer = ImgSizer(app)
-db = SQLAlchemy(app)
-# mail = Mail(app)
+    from .routing import setup_routing
+    setup_routing(app)
 
-# WTF do I need to do this for?!
-db.metadata.bind = db.engine
+    from .errors import setup_errors
+    setup_errors(app)
 
+    print app.extensions
 
-# Setup routing extensions (regexes).
-from . import routing
-
-
-# Setup error handlers.
-from . import errors
+    return dict(
+        app=app,
+        mako=mako,
+        auth=auth,
+        login_manager=login_manager,
+        imgsizer=imgsizer,
+        db=db,
+    )
 

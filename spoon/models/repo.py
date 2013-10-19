@@ -12,7 +12,7 @@ import werkzeug as wz
 from flask.ext.login import current_user
 
 from ..utils import debug, makedirs
-from ..core.flask import app, auth, db
+from ..core import app, auth, db
 from .account import Account
 
 

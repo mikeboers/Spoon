@@ -1,23 +1,26 @@
 
 
-- `bin/roots-bootstrap` creates the `bin/activate` script, which is likely just
-  a copy of the `bin/activate` in Flask-Roots, although it may create some extra
-  information in the form of a `bin/.rootsenv` script that describes the project
-  (such as the Python package name).
+- `bin/roots-bootstrap` creates the `bin/activate` script, which sets up the
+  Python virtualenv, and Ruby/Node/Bower paths. It is questionable whether the
+  non-Python paths should be baked into the bin/activate, or if they should be
+  setup by the installed Flask-Roots.
 
-- `bin/roots-bootstrap --var=/tmp/myapp` stuffs runtime stuff there instead
-  of in "$APP_ROOT/var". It stores this in `$ROOTS_VAR` via the `bin/.rootsenv`
+- `bin/roots-bootstrap /tmp/myapp` stuffs runtime stuff there instead
+  of in "$FLASK_ROOT_PATH/var". It stores this in `$FLASK_INSTANCE_PATH` via the `bin/.rootsenv`
   script.
 
-- APP_ROOT vs FLASK_APP_ROOT (so that FLASK_* envvars can be pulled in automatically?)
-
 - activate/bootstrap pulls package name from:
-python setup.py --name 2>/dev/null
+
+    export APP_NAME=$(python setup.py --name 2>/dev/null)
 
 - pull wsgi_app via entrypoint; see http://stackoverflow.com/a/9615473/66502
 
 - It will provide an easy mechanism for Python/Ruby/Node/general packages, but
   won't actually administer them itself.
+
+  roots {pip,gem,npm,bower} {install,freeze}
+  roots packages freeze -> freeze them all
+  roots packages install -> install from etc/{pip,gem,npm,bower}-requirements.txt
 
 - configuration decorators:
 
@@ -31,11 +34,11 @@ python setup.py --name 2>/dev/null
 
     -- OR --
 
-    @deferred(requires='ADMINS', provides='logging')
+    @defer(requires='ADMINS', provides='logging')
     def setup_logging(config):
         pass
 
-    @deferred(priority=500)
+    @defer(priority=500)
     def _something(config):
         pass
 
@@ -45,7 +48,14 @@ python setup.py --name 2>/dev/null
 - base commands for fabric in flask_roots.fabric.exports:
     in manage.py: from flask.ext.roots.fabric.exports import *
 
-- for path in flask_roots.file_files('etc/requirements.txt'):
+- for path in flask_roots.utils.iter_resources('etc/*-requirements.txt', instance_first=True):
     iterate across the various paths: roots/etc, app/etc, app/var/etc
+
+    Find these via FLASK_INSTANCE_PATH, FLASK_ROOT_PATH, and relative to flask_roots
+    (via the root_path on the Flask-Roots Blueprint).
+
+    This is very similar to `Flask.open_instance_resource(path)`.
+
+
 
 

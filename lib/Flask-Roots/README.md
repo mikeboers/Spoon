@@ -13,13 +13,15 @@ What Flask-Roots Provides
 
 In no particular order:
 
+- a virtualenv with Ruby, Node, and Bower package freezing;
 - a Flask app with extensions including:
     - Flask-Mako
     - Flask-SQLALchemy
     - Flask-WTForms
     - Flask-WTCrud (in development)
     - Flask-Images (currently Flask-ImgSizer)
-- a virtualenv with Ruby and Node package freezing;
+    - Flask-Login
+    - Flask-ACL
 - basic logging
 - basic error handling
 - extensible configuration mechanism;

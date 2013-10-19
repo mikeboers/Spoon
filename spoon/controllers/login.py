@@ -2,7 +2,7 @@ import wtforms as wtf
 from flask.ext.wtf import Form
 from flask.ext.login import login_user, login_required, logout_user
 
-from ..core.flask import login_manager
+from ..core import login_manager
 
 from . import *
 
