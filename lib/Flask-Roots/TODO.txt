@@ -1,11 +1,10 @@
 
 INITIAL
 =======
-
-- refactor into a RootsExtension (and RootsBlueprint)
-  - all of the exts that it creates be attributes on the extension
-  - self.extend_with(name, class_)
   
+- get Roots into template path
+- get Roots into static path, maybe; this may not be nessesary since others can
+  register blueprints which provide their own static folders
 
 - gem/node commands
 - take over manage
@@ -16,14 +15,8 @@ INITIAL
 IMPROVEMENTS
 ============
 
-- `bin/roots-bootstrap` creates the `bin/activate` script, which sets up the
-  Python virtualenv, and Ruby/Node/Bower paths. It is questionable whether the
-  non-Python paths should be baked into the bin/activate, or if they should be
-  setup by the installed Flask-Roots.
+- be able to set FLASK_INSTANCE_PATH
 
-- `bin/roots-bootstrap /tmp/myapp` stuffs runtime stuff there instead
-  of in "$FLASK_ROOT_PATH/var". It stores this in `$FLASK_INSTANCE_PATH` via the `bin/.rootsenv`
-  script.
 
 - activate/bootstrap pulls package name from:
 

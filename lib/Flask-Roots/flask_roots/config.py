@@ -5,10 +5,15 @@ def make_config(app):
 
     our_path = os.path.abspath(os.path.join(__file__, '..', '..'))
 
-    package_name = app.name.split('.')[0]
-    package = __import__(package_name)
-    root_path = os.path.abspath(os.path.join(package.__file__, '..', '..'))
-    instance_path = os.path.join(root_path, 'var')
+    root_path = os.environ.get('FLASK_ROOT_PATH')
+    if not root_path:
+        package_name = app.name.split('.')[0]
+        package = __import__(package_name)
+        root_path = os.path.abspath(os.path.join(package.__file__, '..', '..'))
+
+    instance_path = os.environ.get('FLASK_INSTANCE_PATH')
+    if not instance_path:
+        instance_path = os.path.join(root_path, 'var')
 
     # Scan $root/etc/flask for config files. They are included
     # in sorted order, without respect for the base of their path.
@@ -28,6 +33,7 @@ def make_config(app):
         INSTANCE_PATH=instance_path,
     )
     namespace = dict(basics)
+    basics['setdefault'] = namespace.setdefault
     for path in config_files:
         namespace.update(basics)
         execfile(path, namespace)
