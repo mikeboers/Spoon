@@ -1,4 +1,20 @@
 
+INITIAL
+=======
+
+- refactor into a RootsExtension (and RootsBlueprint)
+  - all of the exts that it creates be attributes on the extension
+  - self.extend_with(name, class_)
+  
+
+- gem/node commands
+- take over manage
+  - perhaps create a new one called `roots`, and leave the manage scripts the
+    way that they are?
+
+
+IMPROVEMENTS
+============
 
 - `bin/roots-bootstrap` creates the `bin/activate` script, which sets up the
   Python virtualenv, and Ruby/Node/Bower paths. It is questionable whether the
