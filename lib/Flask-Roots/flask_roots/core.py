@@ -55,16 +55,13 @@ def make_app(*args, **kwargs):
     imgsizer = ImgSizer(app)
 
     db = SQLAlchemy(app)
-    # WTF do I need to do this for?!
-    db.metadata.bind = db.engine
+    db.metadata.bind = db.engine # WTF do I need to do this for?!
 
     from .routing import setup_routing
     setup_routing(app)
 
     from .errors import setup_errors
     setup_errors(app)
-
-    print app.extensions
 
     return dict(
         app=app,
