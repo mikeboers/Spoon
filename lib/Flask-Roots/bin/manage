@@ -1,102 +1,78 @@
 #!/usr/bin/env python
 
-from inspect import getargspec
-from subprocess import Popen, call, check_output, CalledProcessError, PIPE
-import datetime
 import glob
-import logging
+import grp
 import os
-import re
-import site
-import socket
-import subprocess
-import sys
-import time
-import hashlib
-import errno
+import pwd
+from subprocess import Popen, call, check_output, CalledProcessError, PIPE
 
-from baker import command
-import baker
+try:
+    from mako.lookup import TemplateLookup
+    from baker import command
+    import baker
 
+    from flask.ext.roots.config import get_config
+    from flask.ext.roots.utils import makedirs
 
-is_vagrant = os.environ.get('USER') == 'vagrant'
-
-
-# We have to monkey patch baker so that we can use commands without any args.
-# It will remove the first arg if it is "self", so we latch on to that action.
-def patched_get_argspec(fn):
-    arglist, vargsname, kwargsname, defaults = getargspec(fn)
-    if not arglist:
-        arglist = ['self']
-    return arglist, vargsname, kwargsname, defaults
-baker.getargspec = patched_get_argspec
+except ImportError as e:
+    print 'Missing Python package:', e
+    print 'Please install all requirements.'
+    exit(1)
 
 
-log = logging.getLogger(os.path.basename(__file__))
-
-# Make sure the working directory is right here.
-root = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir))
-os.chdir(root)
-
-
-@command
-def entropy():
-    path = 'var/etc/secret_key_entropy.txt'
-    if not os.path.exists(path):
-        entropy = os.urandom(1024)
-        with open(path, 'wb') as fh:
-            fh.write(entropy.encode('base64'))
-        return entropy
-    else:
-        return open(path, 'rb').read().decode('base64')
+our_path = os.path.abspath(os.path.join(__file__, '..', '..'))
+root_path = os.environ.get('FLASK_ROOT_PATH')
+instance_path = os.environ.get('FLASK_INSTANCE_PATH')
+if not root_path:
+    print 'FLASK_ROOT_PATH missing; did you activate?'
+    exit(1)
+if not instance_path:
+    print 'FLASK_INSTANCE_PATH missing; did you activate?'
+    exit(1)
 
 
-@command
-def secret_key():
-    with open('var/etc/flask/901-secret_key.py', 'w') as fh:
-        fh.write('SECRET_KEY = %r.decode("hex")\n' % hashlib.sha256(entropy()).hexdigest())
+# Make sure the working directory is at the root of the app.
+os.chdir(root_path)
 
 
 @command
 def nginx():
-    from mako.lookup import TemplateLookup
-    from spoon.core import config
 
-    lookup = TemplateLookup(directories=[os.path.join(config.ROOT_PATH, 'etc')])
+    lookup = TemplateLookup(directories=[
+        os.path.join(instance_path, 'etc'),
+        os.path.join(root_path, 'etc'),
+        os.path.join(our_path, 'etc'),
+    ])
 
-    try:
-        os.makedirs('var/etc/nginx')
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
+    makedirs('var/etc/nginx')
+
+    config = get_config()
 
     def render(name, **kwargs):
-        data = dict(config.__dict__)
+        out_path = os.path.join(instance_path, 'etc', 'nginx', name)
+        print 'nginx:', out_path
+        data = dict(config)
         data.update(kwargs)
         rendered = lookup.get_template('nginx.conf.mako').render(**data)
-        with open(os.path.join(config.ROOT_PATH, 'var', 'etc', 'nginx', name), 'wb') as fh:
+        with open(out_path, 'wb') as fh:
             fh.write(rendered)
 
-    domains = getattr(config, 'DOMAINS', None) or [getattr(config, "DOMAIN", 'localhost')]
+    domains = config.get('DOMAINS') or [config.get('DOMAIN', 'localhost')]
     for domain in domains:
         render('%s.conf' % domain.lower(), DOMAIN=domain)
 
     
-
 def get_user():
-    user = os.environ.get('SUDO_USER') or check_output(['id', '-un']).strip()
-    uid = int(check_output(['id', '-u', user]))
+    uid = os.getuid()
+    user = os.environ.get('SUDO_USER') if not uid else None
+    user = user if user else pwd.getpwuid(uid).pw_name
     return user, uid
 
 
 def get_group():
-    for group in 'www', 'www-data':
-        try:
-            gid = int(check_output(['id', '-g', group], stderr=PIPE))
-            return group, gid
-        except CalledProcessError:
-            pass
-    
+    for name in 'www', 'www-data':
+        group = grp.getgrnam(name)
+        return group.gr_name, group.gr_gid
     raise RuntimeError('Could not determine server group.')
 
 
@@ -115,46 +91,32 @@ def config(*args):
         print '%s: %r' % (k, v)
     
 
-@command
-def git(check=False, update=False):
-    if is_vagrant:
-        print 'No git allowed on Vagrant!'
-        return
-    call('git submodule init'.split())
-    top_msg = False
-    for line in check_output('git submodule'.split()).splitlines():
-        if check and not line.startswith(' '):
-            if not top_msg:
-                print 'git submodules out of sync:'
-                top_msg = True
-            print '\t' + line.split(' ', 1)[1]
-        if update or line.startswith('-'):
-            path = line.split(' ', 1)[1]
-            call('git submodule update --'.split() + [path])
-    if check and not top_msg:
-        print 'git submodules are up to date.'
-
 
 @command
-def directories():
+def directories(verbose=False):
+    from roots import app
     for name in '''
-        var/tmp
-        var/etc
-        var/log/nginx
-        var/static
-        var/sqlite
-        var/etc/flask
-        var/etc/nginx
-        var/assets
+        tmp
+        etc
+        log/nginx
+        static
+        sqlite
+        etc/flask
+        etc/nginx
+        assets
     '''.strip().split():
-        if not os.path.exists(name):
-            print 'mkdir -p', name
-            os.makedirs(name)
-        call('chmod g+s'.split() + [name])
+        path = os.path.join(app.instance_path, name)
+        if verbose:
+            print path
+        makedirs(path)
+        call(['chmod', 'g+s', path])
 
 
 @command
 def permissions(verbose=False):
+    if os.getuid():
+        print 'permissions must be run as root'
+        return
     user, _ = get_user()
     group, _ = get_group()
     all_ = glob.glob('*')
@@ -167,10 +129,10 @@ def permissions(verbose=False):
 def css(watch=False):
     if watch:
         try:
-            call(['compass', 'watch', './css', '--output-style', 'nested', '--force'])
+            call(['compass', 'watch', os.path.join(root_path, 'css'), '--output-style', 'nested', '--force'])
         except KeyboardInterrupt: pass
     else:
-        call(['compass', 'compile', './css', '--output-style', 'compressed', '--force'])
+        call(['compass', 'compile', os.path.join(root_path, 'css'), '--output-style', 'compressed', '--force'])
 
 
 @command
@@ -178,7 +140,7 @@ def js(watch=False):
     
     if watch:
         js()
-        print 'Watching for changes...'
+        print 'watching for changes...'
         os.execvp('watchmedo', ['watchmedo', 'shell-command',
             '--patterns', '*.js',
             '--command', 'date; manage js',
@@ -186,8 +148,8 @@ def js(watch=False):
             'js',
         ])
 
-    if not os.path.exists('var/static/js'):
-        os.makedirs('var/static/js')
+    out_path = os.path.join(instance_path, 'static', 'js')
+    makedirs(out_path)
 
     from jsmin import jsmin
     for name in os.listdir('js'):
@@ -196,50 +158,48 @@ def js(watch=False):
         if name.startswith('_') or ext != '.js':
             continue
 
-        print name
+        print 'js: js/%s.js -> %s/%s.js' % (name, out_path, name)
 
-        combined = check_output(('sprockets --include js --include js/include --include var/bower js/%s.js' % name).split())
-        with open('var/static/js/%s.js' % name, 'w') as fh:
+        combined = check_output(['sprockets',
+            '--include', 'js',
+            '--include', 'js/include',
+            '--include', 'js/vendor',
+            '--include', os.path.join(os.environ['VIRTUAL_ENV'], 'lib', 'bower'),
+            os.path.join('js', name + '.js'),
+        ])
+        with open(os.path.join(out_path, name + '.js'), 'w') as fh:
             fh.write(combined)
 
         minified = jsmin(combined)
-        with open('var/static/js/%s.min.js' % name, 'w') as fh:
+        with open(os.path.join(out_path, name + '.min.js'), 'w') as fh:
             fh.write(minified)
-
-@command
-def database():
-    call('python -m app.model.distributor', shell=True)
-    call('python -m app.model.partner', shell=True)
-    call('python -m app.model.product', shell=True)
-    call('python -m app.model.testimonial', shell=True)
 
 
 @command(default=True)
 def build():
-    # git()
     directories()
     permissions()
-    # secret_key()
     nginx()
     css()
-    # js()
-    database()
+    js()
 
 
 @command
 def reload():
     kill('hup')
-            
+      
+
 @command
 def kill(signal='kill'):
     pid = open('services/http/pid').read().strip()
     call(['kill', '-' + signal, pid])
-     
+
+
 @command
 def serve(debug=True, watch=True):
 
     if debug:
-        from spoon.main import app
+        from roots import app
         app.run(
             debug=True,
             use_reloader=watch,

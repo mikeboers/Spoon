@@ -1,15 +1,21 @@
+import copy
 import os
 
 
-def setup_config(app):
+_config = {}
+
+def get_config():
+    if not _config:
+        _config.update(_get_config())
+    return copy.deepcopy(_config)
+
+def _get_config():
 
     our_path = os.path.abspath(os.path.join(__file__, '..', '..'))
 
     root_path = os.environ.get('FLASK_ROOT_PATH')
     if not root_path:
-        package_name = app.name.split('.')[0]
-        package = __import__(package_name)
-        root_path = os.path.abspath(os.path.join(package.__file__, '..', '..'))
+        raise RuntimeError('environ missing FLASK_ROOT_PATH')
 
     instance_path = os.environ.get('FLASK_INSTANCE_PATH')
     if not instance_path:
@@ -28,17 +34,26 @@ def setup_config(app):
 
     config_files = sorted(config_files, key=lambda path: os.path.basename(path))
 
+    config = {}
+
+    # These will never be allowed to change.
     basics = dict(
         ROOT_PATH=root_path,
         INSTANCE_PATH=instance_path,
     )
-    namespace = {}
-    basics['setdefault'] = namespace.setdefault
-    for path in config_files:
-        namespace.update(basics)
-        execfile(path, namespace)
+    basics['setdefault'] = config.setdefault
 
-    app.config.update(namespace)
-    app.config.update(basics)
-    app.root_path = root_path
-    app.instance_path = instance_path
+    for path in config_files:
+        config.update(basics)
+        execfile(path, config)
+
+    config.update(basics)
+    return dict((k, v) for k, v in config.iteritems() if k.isupper())
+
+
+def setup_config(app):
+    config = get_config()
+    app.config.update(config)
+    app.root_path = config['ROOT_PATH']
+    app.instance_path = config['INSTANCE_PATH']
+
