@@ -2,7 +2,7 @@ import os
 
 from flask.ext.login import login_user
 
-from ..core.flask import app
+from ..core import app
 from ..models import Repo
 from ..auth import dummy_admin
 from ..utils import stderr

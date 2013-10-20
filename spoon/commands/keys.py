@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from ..core.flask import app
+from ..core import app
 from ..models import sshkey
 
 

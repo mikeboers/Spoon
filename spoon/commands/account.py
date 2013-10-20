@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 import sqlalchemy as sa
 
-from ..core.flask import app, db
+from ..core import app, db
 from ..models import Account, SSHKey, GroupMembership
 
 

@@ -9,7 +9,7 @@ import sys
 
 from flask.ext.login import login_user, current_user
 
-from ..main import app, auth, db
+from ..core import app, auth, db
 from ..models import Account, Repo
 from ..utils import *
 from ..auth import dummy_anon
