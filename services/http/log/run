@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-if [[ "$(which svlogd)" ]]; then
-    exec svlogd .
-fi
-
-exec multilog n1000 .
