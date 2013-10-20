@@ -1,7 +1,28 @@
 
 INITIAL
 =======
-  
+
+- how to identify Flask app to roots
+
+  x entrypoint; rejected as I don't want to name entrypoints
+  - setup.cfg or roots.cfg
+      [flask]
+      app = spoon.web:app
+  - rootfile.py (like fabfile.py): it can just __import__('rootconfig')
+    and pull what it needs off of it
+  - environment variable; FLASK_ENTRYPOINT
+  - APP_ENTRYPOINT in the etc/flask files: this would require loading the
+    config to find the app which already loaded the config...
+
+- how to setup this identification:
+
+  - roots-config --app spoon.web:app --id com.mikeboers.git.www
+      this would set ENTRYPOINT and FLASK_INSTANCE_ID
+
+- perhaps this should be done the other way around, in which my apps are blueprints
+  that get registered onto Roots' app? This wouldn't work very great for testing...
+
+
 - get Roots into template path
 - get Roots into static path, maybe; this may not be nessesary since others can
   register blueprints which provide their own static folders

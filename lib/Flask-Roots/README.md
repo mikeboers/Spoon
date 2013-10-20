@@ -37,7 +37,7 @@ In no particular order:
 Bootstrapping
 -------------
 
-For now, Flask-Roots assumes that you want to operate the web app out of the directory that it is in. It will set the `app.instance_path` to `os.path.join(app.root_path, 'var')`.
+For now, Roots assumes that you want to operate the web app out of the directory that it is in. It will set the `app.instance_path` to `os.path.join(app.root_path, 'var')`.
 
 All of the run-time information should be stored in `app.instance_path`, so you can destroy that to start with a clean slate.
 
