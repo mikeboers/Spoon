@@ -62,13 +62,16 @@ for dirpath, dirnames, filenames in os.walk(patchdir, followlinks=True):
             
             for x in engine.execute(table.select().where(table.c.name == patch_name)):
                 if opts.verbose:
-                    print patch_name, 'applied on', x['time'].isoformat(' ')
+                    print patch_name
+                    print '\tapplied on', x['time'].isoformat(' ')
                 break
             else:
                 if opts.dry_run:
-                    print patch_name, 'would apply'
+                    print patch_name
+                    print '\twould apply'
                 else:
-                    print patch_name, 'applying...',
+                    print patch_name
+                    print '\tapplying...',
 
                     patch(engine)
 

@@ -14,3 +14,5 @@ REPO_NAME_RE  = r'[\w\.-]+'
 SSH_KEYS_PATH = os.path.join(INSTANCE_PATH, 'ssh', 'authorized_keys')
 
 COMMITS_PER_PAGE = 50
+
+APP_ENTRYPOINT = 'spoon.web:app'

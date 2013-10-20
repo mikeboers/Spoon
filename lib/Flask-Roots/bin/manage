@@ -11,7 +11,7 @@ try:
     from baker import command
     import baker
 
-    from flask.ext.roots.config import get_config
+    from flask.ext.roots import get_app, get_config
     from flask.ext.roots.utils import makedirs
 
 except ImportError as e:
@@ -79,15 +79,18 @@ def get_group():
 
 
 @command
-def config(*args):
+def config(all=False, *args):
 
-    from roots import app
+    if all:
+        config = get_app().config
+    else:
+        config = get_config()
 
     if args:
-        print app.config.get(args[0])
+        print config.get(args[0])
         return
 
-    for k, v in sorted(app.config.iteritems()):
+    for k, v in sorted(config.iteritems()):
         if k.startswith('_') or k.upper() != k:
             continue
         print '%s: %r' % (k, v)

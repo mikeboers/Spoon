@@ -25,4 +25,4 @@ exec $PRELUDE gunicorn \
     -k gevent \
     -b 0.0.0.0:${PORT} \
     -p "$(dirname "$SELF")/pid" \
-    roots:app
+    ${APP_ENTRYPOINT}
