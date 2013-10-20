@@ -41,6 +41,8 @@ For now, Roots assumes that you want to operate the web app out of the directory
 
 All of the run-time information should be stored in `app.instance_path`, so you can destroy that to start with a clean slate.
 
+You must inform Roots of where to find the Flask app to serve. Create a `roots.py` module, and import your Flask app as `app` within it.
+
 
 Configuration
 -------------

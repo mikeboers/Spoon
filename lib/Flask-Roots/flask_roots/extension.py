@@ -16,15 +16,13 @@ class Roots(object):
 
     def init_app(self, app):
 
-        # Link them together.
+        # Establish two-way links.
         self.app = app
         app.roots = self
         app.extensions['roots'] = self
 
-        from .config import make_config
-        app.config.update(make_config(app.name))
-        app.root_path = app.config['ROOT_PATH']
-        app.instance_path = app.config['INSTANCE_PATH']
+        from .config import setup_config
+        setup_config(app)
 
         from .logs import setup_logs
         setup_logs(app)

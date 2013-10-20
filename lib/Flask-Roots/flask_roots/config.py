@@ -1,13 +1,13 @@
 import os
 
 
-def make_config(name):
+def setup_config(app):
 
     our_path = os.path.abspath(os.path.join(__file__, '..', '..'))
 
     root_path = os.environ.get('FLASK_ROOT_PATH')
     if not root_path:
-        package_name = name.split('.')[0]
+        package_name = app.name.split('.')[0]
         package = __import__(package_name)
         root_path = os.path.abspath(os.path.join(package.__file__, '..', '..'))
 
@@ -38,5 +38,7 @@ def make_config(name):
         namespace.update(basics)
         execfile(path, namespace)
 
-    namespace.update(basics)
-    return namespace
+    app.config.update(namespace)
+    app.config.update(basics)
+    app.root_path = root_path
+    app.instance_path = instance_path

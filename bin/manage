@@ -101,20 +101,15 @@ def get_group():
 
 
 @command
-def config(all=False, *args):
+def config(*args):
 
-    if all:
-        from spoon.core import app
-        obj = app.config
-    else:
-        from flask.ext.roots.config import make_config
-        obj = make_config('spoon')
+    from roots import app
 
     if args:
-        print obj.get(args[0])
+        print app.config.get(args[0])
         return
 
-    for k, v in sorted(obj.iteritems()):
+    for k, v in sorted(app.config.iteritems()):
         if k.startswith('_') or k.upper() != k:
             continue
         print '%s: %r' % (k, v)
