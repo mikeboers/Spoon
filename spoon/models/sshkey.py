@@ -41,8 +41,8 @@ _flags = ('# spoon start', '# spoon end')
 
 def iter_authorized_keys():
 
-    command_path = os.path.join(os.path.dirname(sys.executable), 'spoon-shell')
-    format = 'command="%s %%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %%s' % command_path
+    vexec_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'bin', 'vexec'))
+    format = 'command="%s spoon-shell %%s",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty %%s' % vexec_path
 
     to_add = []
     for account in Account.query.all():
