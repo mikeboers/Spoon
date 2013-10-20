@@ -20,6 +20,8 @@
 - repository collaborators, so I can share my personal private repos with
   friends
 
+- repo aliases
+
 
 - test:
     - ssh access control

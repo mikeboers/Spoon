@@ -12,17 +12,13 @@ if not os.path.exists(secret_key_path):
 with open(secret_key_path) as fh:
     SECRET_KEY = fh.read()
 
-
-# TODO: migrate this to Flask-Imgsizer
-setdefault('MAKO_IMPORTS', []).append('from flask.ext.imgsizer import resized_img_src')
-
 MAKO_MODULE_DIRECTORY = os.path.join(INSTANCE_PATH, 'mako')
 
-setdefault('IMGSIZER_PATH', [])
-IMGSIZER_PATH.extend(
+setdefault('IMAGES_PATH', [])
+IMAGES_PATH.extend(
     os.path.join(root, name)
     for name in ('assets', 'static')
     for root in (INSTANCE_PATH, ROOT_PATH)
 )
 
-IMGSIZER_CACHE = os.path.join(INSTANCE_PATH, 'imgsizer')
+IMAGES_CACHE = os.path.join(INSTANCE_PATH, 'images')

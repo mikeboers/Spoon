@@ -33,7 +33,7 @@ setup(
         sqlalchemy-migrate
 
         PIL
-        Flask-ImgSizer
+        Flask-Images
 
         Flask-Login
         Flask-ACL

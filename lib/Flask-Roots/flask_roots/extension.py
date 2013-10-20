@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import os
 
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.imgsizer import ImgSizer
+from flask.ext.images import Images
 # from flask.ext.mail import Mail
 from flask.ext.login import LoginManager
 from flask.ext.acl import AuthManager
@@ -38,7 +38,7 @@ class Roots(object):
         from .mako import MakoTemplates
         self.extensions['mako'] = MakoTemplates(app)
 
-        self.extensions['imgsizer'] = ImgSizer(app)
+        self.extensions['images'] = Images(app)
 
         self.extensions['db'] = db = SQLAlchemy(app)
         db.metadata.bind = db.engine # WTF do I need to do this for?!
