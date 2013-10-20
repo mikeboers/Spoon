@@ -99,7 +99,6 @@ def config(all=False, *args):
 
 @command
 def directories(verbose=False):
-    from roots import app
     for name in '''
         tmp
         etc
@@ -110,7 +109,7 @@ def directories(verbose=False):
         etc/nginx
         assets
     '''.strip().split():
-        path = os.path.join(app.instance_path, name)
+        path = os.path.join(instance_path, name)
         if verbose:
             print path
         makedirs(path)
