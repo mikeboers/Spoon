@@ -1,28 +1,22 @@
 
-INITIAL
-=======
+- gem/node commands
+
+- replace baker with argparse in manage and migrate
+  - roots.command.Command class provides argument setup and the final function
+
+- manage install
+
+- MANAGE_COMMANDS be a list of entrypoints for other commands
+
+- migrate create 'name of new patch'
+- migrate upgrade
 
 - get Roots into template path
 - get Roots into static path, maybe; this may not be nessesary since others can
   register blueprints which provide their own static folders
 
-- gem/node commands
-- take over manage
-  - perhaps create a new one called `roots`, and leave the manage scripts the
-    way that they are?
-
-
-IMPROVEMENTS
-============
-
 - be able to set FLASK_INSTANCE_PATH
 
-
-- activate/bootstrap pulls package name from:
-
-    export APP_NAME=$(python setup.py --name 2>/dev/null)
-
-- pull wsgi_app via entrypoint; see http://stackoverflow.com/a/9615473/66502
 
 - It will provide an easy mechanism for Python/Ruby/Node/general packages, but
   won't actually administer them itself.

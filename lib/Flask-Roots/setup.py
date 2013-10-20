@@ -17,6 +17,32 @@ setup(
         ],
     },
 
+    install_requires='''
+
+        Baker
+        jsmin
+        watchdog
+
+        Flask
+
+        Flask-Mako
+        Markdown
+        PyHAML
+
+        Flask-SQLAlchemy
+        sqlalchemy-migrate
+
+        PIL
+        Flask-ImgSizer
+
+        Flask-Login
+        Flask-ACL
+
+        gunicorn
+        gevent
+    
+    ''',
+
     classifiers=[
         # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

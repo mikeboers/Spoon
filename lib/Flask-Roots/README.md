@@ -53,3 +53,17 @@ Roots will look for Python files in `{app.root_path}/etc/flask`, `{app.instance_
 
 These files will be executed in the same namespace, which will always have `ROOT_PATH`, `INSTANCE_PATH`, and `setdefault` (which operates on the execution namespace).
 
+
+Usage
+-----
+
+Once bootstrapped and configured, you can ask Roots to build your app:
+
+~~~python
+from flask.ext.roots import make_app
+
+app = make_app(__name__)
+db = app.roots.db
+mako = app.roots.mako
+# etc...
+~~~
