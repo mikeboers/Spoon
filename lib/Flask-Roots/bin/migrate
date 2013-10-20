@@ -9,11 +9,7 @@ from optparse import OptionParser
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, DateTime, String
 import migrate # For the monkey patching.
 
-root_path = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
-
-from spoon.core import config
+from flask.ext.roots.config import get_config
 
 
 opt_parser = OptionParser()
@@ -23,8 +19,12 @@ opt_parser.add_option('-e', '--echo', action='store_true')
 opts, args = opt_parser.parse_args()
 
 
+config = get_config()
+root_path = config['ROOT_PATH']
+
+
 # Setup out migration tracking table.
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=opts.echo)
+engine = create_engine(config['SQLALCHEMY_DATABASE_URI'], echo=opts.echo)
 meta = MetaData()
 table = Table('schema_patches', meta,
     Column('id', Integer, primary_key=True),
