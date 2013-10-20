@@ -217,14 +217,20 @@ def build():
 
 
 @command
-def reload():
-    kill('hup')
+def reload(*args):
+    kill(*args, signal='hup')
       
 
 @command
-def kill(signal='kill'):
-    pid = open('services/http/pid').read().strip()
-    call(['kill', '-' + signal, pid])
+def kill(*args, **kwargs):
+    signal = kwargs.pop('signal', 'kill')
+    service_dir = os.path.join(instance_path, 'services')
+    for name in args if args else os.listdir(service_dir):
+        try:
+            pid = open(os.path.join(service_dir, name, 'pid')).read()
+        except OSError:
+            continue
+        call(['kill', '-' + signal, pid])
 
 
 @command
