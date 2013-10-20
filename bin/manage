@@ -104,11 +104,11 @@ def get_group():
 def config(all=False, *args):
 
     if all:
-        from spoon.core.flask import app
-        obj = spoon.config
+        from spoon.core import app
+        obj = app.config
     else:
-        import spoon.core.config
-        obj = spoon.core.config.__dict__
+        from flask.ext.roots.config import make_config
+        obj = make_config('spoon')
 
     if args:
         print obj.get(args[0])
