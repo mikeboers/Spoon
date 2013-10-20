@@ -31,8 +31,8 @@ import cgi
 from markdown import Markdown
 from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension
 
-log = logging.getLogger(__name__)
 
+log = logging.getLogger(__name__)
         
 
 extension_constructors = dict(
@@ -68,4 +68,3 @@ def markdown(text, _unknown=None, **custom_exts):
                   output_format='xhtml')
     return md.convert(text)
     
-
