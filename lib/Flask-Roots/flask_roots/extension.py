@@ -22,7 +22,7 @@ class Roots(object):
         app.extensions['roots'] = self
 
         from .config import make_config
-        app.config.update(make_config(app))
+        app.config.update(make_config(app.name))
         app.root_path = app.config['ROOT_PATH']
         app.instance_path = app.config['INSTANCE_PATH']
 

@@ -1,13 +1,13 @@
 import os
 
 
-def make_config(app):
+def make_config(name):
 
     our_path = os.path.abspath(os.path.join(__file__, '..', '..'))
 
     root_path = os.environ.get('FLASK_ROOT_PATH')
     if not root_path:
-        package_name = app.name.split('.')[0]
+        package_name = name.split('.')[0]
         package = __import__(package_name)
         root_path = os.path.abspath(os.path.join(package.__file__, '..', '..'))
 
