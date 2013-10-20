@@ -49,13 +49,3 @@ class Roots(object):
         from .errors import setup_errors
         setup_errors(app)
 
-    def export(self):
-        return dict(
-            app=self.app,
-            mako=self.mako,
-            auth=self.auth,
-            login_manager=self.login_manager,
-            imgsizer=self.imgsizer,
-            db=self.db,
-        )
-
