@@ -4,6 +4,7 @@ import glob
 import grp
 import os
 import pwd
+import signal
 from subprocess import Popen, call, check_output, CalledProcessError, PIPE
 
 try:
@@ -217,20 +218,47 @@ def build():
 
 
 @command
-def reload(*args):
-    kill(*args, signal='hup')
+def reload(*names):
+    kill(*names, signal='hup')
       
 
-@command
-def kill(*args, **kwargs):
-    signal = kwargs.pop('signal', 'kill')
-    service_dir = os.path.join(instance_path, 'services')
-    for name in args if args else os.listdir(service_dir):
-        try:
-            pid = open(os.path.join(service_dir, name, 'pid')).read().strip()
-        except OSError:
+def iter_services(*names):
+    for root in (root_path, instance_path):
+        service_dir = os.path.join(root, 'services')
+        if not os.path.exists(service_dir):
             continue
-        call(['kill', '-' + signal, pid])
+
+        if names:
+            for name in names:
+                path = os.path.join(service_dir, name)
+                if os.path.exists(path):
+                    yield path
+        else:
+            for name in os.listdir(service_dir):
+                yield os.path.join(service_dir, name)
+
+
+@command
+def kill(*names, **kwargs):
+
+    sig_name = kwargs.pop('signal', 'kill')
+    sig_id = getattr(signal, 'SIG' + sig_name.upper())
+
+    for service in iter_services(*names):
+        try:
+            pid = int(open(os.path.join(service, 'pid')).read().strip())
+        except IOError:
+            print 'missing pid:', service
+            continue
+        except ValueError:
+            print 'bad pid:', service
+            continue
+        try:
+            os.kill(pid, sig_id)
+        except OSError:
+            print pid, 'not running:', service
+        else:
+            print pid, 'sent', sig_name + ':', service
 
 
 @command
