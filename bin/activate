@@ -36,10 +36,10 @@ NEW_PATH="$APP_ROOT/bin"
 # Find Flask-Roots
 ROOTS_INIT="$(python -c 'import flask.ext.roots as r; print r.__file__' 2>/dev/null)"
 ROOTS_ROOT="$(dirname "$(dirname "$ROOTS_INIT")")"
-if [[ "$ROOTS_ROOT" ]]; then
+if [[ "$ROOTS_INIT" ]]; then
     NEW_PATH="$NEW_PATH:$ROOTS_ROOT/bin"
 else
-    echo "Can't import flask.ext.roots; install Flask-Roots and activate again."
+    echo "cannot import Flask-Roots; install and activate again"
 fi
 unset ROOTS_INIT
 unset ROOTS_ROOT
