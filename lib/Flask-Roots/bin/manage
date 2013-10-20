@@ -35,14 +35,16 @@ if not instance_path:
 os.chdir(root_path)
 
 
+etc_lookup = TemplateLookup(directories=[
+    os.path.join(instance_path, 'etc'),
+    os.path.join(root_path, 'etc'),
+    os.path.join(our_path, 'etc'),
+])
+
+
 @command
 def nginx():
 
-    lookup = TemplateLookup(directories=[
-        os.path.join(instance_path, 'etc'),
-        os.path.join(root_path, 'etc'),
-        os.path.join(our_path, 'etc'),
-    ])
 
     makedirs('var/etc/nginx')
 
@@ -53,7 +55,7 @@ def nginx():
         print 'nginx:', out_path
         data = dict(config)
         data.update(kwargs)
-        rendered = lookup.get_template('nginx.conf.mako').render(**data)
+        rendered = etc_lookup.get_template('nginx.conf.mako').render(**data)
         with open(out_path, 'wb') as fh:
             fh.write(rendered)
 
@@ -175,13 +177,41 @@ def js(watch=False):
             fh.write(minified)
 
 
+@command
+def services():
+
+    config = get_config()
+
+    makedirs(os.path.join(instance_path, 'services', 'http'))
+    makedirs(os.path.join(instance_path, 'services', 'http', 'log'))
+    run_path = os.path.join(instance_path, 'services', 'http', 'run')
+    log_path = os.path.join(instance_path, 'services', 'http', 'log', 'run')
+
+    print 'service:', run_path
+    with open(run_path, 'wb') as fh:
+        fh.write(etc_lookup.get_template('runit/web.run.mako').render(
+            service_name='web',
+            **config
+        ))
+    call(['chmod', 'a+x', run_path])
+
+    with open(log_path, 'wb') as fh:
+        fh.write(etc_lookup.get_template('runit/log.run.mako').render(
+            service_name='web',
+            **config
+        ))
+    call(['chmod', 'a+x', log_path])
+
+
+
 @command(default=True)
 def build():
     directories()
-    permissions()
     nginx()
+    services()
     css()
     js()
+    permissions()
 
 
 @command
@@ -208,11 +238,17 @@ def serve(debug=True, watch=True):
 
     else:
     
-        proc = Popen(['services/http/run'])
+        procs = []
+        service_dir = os.path.join(instance_path, 'services')
+        for name in os.listdir(service_dir):
+            proc = Popen([os.path.join(service_dir, name, 'run')])
+            procs.append(proc)
         try:
-            proc.wait()
+            for proc in procs:
+                proc.wait()
         except KeyboardInterrupt:
-            proc.kill()
+            for proc in procs:
+                proc.kill()
     
 
 
