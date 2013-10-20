@@ -185,10 +185,10 @@ def services():
 
     config = get_config()
 
-    makedirs(os.path.join(instance_path, 'services', 'http'))
-    makedirs(os.path.join(instance_path, 'services', 'http', 'log'))
-    run_path = os.path.join(instance_path, 'services', 'http', 'run')
-    log_path = os.path.join(instance_path, 'services', 'http', 'log', 'run')
+    makedirs(os.path.join(instance_path, 'services', 'web'))
+    makedirs(os.path.join(instance_path, 'services', 'web', 'log'))
+    run_path = os.path.join(instance_path, 'services', 'web', 'run')
+    log_path = os.path.join(instance_path, 'services', 'web', 'log', 'run')
 
     print 'service:', run_path
     with open(run_path, 'wb') as fh:
