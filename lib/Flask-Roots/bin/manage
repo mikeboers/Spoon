@@ -227,7 +227,7 @@ def kill(*args, **kwargs):
     service_dir = os.path.join(instance_path, 'services')
     for name in args if args else os.listdir(service_dir):
         try:
-            pid = open(os.path.join(service_dir, name, 'pid')).read()
+            pid = open(os.path.join(service_dir, name, 'pid')).read().strip()
         except OSError:
             continue
         call(['kill', '-' + signal, pid])
