@@ -232,7 +232,7 @@ def kill(signal='kill'):
 def serve(debug=True, watch=True):
 
     if debug:
-        from roots import app
+        app = get_app()
         app.run(
             debug=True,
             use_reloader=watch,

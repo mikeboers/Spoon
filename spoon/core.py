@@ -2,10 +2,10 @@ from flask.ext.roots import make_app
 
 app = make_app(__name__)
 
-db = app.roots.db
-mako = app.roots.mako
-login_manager = app.roots.login_manager
-auth = app.roots.auth
+# Extract: db, mako, auth, login_manager, etc..
+globals().update(app.extensions)
+globals().update(app.roots.extensions)
+
 
 # Register other components.
 from . import auth as _auth

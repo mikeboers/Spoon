@@ -12,6 +12,7 @@ from flask.ext.acl import AuthManager
 class Roots(object):
 
     def __init__(self, app):
+        self.extensions = {}
         self.init_app(app)
 
     def init_app(self, app):
@@ -20,6 +21,7 @@ class Roots(object):
         self.app = app
         app.roots = self
         app.extensions['roots'] = self
+
 
         from .config import setup_config
         setup_config(app)
@@ -30,16 +32,16 @@ class Roots(object):
         from .session import setup_session
         setup_session(app)
 
-        self.login_manager = LoginManager(app)
-        self.auth = AuthManager(app)
+        self.extensions['login_manager'] = LoginManager(app)
+        self.extensions['auth'] = AuthManager(app)
 
         from .mako import MakoTemplates
-        self.mako = MakoTemplates(app)
+        self.extensions['mako'] = MakoTemplates(app)
 
-        self.imgsizer = ImgSizer(app)
+        self.extensions['imgsizer'] = ImgSizer(app)
 
-        self.db = SQLAlchemy(app)
-        self.db.metadata.bind = self.db.engine # WTF do I need to do this for?!
+        self.extensions['db'] = db = SQLAlchemy(app)
+        db.metadata.bind = db.engine # WTF do I need to do this for?!
 
         from .routing import setup_routing
         setup_routing(app)

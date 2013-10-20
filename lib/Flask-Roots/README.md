@@ -59,11 +59,11 @@ Usage
 
 Once bootstrapped and configured, you can ask Roots to build your app:
 
-~~~python
+~~~
 from flask.ext.roots import make_app
 
 app = make_app(__name__)
-db = app.roots.db
-mako = app.roots.mako
-# etc...
+
+# Extract: db, mako, auth, login_manager, etc..
+globals().update(app.roots.extensions)
 ~~~
