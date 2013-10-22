@@ -32,6 +32,8 @@ setup(
         Flask-SQLAlchemy
         sqlalchemy-migrate
 
+        Flask-Mail
+        
         PIL
         Flask-Images
 
