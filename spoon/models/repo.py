@@ -28,7 +28,7 @@ class Repo(db.Model):
         extend_existing=True,
     )
 
-    account = db.relationship(Account, backref='repos')
+    account = db.relationship(Account, backref=db.backref('repos', order_by=lambda: Repo.name))
     
     @property
     def __acl__(self):
