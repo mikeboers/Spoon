@@ -1,11 +1,13 @@
 
-- ssh keys should be parsed at creation time
-- split account actions into their own endpoints
+- account/repo renaming and aliases
+  - the location on disk likely should not be moved, and so should be stored on
+    the Repo
 
 - repo name checking is generally case sensitive, unless you are renaming or
   autocreating
 
-- reflog
+- `ssh git@server info/perms/list`
+- some sort of reflog
 
 - activity log on the landing page; this requires a reflog
 
@@ -21,9 +23,9 @@
     group [-r role] -u user group
 
 - repository collaborators, so I can share my personal private repos with
-  friends
-
-- repo aliases
+  friends.
+    - What are the permission semantics? Must the account be public, or they
+      have read permission there too?
 
 
 - test:

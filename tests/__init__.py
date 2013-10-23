@@ -10,7 +10,7 @@ from subprocess import call, check_output, CalledProcessError
 import werkzeug as wz
 from flask.ext.login import current_user, login_user
 
-from spoon.core.flask import app, auth, db
+from spoon.core import app, auth, db
 from spoon.auth import dummy_admin, dummy_anon
 from spoon.models import Account, Repo, GroupMembership
 
