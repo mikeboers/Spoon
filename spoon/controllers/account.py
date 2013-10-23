@@ -2,7 +2,7 @@ import wtforms as wtf
 from flask.ext.wtf import Form
 
 from . import *
-from ..models.sshkey import SSHKey
+from ..models.sshkey import SSHKey, rewrite_authorized_keys
 
 
 class NewRepoForm(Form):
@@ -67,12 +67,16 @@ def account_admin(account):
                 db.session.commit()
                 flash('Added SSH key %s' % key.fingerprint)
 
+        if added:
+            rewrite_authorized_keys()
+
     if request.method == 'POST' and request.form.get('action') == 'account.keys.delete':
         auth.assert_can('account.write', account)
         id_ = int(request.form.get('key.id'))
         account.ssh_keys = [x for x in account.ssh_keys if x.id != id_]
         flash('Deleted ssh key.')
         db.session.commit()
+        rewrite_authorized_keys()
 
     if request.method == 'POST' and request.form.get('action') == 'account.meta.write':
         auth.assert_can('account.write', account)
