@@ -25,7 +25,7 @@
 
     .alert.alert-info
         %strong SSH Keys
-        %ul - for key in account.ssh_keys: %li
+        - for key in account.ssh_keys: .clearfix
             %form(method='POST').pull-right
                 %input(type='hidden', name='action', value='account.keys.delete')
                 %input(type='hidden', name='key.id', value=key.id)
@@ -36,7 +36,7 @@
 
         - if not account.ssh_keys:
             %em No SSH keys.
-        
+
         %hr
 
         %form(method='POST')

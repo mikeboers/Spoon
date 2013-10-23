@@ -1,6 +1,6 @@
 
-- ssk key names
-- ssh key management
+- ssh keys should be parsed at creation time
+- split account actions into their own endpoints
 
 - repo name checking is generally case sensitive, unless you are renaming or
   autocreating
