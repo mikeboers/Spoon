@@ -7,6 +7,7 @@ import sqlalchemy as sa
 
 from ..core import app, db
 from ..models import Account, SSHKey, GroupMembership
+from ..models.sshkey import rewrite_authorized_keys
 
 
 def main():
@@ -144,6 +145,7 @@ def process_account(account, args):
                 print 'warning: SSH key was malformed, and not added'
             else:
                 account.ssh_keys.append(ssh_key)
+        rewrite_authorized_keys()
 
     db.session.commit()
 
