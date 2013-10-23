@@ -30,9 +30,8 @@
                 %input(type='hidden', name='action', value='account.keys.delete')
                 %input(type='hidden', name='key.id', value=key.id)
                 %button.btn.btn-xs.btn-danger Delete
-            &= key.parts[-1] or 'unknown'
-            - fp = key.fingerprint
-            %small %code &= ':'.join(fp[i:i + 2] for i in xrange(0, 32, 2))
+            &= key.comment
+            %small %code &= key.fingerprint
 
         - if not account.ssh_keys:
             %em No SSH keys.

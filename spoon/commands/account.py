@@ -139,7 +139,7 @@ def process_account(account, args):
             if os.path.exists(raw_key):
                 raw_key = open(raw_key).read()
             try:
-                ssh_key = SSHKey(data=raw_key)
+                ssh_key = SSHKey(raw_key)
             except ValueError:
                 print 'warning: SSH key was malformed, and not added'
             else:

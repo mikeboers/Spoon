@@ -13,7 +13,7 @@ class NewRepoForm(Form):
 
 class AddKeyForm(Form):
 
-    encoded = wtf.fields.TextAreaField('New Key')
+    encoded = wtf.fields.TextAreaField('New Keys')
 
 
 class AccountMetaForm(Form):
@@ -52,14 +52,20 @@ def account_admin(account):
     if request.method == 'POST' and request.form.get('action') == 'account.keys.create':
         auth.assert_can('account.write', account)
         encoded = request.form.get('encoded')
-        try:
-            key = SSHKey(data=encoded)
-        except ValueError:
-            flash('Malformed SSH Key', 'danger')
-        else:
-            account.ssh_keys.append(key)
-            db.session.commit()
-            flash('Added SSH key.')
+        added = 0
+        for line in encoded.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                key = SSHKey(line)
+            except ValueError as e:
+                flash('Malformed SSH Key: %s' % e, 'danger')
+            else:
+                added += 1
+                account.ssh_keys.append(key)
+                db.session.commit()
+                flash('Added SSH key %s' % key.fingerprint)
 
     if request.method == 'POST' and request.form.get('action') == 'account.keys.delete':
         auth.assert_can('account.write', account)

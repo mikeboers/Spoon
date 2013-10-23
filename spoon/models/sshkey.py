@@ -1,3 +1,4 @@
+import base64
 import errno
 import hashlib
 import os
@@ -18,38 +19,50 @@ class SSHKey(db.Model):
 
     owner = db.relationship('Account', backref=db.backref('ssh_keys', cascade='save-update,delete,delete-orphan'))
 
-    def __init__(self, *args, **kwargs):
-        super(SSHKey, self).__init__(*args, **kwargs)
-        if not self.clean:
-            raise ValueError('badly formatted ssh key')
+    def __init__(self, encoded=None, *args, **kwargs):
+        if encoded is not None:
 
-    @property
-    def parts(self):
-        m = re.match(r'(ssh-rsa|ssh-dsa)\s+([a-zA-Z0-9+/]+=*)\s*(.+?)$', self.data)
-        if not m:
-            return None, None, None
-        return m.groups()
+            m = re.match(r'^(ssh-rsa|ssh-dsa)\s+([a-zA-Z0-9+/]+=*)\s*(.+?)$', encoded, re.DOTALL)
+            if not m:
+                raise ValueError('badly formatted key')
+            type_, data, comment = m.groups()
+
+            conflicts = [k for k in ('type', 'data', 'comment') if k in kwargs]
+            if conflicts:
+                raise TypeError('got encoded and %s' % '/'.join(conflicts))
+
+        else:
+            try:
+                type_ = kwargs.pop('type')
+                data = kwargs.pop('data')
+                comment = kwargs.pop('comment')
+            except KeyError as e:
+                raise TypeError('SSHKey requires %s' % e.args[0])
+
+        if type_ not in ('ssh-rsa', 'ssh-dsa'):
+            raise ValueError('unknown SSHKey type %r' % type_)
+        try:
+            roundtrip = base64.b64encode(base64.b64decode(data))
+        except TypeError:
+            roundtrip = None
+        if data != roundtrip:
+            raise ValueError('SSHKey data not base64')
+        comment = comment.strip()
+
+        super(SSHKey, self).__init__(type=type_, data=data, comment=comment, **kwargs)
 
     @property
     def fingerprint(self):
-        _, key, _ = self.parts
-        if key:
-            return hashlib.md5(key.decode('base64')).hexdigest()
+        digest = hashlib.md5(self.data.decode('base64')).hexdigest()
+        return ':'.join(digest[i:i + 2] for i in xrange(0, len(digest), 2))
 
     @property
-    def clean(self):
-        type_, key, comment = self.parts
-        if not type_:
-            return
+    def clean_comment(self):
+        comment = re.sub(r'[^\w@\.-]+', '-', self.comment.strip())
+        return comment
 
-        # Clean up the comment; assert that it starts with the owner's name.
-        comment = re.sub(r'[^\w@\.-]+', '-', comment.strip())
-        owner_name = self.owner.name if self.owner else 'unknown'
-        if not comment.startswith(owner_name + '@'):
-            comment = '%s@%s' % (owner_name, comment.replace('@', '.'))
-
-
-        return '%s %s %s' % (type_, key, comment)
+    def as_string(self):
+        return '%s %s %s' % (self.type, self.data, self.clean_comment)
 
 
 
@@ -65,7 +78,7 @@ def iter_authorized_keys():
     for account in Account.query.all():
         for key in account.ssh_keys:
             try:
-                yield format % (account.name, key.clean)
+                yield format % (account.name, key.as_string())
             except ValueError as e:
                 print e
 
