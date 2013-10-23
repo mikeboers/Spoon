@@ -21,10 +21,16 @@ def setup_errors(app):
     # Take over all formatting of HTTP status codes by replacing the method which
     # normally handles them.
     def handle_http_exception(e):
+
+        # Pass through non errors.
+        if e.code < 400:
+            return e
+
         if e.code >= 500:
             log.exception(str(e))
         else:
             log.warning(str(e))
+
         try:
             return render_template(current_app.config['STATUS_TEMPLATE'],
                 status=e,

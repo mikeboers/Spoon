@@ -34,7 +34,13 @@ def _get_config():
 
     config_files = sorted(config_files, key=lambda path: os.path.basename(path))
 
-    config = {}
+    config = {
+        'DEBUG': False,
+        'TESTING': False,
+    }
+    for k, v in os.environ.iteritems():
+        if k.isupper() and k.startswith('FLASK_'):
+            config[k[6:]] = v
 
     # These will never be allowed to change.
     basics = dict(
@@ -56,4 +62,5 @@ def setup_config(app):
     app.config.update(config)
     app.root_path = config['ROOT_PATH']
     app.instance_path = config['INSTANCE_PATH']
+
 

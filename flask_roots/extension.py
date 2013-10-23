@@ -4,7 +4,6 @@ import os
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.images import Images
-from flask.ext.mail import Mail
 from flask.ext.login import LoginManager
 from flask.ext.acl import AuthManager
 
@@ -21,7 +20,6 @@ class Roots(object):
         self.app = app
         app.roots = self
         app.extensions['roots'] = self
-
 
         from .config import setup_config
         setup_config(app)
@@ -45,6 +43,7 @@ class Roots(object):
         self.extensions['db'] = db = SQLAlchemy(app)
         db.metadata.bind = db.engine # WTF do I need to do this for?!
 
+        from .mail import Mail
         self.extensions['mail'] = Mail(app)
 
         from .routing import setup_routing
