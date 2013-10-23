@@ -156,6 +156,10 @@ def js(watch=False):
     out_path = os.path.join(instance_path, 'static', 'js')
     makedirs(out_path)
 
+    if not os.path.exists('js'):
+        print 'No Javascript'
+        return
+    
     from jsmin import jsmin
     for name in os.listdir('js'):
 
@@ -262,14 +266,20 @@ def kill(*names, **kwargs):
 
 
 @command
-def serve(debug=True, watch=True):
+def serve(service=False, debug=None, watch=True, testing=None):
 
-    if debug:
+    # HACK!
+    if testing is not None:
+        os.environ['FLASK_TESTING'] = '1' if test else ''
+    if debug is not None:
+        os.environ['FLASK_DEBUG'] = '1' if debug else ''
+
+    if not service:
+
         app = get_app()
         app.run(
-            debug=True,
             use_reloader=watch,
-            port=app.config['PORT'],
+            port=app.config.get('PORT', 8000),
         )
 
     else:

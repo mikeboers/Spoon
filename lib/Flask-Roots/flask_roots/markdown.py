@@ -29,6 +29,7 @@ import logging
 import re
 import cgi
 
+from flask import current_app
 import markdown as _markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 
@@ -95,6 +96,7 @@ def markdown(text, _unknown=None, **custom_exts):
     
     loaded_extensions = []
     ext_prefs = extension_usage_defaults.copy()
+    ext_prefs.update(current_app.config.get('MARKDOWN_EXTS', {}))
     ext_prefs.update(custom_exts)
     for name, include in ext_prefs.iteritems():
         if include:

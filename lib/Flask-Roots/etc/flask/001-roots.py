@@ -1,5 +1,7 @@
 import os
 
+PORT = 8000
+
 UPLOAD_FOLDER = os.path.join(INSTANCE_PATH, 'uploads')
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(INSTANCE_PATH, 'sqlite', 'main.sqlite')
