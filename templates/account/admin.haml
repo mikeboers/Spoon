@@ -23,6 +23,26 @@
         +utils.render_form(account_meta_form)
         %button.btn.btn-primary Update Account
 
+    .alert.alert-info
+        %strong SSH Keys
+        %ul - for key in account.ssh_keys: %li
+            %form(method='POST').pull-right
+                %input(type='hidden', name='action', value='account.keys.delete')
+                %input(type='hidden', name='key.id', value=key.id)
+                %button.btn.btn-xs.btn-danger Delete
+            &= key.parts[-1] or 'unknown'
+            - fp = key.fingerprint
+            %small %code &= ':'.join(fp[i:i + 2] for i in xrange(0, 32, 2))
+
+        - if not account.ssh_keys:
+            %em No SSH keys.
+        
+        %hr
+
+        %form(method='POST')
+            %input(type='hidden', name='action', value='account.keys.create')
+            +utils.render_form(add_key_form)
+            %button.btn.btn-primary Add SSH Key
 
 -# if auth.can('repo.create', account):
     .alert.alert-success

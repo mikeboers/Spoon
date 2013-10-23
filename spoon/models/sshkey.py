@@ -1,4 +1,5 @@
 import errno
+import hashlib
 import os
 import re
 import sys
@@ -23,16 +24,32 @@ class SSHKey(db.Model):
             raise ValueError('badly formatted ssh key')
 
     @property
-    def clean(self):
-
-        m = re.match(r'(ssh-rsa|ssh-dsa)\s+([a-zA-Z0-9+/]+=*)', self.data)
+    def parts(self):
+        m = re.match(r'(ssh-rsa|ssh-dsa)\s+([a-zA-Z0-9+/]+=*)\s*(.+?)$', self.data)
         if not m:
+            return None, None, None
+        return m.groups()
+
+    @property
+    def fingerprint(self):
+        _, key, _ = self.parts
+        if key:
+            return hashlib.md5(key.decode('base64')).hexdigest()
+
+    @property
+    def clean(self):
+        type_, key, comment = self.parts
+        if not type_:
             return
 
-        type_, key = m.groups()
-        # comment = re.sub(r'[^\w@\.-]+', '-', comment.strip())
+        # Clean up the comment; assert that it starts with the owner's name.
+        comment = re.sub(r'[^\w@\.-]+', '-', comment.strip())
+        owner_name = self.owner.name if self.owner else 'unknown'
+        if not comment.startswith(owner_name + '@'):
+            comment = '%s@%s' % (owner_name, comment.replace('@', '.'))
 
-        return '%s %s %s' % (type_, key, self.owner.name if self.owner else 'unowned')
+
+        return '%s %s %s' % (type_, key, comment)
 
 
 
