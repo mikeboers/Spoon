@@ -30,8 +30,9 @@ def echo(command, *args):
 def passwd(args, pass_=None):
 
     if pass_ is None:
-        pass_ = getpass.getpass('Password: ')
-        pass2 = getpass.getpass('Verify: ')
+        print 'Resetting password for "%s".' % current_user.name
+        pass_ = getpass.getpass('New password: ')
+        pass2 = getpass.getpass('Verify password: ')
         if pass_ != pass2:
             print 'Passwords do not match.'
             return 1
